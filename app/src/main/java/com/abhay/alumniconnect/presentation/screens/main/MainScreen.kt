@@ -1,0 +1,180 @@
+package com.abhay.alumniconnect.presentation.screens.main
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.abhay.alumniconnect.R
+import com.abhay.alumniconnect.presentation.navigation.graphs.MainNavGraph
+import com.abhay.alumniconnect.presentation.navigation.routes.Route
+import com.abhay.alumniconnect.utils.navigateWithStateAndPopToStart
+import com.example.ui.theme.someFontFamily
+
+
+@Composable
+fun MainScreen(navController: NavHostController = rememberNavController()) {
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry.value?.destination
+    val isTopLevel = topLevelDestinations.any { route ->
+        currentDestination?.hierarchy?.any {
+            it.hasRoute(route.route::class)
+        } == true
+    }
+
+
+    Scaffold(
+        bottomBar = {
+            AnimatedVisibility(
+                visible = isTopLevel,
+                enter = slideInVertically(animationSpec = tween(200)) { it },
+                exit = slideOutVertically(animationSpec = tween(200)) { it }
+            ) {
+                BottomNavigationBar(
+                    currentDestination = currentDestination, onNavItemClick = { route ->
+                        navController.navigateWithStateAndPopToStart(route)
+                    },
+                    isVisible = isTopLevel
+                )
+            }
+        },
+        topBar = {
+            // Handle the case to change names and navigation function according to current screens
+            AnimatedVisibility(
+                visible = isTopLevel,
+                enter = slideInVertically(animationSpec = tween(200)) { -it },
+                exit = slideOutVertically(animationSpec = tween(200)) { -it }
+            ) {
+                AlumniTopAppBar(
+                    currentDestination = currentDestination,
+                    isVisible = isTopLevel
+                )
+            }
+
+        },
+    ) { paddingValues ->
+        NavHost(
+            modifier = Modifier.padding(paddingValues),
+            navController = navController,
+            startDestination = Route.MainRoute.Home,
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it }, animationSpec = tween(500)
+                )
+            },
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { -it }, animationSpec = tween(500)
+                )
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it }, animationSpec = tween(500)
+                )
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { it }, animationSpec = tween(500)
+                )
+            }
+        ) {
+            MainNavGraph(navController)
+        }
+    }
+}
+
+
+@Composable
+fun BottomNavigationBar(
+    modifier: Modifier = Modifier,
+    onNavItemClick: (Any) -> Unit,
+    currentDestination: NavDestination?,
+    isVisible: Boolean = true
+) {
+
+
+    if (isVisible) {
+
+        NavigationBar(
+            modifier = modifier,
+            containerColor = MaterialTheme.colorScheme.surface,
+            tonalElevation = 30.dp
+        ) {
+            topLevelDestinations.forEach { item ->
+                val isSelected =
+                    currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true
+                NavigationBarItem(
+                    selected = isSelected,
+                    icon = {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    onClick = { onNavItemClick(item.route) },
+                )
+            }
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlumniTopAppBar(
+    modifier: Modifier = Modifier,
+    currentDestination: NavDestination?,
+    isVisible: Boolean = true
+) {
+
+
+    if (isVisible) {
+        TopAppBar(
+            modifier = modifier.height(80.dp),
+            title = {
+                Text(
+                    "Alumni App",
+                    fontFamily = someFontFamily,
+                    style = MaterialTheme.typography.displaySmall,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            navigationIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.requiredSize(70.dp)
+                )
+            })
+    }
+}
