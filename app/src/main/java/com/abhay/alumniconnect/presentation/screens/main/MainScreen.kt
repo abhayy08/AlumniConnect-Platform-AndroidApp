@@ -41,9 +41,15 @@ import com.example.ui.theme.someFontFamily
 fun MainScreen(navController: NavHostController = rememberNavController()) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination
+    var currentTitle = "Alumni Connect"
     val isTopLevel = topLevelDestinations.any { route ->
         currentDestination?.hierarchy?.any {
-            it.hasRoute(route.route::class)
+            if (it.hasRoute(route.route::class)) {
+                currentTitle = route.title
+                true
+            }else {
+                false
+            }
         } == true
     }
 
@@ -64,15 +70,14 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             }
         },
         topBar = {
-            // Handle the case to change names and navigation function according to current screens
             AnimatedVisibility(
                 visible = isTopLevel,
                 enter = slideInVertically(animationSpec = tween(200)) { -it },
                 exit = slideOutVertically(animationSpec = tween(200)) { -it }
             ) {
                 AlumniTopAppBar(
-                    currentDestination = currentDestination,
-                    isVisible = isTopLevel
+                    isVisible = isTopLevel,
+                    title = currentTitle
                 )
             }
 
@@ -149,19 +154,17 @@ fun BottomNavigationBar(
 @Composable
 fun AlumniTopAppBar(
     modifier: Modifier = Modifier,
-    currentDestination: NavDestination?,
-    isVisible: Boolean = true
+    isVisible: Boolean = true,
+    title: String
 ) {
-
 
     if (isVisible) {
         TopAppBar(
-            modifier = modifier.height(80.dp),
             title = {
                 Text(
-                    "Alumni App",
+                    text = title,
                     fontFamily = someFontFamily,
-                    style = MaterialTheme.typography.displaySmall,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
             },

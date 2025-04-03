@@ -2,6 +2,7 @@ package com.abhay.alumniconnect.data.remote
 
 import com.abhay.alumniconnect.data.remote.dto.ApiResponse
 import com.abhay.alumniconnect.data.remote.dto.Connection
+import com.abhay.alumniconnect.data.remote.dto.Job
 import com.abhay.alumniconnect.data.remote.dto.UserDetails
 import com.abhay.alumniconnect.data.remote.dto.UserToken
 import com.abhay.alumniconnect.data.remote.dto.WorkExperience
@@ -49,5 +50,13 @@ interface AlumniApi {
     @DELETE("profile/work-experience/{id}")
     suspend fun deleteWorkExperienceById(@Path("id") experienceId: String): Response<ApiResponse>
 
+    @GET("jobs")
+    suspend fun getJobs(): Response<List<Job>>
+
+    @GET("jobs/{id}")
+    suspend fun getJobById(@Path("id") jobId: String): Response<Job>
+
+    @POST("jobs/{id}/apply")
+    suspend fun applyForJob(@Path("id") jobId: String, @Body requestBody: Map<String, String>): Response<ApiResponse>
 
 }

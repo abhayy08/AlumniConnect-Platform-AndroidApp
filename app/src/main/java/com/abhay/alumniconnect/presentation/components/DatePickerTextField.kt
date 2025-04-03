@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.abhay.alumniconnect.utils.formatDateForDisplay
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -87,15 +88,4 @@ fun DatePickerTextField(
             }
         }
     )
-}
-
-// Helper function to format ISO date for display
-private fun formatDateForDisplay(isoDateString: String): String {
-    return try {
-        val dateTime = ZonedDateTime.parse(isoDateString)
-        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
-        dateTime.format(formatter)
-    } catch (e: Exception) {
-        isoDateString
-    }
 }

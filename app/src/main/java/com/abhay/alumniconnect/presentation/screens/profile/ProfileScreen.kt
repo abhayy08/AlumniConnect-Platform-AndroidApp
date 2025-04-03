@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.data.remote.dto.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
+import com.abhay.alumniconnect.presentation.components.CustomChip
 import com.abhay.alumniconnect.presentation.navigation.graphs.dummyUser
 import com.example.compose.AlumniConnectTheme
 import com.example.ui.theme.AppShapes
@@ -207,7 +208,7 @@ fun SkillsAndInterestsSection(skills: List<String>, interests: List<String>) {
             )
             Spacer(Modifier.height(6.dp))
             FlowRow {
-                skills.forEach { skill -> Chip(label = skill) }
+                skills.forEach { skill -> CustomChip(label = skill) }
             }
         }
 
@@ -221,7 +222,7 @@ fun SkillsAndInterestsSection(skills: List<String>, interests: List<String>) {
             )
             Spacer(Modifier.height(6.dp))
             FlowRow {
-                interests.forEach { interest -> Chip(label = interest) }
+                interests.forEach { interest -> CustomChip(label = interest) }
             }
         }
     }
@@ -291,20 +292,6 @@ fun AccountCreationInfo(createdAt: String) {
         color = Color.Gray
     )
 }
-
-@Composable
-fun Chip(label: String) {
-    Box(
-        modifier = Modifier
-            .padding(4.dp)
-            .clip(MaterialTheme.shapes.small)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(horizontal = 10.dp, vertical = 6.dp)
-    ) {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium)
-    }
-}
-
 
 @Composable
 fun WorkExperienceItem(

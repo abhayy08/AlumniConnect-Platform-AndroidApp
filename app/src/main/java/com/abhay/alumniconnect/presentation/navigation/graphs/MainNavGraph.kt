@@ -16,6 +16,7 @@ import com.abhay.alumniconnect.data.remote.dto.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
 import com.abhay.alumniconnect.presentation.screens.event.EventsScreen
+import com.abhay.alumniconnect.presentation.screens.job.JobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobsScreen
 import com.abhay.alumniconnect.presentation.screens.main.HomeScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ConnectionsScreen
@@ -40,7 +41,12 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.Jobs> {
-        JobsScreen()
+        val viewModel = hiltViewModel<JobViewModel>()
+        val jobScreenState = viewModel.jobScreenState.collectAsState().value
+        JobsScreen(
+            jobScreenState = jobScreenState,
+            onApplyClick = viewModel::applyForJob
+        )
     }
 
     composable<Route.MainRoute.Events> {

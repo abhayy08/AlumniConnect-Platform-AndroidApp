@@ -38,7 +38,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.abhay.alumniconnect.presentation.components.Chip
+import com.abhay.alumniconnect.presentation.components.CustomChip
 import com.abhay.alumniconnect.presentation.components.ChipsInputField
 import com.abhay.alumniconnect.presentation.components.CustomOutlinedTextField
 import com.example.compose.AlumniConnectTheme
@@ -165,7 +165,7 @@ fun EditProfileScreen(
                         .fillMaxWidth()
                         .padding(top = 8.dp)) {
                         editProfileState.achievements.forEach { achievement ->
-                            Chip(
+                            CustomChip(
                                 label = achievement,
                                 onDelete = {
                                     onEvent(

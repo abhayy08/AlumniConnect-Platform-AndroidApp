@@ -92,7 +92,7 @@ fun ChipsInputField(
             ) {
                 // Display existing skills as chips
                 value.forEach { skill ->
-                    Chip(
+                    CustomChip(
                         label = skill,
                         onDelete = {
                             value.remove(skill)
@@ -156,7 +156,7 @@ fun ChipsInputField(
 }
 
 @Composable
-fun Chip(label: String, onDelete: () -> Unit) {
+fun CustomChip(label: String, onDelete: () -> Unit) {
     Box(
         modifier = Modifier
             .padding(4.dp)

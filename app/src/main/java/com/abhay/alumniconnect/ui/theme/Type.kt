@@ -1,6 +1,7 @@
 package com.example.ui.theme
 
 import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -62,10 +63,11 @@ val AppTypography = Typography(
 )
 
 val AppShapes = Shapes(
-    extraSmall = CutCornerShape(4.dp, 0.dp, 4.dp, 0.dp),
-    small = CutCornerShape(8.dp, 0.dp, 8.dp, 0.dp),
-    medium = CutCornerShape(16.dp, 0.dp, 16.dp, 0.dp),
-    large = CutCornerShape(32.dp, 0.dp, 32.dp, 0.dp),
-    extraLarge = CutCornerShape(64.dp, 0.dp, 64.dp, 0.dp)
+    extraSmall = RoundedCornerShape(4.dp),
+    small = RoundedCornerShape(8.dp),
+    medium = RoundedCornerShape(16.dp),
+    large = RoundedCornerShape(32.dp),
+    extraLarge = RoundedCornerShape(64.dp)
 )
+
 
