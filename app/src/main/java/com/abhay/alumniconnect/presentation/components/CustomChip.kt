@@ -9,13 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomChip(
     modifier: Modifier = Modifier,
-    label: String,
+    value: String,
     color: Color = MaterialTheme.colorScheme.surfaceVariant,
+    valueStyle: TextStyle = MaterialTheme.typography.bodyMedium
 ) {
     Box(
         modifier = modifier
@@ -24,6 +26,6 @@ fun CustomChip(
             .background(color)
             .padding(horizontal = 6.dp, vertical = 3.dp)
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium)
+        Text(text = value, style = valueStyle)
     }
 }

@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -94,7 +95,10 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
         }
     ) { paddingValues ->
         NavHost(
-            modifier = Modifier.padding(paddingValues),
+            modifier = then(
+                if (isTopLevel) Modifier.padding(paddingValues)
+                else Modifier
+            ),
             navController = navController,
             startDestination = Route.MainRoute.Home,
             enterTransition = {

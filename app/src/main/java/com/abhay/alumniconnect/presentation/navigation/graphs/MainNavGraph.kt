@@ -1,5 +1,6 @@
 package com.abhay.alumniconnect.presentation.navigation.graphs
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -12,6 +13,9 @@ import com.abhay.alumniconnect.presentation.navigation.routes.Route
 import com.abhay.alumniconnect.presentation.screens.event.EventsScreen
 import com.abhay.alumniconnect.presentation.screens.job.JobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobsScreen
+import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicationScreen
+import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicationViewModel
+import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails
 import com.abhay.alumniconnect.presentation.screens.main.HomeScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ConnectionsScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreen
@@ -21,6 +25,7 @@ import com.abhay.alumniconnect.presentation.screens.profile.add_edit_work_experi
 import com.abhay.alumniconnect.presentation.screens.profile.editprofilescreen.EditProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.editprofilescreen.EditProfileViewModel
 import com.abhay.alumniconnect.presentation.screens.search.SearchScreen
+import com.abhay.alumniconnect.utils.navigateAndPopUp
 import com.abhay.alumniconnect.utils.popUp
 
 fun NavGraphBuilder.MainNavGraph(
@@ -123,16 +128,57 @@ fun NavGraphBuilder.jobNavGraph(
             JobsScreen(
                 jobScreenState = jobScreenState,
                 uiState = jobUiState,
-                onApplyClick = {},
+                onApplyClick = { navController.navigate(Route.MainRoute.Jobs.Application(it)) },
                 onJobCardClick = { id ->
-
+                    viewModel.getJobById(id)
+                    navController.navigate(Route.MainRoute.Jobs.JobDetails)
                 },
                 onShowSnackbarMessage = showSnackbar
             )
         }
 
         composable<Route.MainRoute.Jobs.JobDetails> {
+            val viewmodel = it.sharedViewModel<JobViewModel>(navController)
 
+            val selectedJobState = viewmodel.selectedJob.collectAsState().value
+
+            JobDetails(
+                jobState = selectedJobState,
+                onApplyClick = {
+                    navController.navigate(Route.MainRoute.Jobs.Application(id = selectedJobState.job?._id))
+                },
+                onBackClick = {
+                    viewmodel.onNavigateBack { navController.popUp() }
+                }
+            )
+        }
+
+        composable<Route.MainRoute.Jobs.Application> {
+            val args = it.toRoute<Route.MainRoute.Jobs.Application>()
+            val viewModel = hiltViewModel<JobApplicationViewModel>(it)
+            val state = viewModel.applicationState.collectAsState().value
+
+            LaunchedEffect(args.id) {
+                if (args.id == null) {
+                    showSnackbar("Unable to get Job Id, Try Again Later!")
+                    navController.popUp()
+                } else {
+                    viewModel.init(args.id)
+                }
+            }
+
+            JobApplicationScreen(
+                state = state,
+                onEvent = viewModel::onEvent,
+                showSnackbar = showSnackbar,
+                onBackClick = {
+                    navController.popUp()
+                },
+                navigateAndPopUp = {route, popUp ->
+                    navController.navigateAndPopUp(route, popUp)
+                },
+
+            )
         }
     }
 }

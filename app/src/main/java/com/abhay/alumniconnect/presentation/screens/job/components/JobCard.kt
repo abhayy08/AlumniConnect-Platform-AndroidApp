@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.presentation.components.CustomChip
+import com.abhay.alumniconnect.presentation.components.InfoLabel
 import com.abhay.alumniconnect.utils.formatDateForDisplay
 import com.example.compose.AlumniConnectTheme
 
@@ -84,7 +85,7 @@ fun JobCard(
                     requiredSkills.take(3).forEach { skill ->
                         CustomChip(
                             modifier = Modifier.scale(0.95f),
-                            label = skill,
+                            value = skill,
                             color = MaterialTheme.colorScheme.secondaryContainer
                         )
                     }
@@ -120,17 +121,7 @@ fun JobCard(
     }
 }
 
-@Composable
-fun InfoLabel(
-    modifier: Modifier = Modifier, label: String, value: String
-) {
-    Column(
-        modifier = modifier, verticalArrangement = Arrangement.Center
-    ) {
-        Text(label, style = MaterialTheme.typography.labelMedium, color = Color.Gray)
-        Text(value, style = MaterialTheme.typography.bodySmall)
-    }
-}
+
 
 @Preview
 @Composable

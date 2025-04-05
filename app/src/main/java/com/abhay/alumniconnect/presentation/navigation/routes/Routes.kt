@@ -51,10 +51,10 @@ sealed class Route {
             object JobsLists
 
             @Serializable
-            object JobDetails
+            data object JobDetails
 
             @Serializable
-            object Application
+            data class Application(val id: String? = null)
         }
 
         @Serializable

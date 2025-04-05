@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.presentation.screens.job
+package com.abhay.alumniconnect.presentation.screens.job.pages
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,7 +14,7 @@ import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
 fun OpportunitiesPage(
     modifier: Modifier = Modifier,
     jobs: List<Job>,
-    onApplyClick: () -> Unit = { },
+    onApplyClick: (String) -> Unit = { },
     onJobCardClick: (id: String) -> Unit = { }
 ) {
     LazyColumn(
@@ -30,7 +30,7 @@ fun OpportunitiesPage(
                 experienceLevel = it.experienceLevel,
                 requiredSkills = it.requiredSkills,
                 applicationDeadline = it.applicationDeadline,
-                onApplyClick = onApplyClick,
+                onApplyClick = { onApplyClick(it._id) },
             )
         }
     }

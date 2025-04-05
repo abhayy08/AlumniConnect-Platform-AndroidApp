@@ -13,10 +13,15 @@ data class Job(
     val jobType: String,
     val location: String,
     val minExperience: Int,
-    val postedBy: Any,
-    val requiredEducation: RequiredEducation,
+    val postedBy: PostedBy,
+    val requiredEducation: List<RequiredEducation>,
     val requiredSkills: List<String>,
     val status: String,
     val title: String,
     val updatedAt: String
+)
+
+data class PostedBy (
+    val id: String,
+    val name: String
 )

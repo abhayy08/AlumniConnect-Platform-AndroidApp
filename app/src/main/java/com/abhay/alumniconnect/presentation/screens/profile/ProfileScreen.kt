@@ -208,7 +208,7 @@ fun SkillsAndInterestsSection(skills: List<String>, interests: List<String>) {
             )
             Spacer(Modifier.height(6.dp))
             FlowRow {
-                skills.forEach { skill -> CustomChip(label = skill) }
+                skills.forEach { skill -> CustomChip(value = skill) }
             }
         }
 
@@ -222,7 +222,7 @@ fun SkillsAndInterestsSection(skills: List<String>, interests: List<String>) {
             )
             Spacer(Modifier.height(6.dp))
             FlowRow {
-                interests.forEach { interest -> CustomChip(label = interest) }
+                interests.forEach { interest -> CustomChip(value = interest) }
             }
         }
     }

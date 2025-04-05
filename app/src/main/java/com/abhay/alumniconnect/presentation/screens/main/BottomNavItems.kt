@@ -27,7 +27,7 @@ val topLevelDestinations = listOf(
         icon = Icons.Rounded.Search
     ),
     BottomNavItem(
-        route = Route.MainRoute.Jobs,
+        route = Route.MainRoute.Jobs.JobsLists,
         title = "Jobs",
         icon = Icons.Rounded.Work
     ),

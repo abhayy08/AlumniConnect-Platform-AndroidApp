@@ -71,7 +71,7 @@ class JobsRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun applyForJob(jobId: String, resumeLink: String): Result<String> =
+    override suspend fun applyForJob(jobId: String, resumeLink: String, coverLetter: String): Result<String> =
         withContext(Dispatchers.IO) {
             try {
                 val requestBody =  mapOf("resumeLink" to resumeLink)

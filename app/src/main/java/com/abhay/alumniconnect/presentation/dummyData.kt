@@ -2,6 +2,7 @@ package com.abhay.alumniconnect.presentation
 
 import com.abhay.alumniconnect.data.remote.dto.Connection
 import com.abhay.alumniconnect.data.remote.dto.Job
+import com.abhay.alumniconnect.data.remote.dto.PostedBy
 import com.abhay.alumniconnect.data.remote.dto.PrivacySettings
 import com.abhay.alumniconnect.data.remote.dto.RequiredEducation
 import com.abhay.alumniconnect.data.remote.dto.WorkExperience
@@ -69,60 +70,24 @@ val dummyJobs = listOf(
         _id = "1",
         title = "Android Developer",
         company = "Google",
-        description = "Develop modern Android apps...",
+        description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         location = "remote",
         jobType = "full-time",
         experienceLevel = "mid",
         minExperience = 2,
         applicationDeadline = "2025-04-30",
         requiredSkills = listOf("Kotlin", "Jetpack Compose", "MVVM"),
-        requiredEducation = RequiredEducation("Bachelors", "CSE"),
+        requiredEducation = listOf(
+            RequiredEducation("Bachelors", "CSE"),
+            RequiredEducation("Bachelors", "IT")
+        ),
         graduationYear = 2022,
         benefitsOffered = listOf("Health Insurance", "Stock Options"),
         status = "open",
         __v = 1,
         createdAt = "",
-        postedBy = "",
+        postedBy = PostedBy("1", "Abhay"),
         updatedAt = ""
     ),
-    Job(
-        _id = "1",
-        title = "Android Developer",
-        company = "Google",
-        description = "Develop modern Android apps...",
-        location = "remote",
-        jobType = "full-time",
-        experienceLevel = "mid",
-        minExperience = 2,
-        applicationDeadline = "2025-04-30",
-        requiredSkills = listOf("Kotlin", "Jetpack Compose", "MVVM"),
-        requiredEducation = RequiredEducation("Bachelors", "CSE"),
-        graduationYear = 2022,
-        benefitsOffered = listOf("Health Insurance", "Stock Options"),
-        status = "open",
-        __v = 1,
-        createdAt = "",
-        postedBy = "",
-        updatedAt = ""
-    ),
-    Job(
-        _id = "1",
-        title = "Android Developer",
-        company = "Google",
-        description = "Develop modern Android apps...",
-        location = "remote",
-        jobType = "full-time",
-        experienceLevel = "mid",
-        minExperience = 2,
-        applicationDeadline = "2025-04-30",
-        requiredSkills = listOf("Kotlin", "Jetpack Compose", "MVVM"),
-        requiredEducation = RequiredEducation("Bachelors", "CSE"),
-        graduationYear = 2022,
-        benefitsOffered = listOf("Health Insurance", "Stock Options"),
-        status = "open",
-        __v = 1,
-        createdAt = "",
-        postedBy = "",
-        updatedAt = ""
-    ),
+
 )

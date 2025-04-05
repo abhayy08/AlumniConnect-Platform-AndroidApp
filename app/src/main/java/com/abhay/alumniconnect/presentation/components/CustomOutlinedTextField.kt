@@ -1,5 +1,6 @@
 package com.abhay.alumniconnect.presentation.components
 
+import android.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,7 @@ fun CustomOutlinedTextField(
     onValueChange: (String) -> Unit,
     label: String,
     isRequired: Boolean = false,
+    isError: Boolean = false,
     error: String? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -52,7 +54,7 @@ fun CustomOutlinedTextField(
                 .padding(vertical = 8.dp),
             keyboardOptions = keyboardOptions,
             singleLine = true,
-            isError = error != null,
+            isError = error != null || isError,
             trailingIcon = trailingIcon,
             visualTransformation = visualTransformation,
             shape = MaterialTheme.shapes.small,
