@@ -15,10 +15,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +39,7 @@ import com.abhay.alumniconnect.presentation.navigation.graphs.MainNavGraph
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
 import com.abhay.alumniconnect.utils.navigateWithStateAndPopToStart
 import com.example.ui.theme.someFontFamily
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -53,6 +58,8 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
         } == true
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         bottomBar = {
@@ -82,6 +89,9 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             }
 
         },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
     ) { paddingValues ->
         NavHost(
             modifier = Modifier.padding(paddingValues),
@@ -108,7 +118,14 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
                 )
             }
         ) {
-            MainNavGraph(navController)
+            MainNavGraph(
+                navController,
+                onShowSnackbarMessage = {message ->
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(message)
+                    }
+                }
+            )
         }
     }
 }

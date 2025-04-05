@@ -1,5 +1,6 @@
 package com.abhay.alumniconnect.presentation.screens.job
 
+import android.R.attr.onClick
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,13 +40,12 @@ fun JobCard(
     experienceLevel: String,
     requiredSkills: List<String>,
     applicationDeadline: String,
-    onClick: () -> Unit
+    onApplyClick: () -> Unit,
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp)
-            .clickable { onClick() },
+            .padding(10.dp),
         shape = MaterialTheme.shapes.small,
         elevation = CardDefaults.cardElevation(2.dp),
         border = BorderStroke(
@@ -78,7 +78,10 @@ fun JobCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 FlowRow {
                     requiredSkills.take(3).forEach { skill ->
                         CustomChip(
@@ -109,7 +112,7 @@ fun JobCard(
                 }
                 Button(
                     modifier = Modifier.scale(0.9f),
-                    onClick = {},
+                    onClick = onApplyClick,
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text("Apply Now")
@@ -143,6 +146,7 @@ private fun JobCardPreview() {
             experienceLevel = "mid",
             requiredSkills = listOf("Kotlin", "Jetpack Compose", "MVVM"),
             applicationDeadline = "2025-04-30",
-            onClick = {})
+            onApplyClick = {},
+        )
     }
 }

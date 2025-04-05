@@ -52,9 +52,27 @@ class JobsRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun getAppliedJobs(): Result<List<Job>> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.getAppliedJobs()
+                if(!response.isSuccessful) {
+                    return@withContext Result.Error(
+                        message = extractErrorMessage(response, ERROR_TAG)
+                    )
+                }
+                response.body()?.let {
+                    return@withContext Result.Success(it)
+                }
+                Result.Error(message = "An unknown error has occurred!")
+
+            }catch(e: java.lang.Exception) {
+                Result.Error(message = "An unknown error has occurred!")
+            }
+        }
+
     override suspend fun applyForJob(jobId: String, resumeLink: String): Result<String> =
         withContext(Dispatchers.IO) {
-                Log.d(ERROR_TAG, "applyForJob: Entered Here")
             try {
                 val requestBody =  mapOf("resumeLink" to resumeLink)
                 val response = api.applyForJob(jobId, requestBody)
@@ -65,6 +83,7 @@ class JobsRepositoryImpl @Inject constructor(
                 }
 
                 response.body()?.let {
+                    Log.d(ERROR_TAG, "applyForJob: ${it.message}")
                     return@withContext Result.Success(it.message)
                 }
 

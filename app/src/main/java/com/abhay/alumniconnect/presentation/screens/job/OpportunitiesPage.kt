@@ -1,5 +1,6 @@
 package com.abhay.alumniconnect.presentation.screens.job
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -8,16 +9,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.abhay.alumniconnect.data.remote.dto.Job
 
 @Composable
-fun OpportunitesPage(
+fun OpportunitiesPage(
     modifier: Modifier = Modifier,
     jobs: List<Job>,
-    onApplyClick: (id: String, resumeLink: String) -> Unit = { _, _ -> }
+    onApplyClick: () -> Unit = { },
+    onJobCardClick: (id: String) -> Unit = { }
 ) {
     LazyColumn(
         modifier = modifier
     ){
         items(jobs) {
             JobCard(
+                modifier = Modifier.clickable {onJobCardClick(it._id)},
                 title = it.title,
                 company = it.company,
                 location = it.location,
@@ -25,7 +28,7 @@ fun OpportunitesPage(
                 experienceLevel = it.experienceLevel,
                 requiredSkills = it.requiredSkills,
                 applicationDeadline = it.applicationDeadline,
-                onClick = { onApplyClick(it._id, "this is the link") }
+                onApplyClick = onApplyClick,
             )
         }
     }
@@ -34,7 +37,7 @@ fun OpportunitesPage(
 @Preview
 @Composable
 private fun OpportunitesPagePreview() {
-    OpportunitesPage(
+    OpportunitiesPage(
         jobs = dummyJobs
     )
 }

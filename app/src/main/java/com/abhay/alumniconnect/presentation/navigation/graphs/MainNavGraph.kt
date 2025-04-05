@@ -30,7 +30,8 @@ import com.abhay.alumniconnect.presentation.screens.search.SearchScreen
 import com.abhay.alumniconnect.utils.popUp
 
 fun NavGraphBuilder.MainNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    onShowSnackbarMessage: (String) -> Unit = { _->}
 ) {
     composable<Route.MainRoute.Home> {
         HomeScreen()
@@ -43,9 +44,15 @@ fun NavGraphBuilder.MainNavGraph(
     composable<Route.MainRoute.Jobs> {
         val viewModel = hiltViewModel<JobViewModel>()
         val jobScreenState = viewModel.jobScreenState.collectAsState().value
+        val jobUiState = viewModel.jobUiState.collectAsState().value
         JobsScreen(
             jobScreenState = jobScreenState,
-            onApplyClick = viewModel::applyForJob
+            uiState = jobUiState,
+            onApplyClick = {},
+            onJobCardClick = { id ->
+
+            },
+            onShowSnackbarMessage = onShowSnackbarMessage
         )
     }
 
