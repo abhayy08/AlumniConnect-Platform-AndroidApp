@@ -22,6 +22,6 @@ data class Job(
 )
 
 data class PostedBy (
-    val id: String,
+    val _id: String,
     val name: String
 )
