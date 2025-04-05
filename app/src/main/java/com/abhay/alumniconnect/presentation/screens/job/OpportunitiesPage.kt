@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.abhay.alumniconnect.data.remote.dto.Job
+import com.abhay.alumniconnect.presentation.dummyJobs
+import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
 
 @Composable
 fun OpportunitiesPage(
@@ -20,7 +22,7 @@ fun OpportunitiesPage(
     ){
         items(jobs) {
             JobCard(
-                modifier = Modifier.clickable {onJobCardClick(it._id)},
+                modifier = Modifier.clickable { onJobCardClick(it._id) },
                 title = it.title,
                 company = it.company,
                 location = it.location,

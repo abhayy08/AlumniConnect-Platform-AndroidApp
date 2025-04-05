@@ -1,19 +1,13 @@
 package com.abhay.alumniconnect.presentation.navigation.graphs
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.abhay.alumniconnect.data.remote.dto.Connection
-import com.abhay.alumniconnect.data.remote.dto.PrivacySettings
-import com.abhay.alumniconnect.data.remote.dto.WorkExperience
-import com.abhay.alumniconnect.domain.model.User
+import com.abhay.alumniconnect.presentation.dummyUser
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
 import com.abhay.alumniconnect.presentation.screens.event.EventsScreen
 import com.abhay.alumniconnect.presentation.screens.job.JobViewModel
@@ -30,8 +24,7 @@ import com.abhay.alumniconnect.presentation.screens.search.SearchScreen
 import com.abhay.alumniconnect.utils.popUp
 
 fun NavGraphBuilder.MainNavGraph(
-    navController: NavHostController,
-    onShowSnackbarMessage: (String) -> Unit = { _->}
+    navController: NavHostController, onShowSnackbarMessage: (String) -> Unit = { _ -> }
 ) {
     composable<Route.MainRoute.Home> {
         HomeScreen()
@@ -39,21 +32,6 @@ fun NavGraphBuilder.MainNavGraph(
 
     composable<Route.MainRoute.Search> {
         SearchScreen()
-    }
-
-    composable<Route.MainRoute.Jobs> {
-        val viewModel = hiltViewModel<JobViewModel>()
-        val jobScreenState = viewModel.jobScreenState.collectAsState().value
-        val jobUiState = viewModel.jobUiState.collectAsState().value
-        JobsScreen(
-            jobScreenState = jobScreenState,
-            uiState = jobUiState,
-            onApplyClick = {},
-            onJobCardClick = { id ->
-
-            },
-            onShowSnackbarMessage = onShowSnackbarMessage
-        )
     }
 
     composable<Route.MainRoute.Events> {
@@ -82,15 +60,12 @@ fun NavGraphBuilder.MainNavGraph(
                         startDate = experience.startDate
                     )
                 )
-            }
-        )
+            })
     }
 
     composable<Route.MainRoute.Connections> {
         ConnectionsScreen(
-            connections = dummyUser.connections,
-            onBackClick = { navController.navigateUp() }
-        )
+            connections = dummyUser.connections, onBackClick = { navController.navigateUp() })
     }
 
     composable<Route.MainRoute.EditProfile> {
@@ -102,8 +77,7 @@ fun NavGraphBuilder.MainNavGraph(
             editProfileState = editProfileState,
             uiState = uiState,
             onEvent = viewModel::onEvent,
-            onBackClick = { navController.popUp() }
-        )
+            onBackClick = { navController.popUp() })
     }
 
     composable<Route.MainRoute.AddEditExperience> {
@@ -124,67 +98,42 @@ fun NavGraphBuilder.MainNavGraph(
             state = state,
             uiState = uiState,
             onEvent = viewModel::onEvent,
-            onBackClick = { navController.popUp() }
-        )
+            onBackClick = { navController.popUp() })
 
     }
 
+    jobNavGraph(
+        showSnackbar = onShowSnackbarMessage, navController = navController
+    )
+
 }
 
+fun NavGraphBuilder.jobNavGraph(
+    showSnackbar: (String) -> Unit = {}, navController: NavHostController
+) {
+    navigation<Route.MainRoute.Jobs>(
+        startDestination = Route.MainRoute.Jobs.JobsLists
+    ) {
 
-// For preview purposes
-val dummyUser = User(
-    id = "123456",
-    name = "Jane Doe",
-    email = "jane.doe@example.com",
-    bio = "Software developer with a passion for creating innovative solutions. Experienced in mobile and web development.",
-    company = "Tech Innovations",
-    currentJob = "Mobile Developer",
-    jobTitle = "Senior Developer",
-    degree = "Bachelor of Science",
-    fieldOfStudy = "Computer Science",
-    graduationYear = 2022,
-    major = "Computer Science",
-    minor = "Mathematics",
-    university = "University of Technology",
-    linkedInProfile = "linkedin.com/in/jane-doe",
-    location = "San Francisco, CA",
-    isVerifiedUser = true,
-    createdAt = "2023-01-15T14:23:45.678Z",
-    updatedAt = "2023-04-28T09:12:34.567Z",
-    achievements = listOf(
-        "Winner of University Hackathon 2022",
-        "Published paper on Machine Learning Applications",
-        "Developed open-source library with 500+ stars"
-    ),
-    interests = listOf("Machine Learning", "Mobile Development", "IoT", "Cloud Computing"),
-    skills = listOf("Kotlin", "Android", "Java", "Python", "Flutter", "React", "AWS"),
-    connections = listOf(
-        Connection("1", "John Smith", "Google", "Software Engineer"),
-        Connection("2", "Alice Johnson", "Amazon", "Product Manager"),
-        Connection("3", "Bob Williams", "Microsoft", "UX Designer")
-    ),
-    workExperience = listOf(
-        WorkExperience(
-            _id = "exp1",
-            company = "Tech Innovations",
-            position = "Senior Developer",
-            startDate = "2022-01-01",
-            endDate = null,
-            description = "Leading the mobile development team and implementing new features"
-        ),
-        WorkExperience(
-            _id = "exp2",
-            company = "StartupX",
-            position = "Junior Developer",
-            startDate = "2020-03-15",
-            endDate = "2021-12-31",
-            description = "Developed and maintained the company's mobile application"
-        )
-    ),
-    privacySettings = PrivacySettings(
-        showEmail = true,
-        showPhone = false,
-        showLocation = true
-    )
-)
+        composable<Route.MainRoute.Jobs.JobsLists> {
+            val viewModel = it.sharedViewModel<JobViewModel>(navController)
+
+            val jobScreenState = viewModel.jobScreenState.collectAsState().value
+            val jobUiState = viewModel.jobUiState.collectAsState().value
+            JobsScreen(
+                jobScreenState = jobScreenState,
+                uiState = jobUiState,
+                onApplyClick = {},
+                onJobCardClick = { id ->
+
+                },
+                onShowSnackbarMessage = showSnackbar
+            )
+        }
+
+        composable<Route.MainRoute.Jobs.JobDetails> {
+
+        }
+    }
+}
+

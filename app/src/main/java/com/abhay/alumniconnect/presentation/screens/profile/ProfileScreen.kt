@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.data.remote.dto.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.presentation.components.CustomChip
-import com.abhay.alumniconnect.presentation.navigation.graphs.dummyUser
+import com.abhay.alumniconnect.presentation.dummyUser
 import com.example.compose.AlumniConnectTheme
 import com.example.ui.theme.AppShapes
 import java.time.Year

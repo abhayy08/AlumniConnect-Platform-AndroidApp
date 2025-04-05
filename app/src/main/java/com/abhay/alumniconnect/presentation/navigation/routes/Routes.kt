@@ -45,7 +45,17 @@ sealed class Route {
         object Search
 
         @Serializable
-        object Jobs
+        object Jobs {
+
+            @Serializable
+            object JobsLists
+
+            @Serializable
+            object JobDetails
+
+            @Serializable
+            object Application
+        }
 
         @Serializable
         object Events

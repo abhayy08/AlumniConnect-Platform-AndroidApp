@@ -1,6 +1,7 @@
 package com.abhay.alumniconnect.presentation.navigation.graphs
 
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -18,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
 import com.abhay.alumniconnect.presentation.screens.main.MainScreen
+import kotlin.math.log
 
 @Composable
 fun RootNavGraph(
@@ -57,6 +59,7 @@ fun RootNavGraph(
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavController): T {
     val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
+    Log.d("sharedViewModel", "sharedViewModel: $navGraphRoute")
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)
     }

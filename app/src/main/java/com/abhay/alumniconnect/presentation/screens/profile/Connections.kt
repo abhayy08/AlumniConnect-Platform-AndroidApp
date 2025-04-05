@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.abhay.alumniconnect.data.remote.dto.Connection
-import com.abhay.alumniconnect.presentation.navigation.graphs.dummyUser
+import com.abhay.alumniconnect.presentation.dummyUser
 import com.example.compose.AlumniConnectTheme
 import com.example.ui.theme.AppShapes
 
