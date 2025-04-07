@@ -129,15 +129,18 @@ fun NavGraphBuilder.jobNavGraph(
                 jobScreenState = jobScreenState,
                 uiState = jobUiState,
                 onApplyClick = { navController.navigate(Route.MainRoute.Jobs.Application(it)) },
-                onJobCardClick = { id ->
-                    viewModel.getJobById(id)
-                    navController.navigate(Route.MainRoute.Jobs.JobDetails)
+                onJobCardClick = { id, appliedOrNot ->
+                    viewModel.getJobById(id, appliedOrNot)
+                    navController.navigate(Route.MainRoute.Jobs.JobDetails(
+                        applied = appliedOrNot
+                    ))
                 },
                 onShowSnackbarMessage = showSnackbar
             )
         }
 
         composable<Route.MainRoute.Jobs.JobDetails> {
+            val args = it.toRoute<Route.MainRoute.Jobs.JobDetails>()
             val viewmodel = it.sharedViewModel<JobViewModel>(navController)
 
             val selectedJobState = viewmodel.selectedJob.collectAsState().value
@@ -149,7 +152,8 @@ fun NavGraphBuilder.jobNavGraph(
                 },
                 onBackClick = {
                     viewmodel.onNavigateBack { navController.popUp() }
-                }
+                },
+                alreadyApplied = args.applied
             )
         }
 
@@ -157,6 +161,8 @@ fun NavGraphBuilder.jobNavGraph(
             val args = it.toRoute<Route.MainRoute.Jobs.Application>()
             val viewModel = hiltViewModel<JobApplicationViewModel>(it)
             val state = viewModel.applicationState.collectAsState().value
+
+            val sharedJobViewModel = it.sharedViewModel<JobViewModel>(navController)
 
             LaunchedEffect(args.id) {
                 if (args.id == null) {
@@ -172,9 +178,10 @@ fun NavGraphBuilder.jobNavGraph(
                 onEvent = viewModel::onEvent,
                 showSnackbar = showSnackbar,
                 onBackClick = {
-                    navController.popUp()
+                    sharedJobViewModel.onNavigateBack { navController.popUp() }
                 },
                 navigateAndPopUp = {route, popUp ->
+                    sharedJobViewModel.refreshData()
                     navController.navigateAndPopUp(route, popUp)
                 },
 

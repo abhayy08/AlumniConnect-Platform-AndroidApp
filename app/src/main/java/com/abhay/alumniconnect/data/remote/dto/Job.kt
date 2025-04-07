@@ -15,6 +15,7 @@ data class Job(
     val minExperience: Int,
     val postedBy: PostedBy,
     val requiredEducation: List<RequiredEducation>,
+    val applications: List<Application>,
     val requiredSkills: List<String>,
     val status: String,
     val title: String,
@@ -24,4 +25,11 @@ data class Job(
 data class PostedBy (
     val _id: String,
     val name: String
+)
+
+data class Application (
+    val _id: String,
+    val applicant: String,
+    val status: String,
+    val appliedAt: String
 )

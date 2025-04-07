@@ -87,7 +87,8 @@ val dummyJobs = listOf(
         __v = 1,
         createdAt = "",
         postedBy = PostedBy("1", "Abhay"),
-        updatedAt = ""
+        updatedAt = "",
+        applications = emptyList()
     ),
 
 )

@@ -43,6 +43,7 @@ class JobApplicationViewModel @Inject constructor(
     }
 
     private fun applyForJob(navigateAndPopUp: (Any, Any) -> Unit) {
+        _applicationState.value = _applicationState.value.copy(isLoading = true)
         viewModelScope.launch {
             if(_applicationState.value.resumeLink.isEmpty()) {
                 _applicationState.value = _applicationState.value.copy(resumeError = true, message = "Please enter a valid resume link")
@@ -57,13 +58,17 @@ class JobApplicationViewModel @Inject constructor(
                     is Result.Success<*> -> {
                         Log.d("JobApplicationViewModel", "applyForJob: ${result.data}")
                         _applicationState.value = _applicationState.value.copy(
-                            message = result.data.toString()
+                            message = result.data.toString(),
+                            isLoading = false
                         )
-                        navigateAndPopUp(Route.MainRoute.Jobs.JobsLists, Route.MainRoute.Jobs.JobDetails)
+                        navigateAndPopUp(Route.MainRoute.Jobs.JobsLists, Route.MainRoute.Jobs.JobDetails())
                     }
                     is Result.Error<*> -> {
                         Log.d("JobApplicationViewModel", "applyForJob: ${result.message}")
-                        _applicationState.value = _applicationState.value.copy(message = result.message)
+                        _applicationState.value = _applicationState.value.copy(
+                            message = result.message,
+                            isLoading = false
+                        )
                     }
                 }
             }
@@ -90,5 +95,6 @@ data class JobApplicationState(
     val resumeLink: String = "",
     val coverLetter: String = "",
     val resumeError: Boolean = false,
-    val message: String? = null
+    val message: String? = null,
+    val isLoading: Boolean = false
 )

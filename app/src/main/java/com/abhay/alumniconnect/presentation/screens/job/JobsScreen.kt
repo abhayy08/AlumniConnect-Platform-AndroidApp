@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.presentation.dummyJobs
+import com.abhay.alumniconnect.presentation.screens.job.pages.ApplicationsPage
 import com.abhay.alumniconnect.presentation.screens.job.pages.OpportunitiesPage
 import com.example.compose.AlumniConnectTheme
 import kotlinx.coroutines.launch
@@ -33,7 +34,7 @@ fun JobsScreen(
     jobScreenState: JobScreenState,
     uiState: JobUIState,
     onApplyClick: (String) -> Unit = { },
-    onJobCardClick: (id: String) -> Unit = { },
+    onJobCardClick: (id: String, applied: Boolean) -> Unit = { id, applied -> },
     onShowSnackbarMessage: (String) -> Unit = {}
 ) {
 
@@ -103,7 +104,10 @@ fun JobsScreen(
                         }
 
                         "Applications" -> {
-
+                            ApplicationsPage(
+                                jobs = jobScreenState.jobsAppliedTo,
+                                onJobCardClick = onJobCardClick
+                            )
                         }
 
                         "Offers" -> {

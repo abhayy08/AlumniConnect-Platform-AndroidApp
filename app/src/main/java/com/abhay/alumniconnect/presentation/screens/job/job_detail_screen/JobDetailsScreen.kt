@@ -49,7 +49,8 @@ import com.abhay.alumniconnect.utils.titlecase
 fun JobDetails(
     jobState: SelectedJobState,
     onApplyClick: () -> Unit = {},
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    alreadyApplied: Boolean,
 ) {
     BackHandler { onBackClick() }
 
@@ -145,7 +146,9 @@ fun JobDetails(
             JobDetailsBottomBar(
                 isInDeadline = jobState.isInDeadline,
                 deadline = job.applicationDeadline,
-                onApplyClick = onApplyClick
+                onApplyClick = onApplyClick,
+                alreadyApplied = alreadyApplied,
+                appliedAt = if (alreadyApplied) formatDateForDisplay(job.applications.first().appliedAt.toString()) else null
             )
         }
     }
@@ -183,7 +186,9 @@ private fun BoxScope.JobDetailsTopBar(job: Job, isInDeadline: Boolean, onBackCli
 private fun BoxScope.JobDetailsBottomBar(
     isInDeadline: Boolean,
     deadline: String,
-    onApplyClick: () -> Unit
+    onApplyClick: () -> Unit,
+    alreadyApplied: Boolean,
+    appliedAt: String? = null
 ) {
     Column(
         modifier = Modifier
@@ -204,11 +209,16 @@ private fun BoxScope.JobDetailsBottomBar(
                 .padding(8.dp),
             shape = MaterialTheme.shapes.small,
             onClick = onApplyClick,
-            enabled = isInDeadline
+            enabled = isInDeadline && !alreadyApplied
         ) {
             Text(
-                if (isInDeadline) "Apply Now"
-                else "Registration Ended on ${formatDateForDisplay(deadline)}"
+                if (!isInDeadline) {
+                    "Registration Ended on ${formatDateForDisplay(deadline)}"
+                } else if (alreadyApplied) {
+                    ("Applied on $appliedAt") ?: "Applied"
+                } else {
+                    "Apply Now"
+                }
             )
         }
     }
@@ -240,5 +250,5 @@ private fun JobDescriptionCard(description: String) {
 @Preview(showBackground = true)
 @Composable
 private fun JobDetailsPreview() {
-    JobDetails(jobState = SelectedJobState(job = dummyJobs[0]))
+    JobDetails(jobState = SelectedJobState(job = dummyJobs[0]), alreadyApplied = false)
 }

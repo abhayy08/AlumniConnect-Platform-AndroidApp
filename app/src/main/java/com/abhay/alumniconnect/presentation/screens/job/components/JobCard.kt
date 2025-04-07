@@ -39,7 +39,8 @@ fun JobCard(
     experienceLevel: String,
     requiredSkills: List<String>,
     applicationDeadline: String,
-    onApplyClick: () -> Unit,
+    onApplyClick: () -> Unit = {},
+    alreadyApplied: Boolean = false
 ) {
     Card(
         modifier = modifier
@@ -112,9 +113,14 @@ fun JobCard(
                 Button(
                     modifier = Modifier.scale(0.9f),
                     onClick = onApplyClick,
-                    shape = MaterialTheme.shapes.small
+                    shape = MaterialTheme.shapes.small,
+                    enabled = !alreadyApplied
                 ) {
-                    Text("Apply Now")
+                    if(alreadyApplied) {
+                        Text("Applied")
+                    }else {
+                        Text("Apply Now")
+                    }
                 }
             }
         }
