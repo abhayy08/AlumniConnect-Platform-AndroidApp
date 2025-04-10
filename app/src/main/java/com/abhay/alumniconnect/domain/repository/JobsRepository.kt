@@ -5,6 +5,7 @@ import com.abhay.alumniconnect.utils.Result
 
 interface JobsRepository {
     suspend fun getJobs(): Result<List<Job>>
+    suspend fun getJobsByCurrentUser(): Result<List<Job>>
     suspend fun getJobById(id: String): Result<Job>
     suspend fun getAppliedJobs(): Result<List<Job>>
     suspend fun getOfferedJobs(): Result<List<Job>>

@@ -60,8 +60,6 @@ sealed class Route {
             data class Application(val id: String? = null)
         }
 
-        @Serializable
-        object Events
     }
 }
 

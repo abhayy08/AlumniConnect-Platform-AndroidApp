@@ -10,7 +10,6 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.abhay.alumniconnect.presentation.dummyUser
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
-import com.abhay.alumniconnect.presentation.screens.event.EventsScreen
 import com.abhay.alumniconnect.presentation.screens.job.JobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobsScreen
 import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicationScreen
@@ -41,18 +40,18 @@ fun NavGraphBuilder.MainNavGraph(
         SearchScreen()
     }
 
-    composable<Route.MainRoute.Events> {
-        EventsScreen()
-    }
-
     composable<Route.MainRoute.Profile> {
         val viewModel = hiltViewModel<ProfileScreenViewModel>()
-        val profileUiState = viewModel.profileUiState.collectAsState().value
+        val profileUiState = viewModel.profileState.collectAsState().value
+        val jobsState = viewModel.jobsState.collectAsState().value
+        val uiState = viewModel.uiState.collectAsState().value
 
         ProfileScreen(
-            profileUiState = profileUiState,
+            profileState = profileUiState,
+            jobsState = jobsState,
+            uiState = uiState,
             onConnectionsClick = { navController.navigate(Route.MainRoute.Connections) },
-            onEditClick = { navController.navigate(Route.MainRoute.EditProfile) },
+            onProfileEditClick = { navController.navigate(Route.MainRoute.EditProfile) },
             onAddExperienceClick = {
                 navController.navigate(Route.MainRoute.AddEditExperience())
             },
@@ -67,7 +66,9 @@ fun NavGraphBuilder.MainNavGraph(
                         startDate = experience.startDate
                     )
                 )
-            })
+            },
+            showSnackbar = onShowSnackbarMessage
+        )
     }
 
     composable<Route.MainRoute.Connections> {

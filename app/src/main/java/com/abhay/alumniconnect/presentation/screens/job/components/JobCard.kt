@@ -42,7 +42,8 @@ fun JobCard(
     applicationDeadline: String,
     onApplyClick: () -> Unit = {},
     alreadyApplied: Boolean = false,
-    status: String = ""
+    status: String = "",
+    showApplyButton: Boolean = true,
 ) {
     Card(
         modifier = modifier
@@ -126,16 +127,18 @@ fun JobCard(
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Button(
-                    modifier = Modifier.scale(0.9f),
-                    onClick = onApplyClick,
-                    shape = MaterialTheme.shapes.small,
-                    enabled = !alreadyApplied
-                ) {
-                    if(alreadyApplied) {
-                        Text("Applied")
-                    }else {
-                        Text("Apply Now")
+                if(showApplyButton) {
+                    Button(
+                        modifier = Modifier.scale(0.9f),
+                        onClick = onApplyClick,
+                        shape = MaterialTheme.shapes.small,
+                        enabled = !alreadyApplied
+                    ) {
+                        if(alreadyApplied) {
+                            Text("Applied")
+                        }else {
+                            Text("Apply Now")
+                        }
                     }
                 }
             }

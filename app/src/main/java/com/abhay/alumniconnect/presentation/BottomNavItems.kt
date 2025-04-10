@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.presentation.screens.main
+package com.abhay.alumniconnect.presentation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Event
@@ -30,11 +30,6 @@ val topLevelDestinations = listOf(
         route = Route.MainRoute.Jobs.JobsLists,
         title = "Jobs",
         icon = Icons.Rounded.Work
-    ),
-    BottomNavItem(
-        route = Route.MainRoute.Events,
-        title = "Events",
-        icon = Icons.Rounded.Event
     ),
     BottomNavItem(
         route = Route.MainRoute.Profile,

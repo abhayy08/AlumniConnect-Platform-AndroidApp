@@ -53,6 +53,9 @@ interface AlumniApi {
     @GET("jobs")
     suspend fun getJobs(): Response<List<Job>>
 
+    @GET("jobs/me")
+    suspend fun getJobsByCurrentUser(): Response<List<Job>>
+
     @GET("jobs/{id}")
     suspend fun getJobById(@Path("id") jobId: String): Response<Job>
 
