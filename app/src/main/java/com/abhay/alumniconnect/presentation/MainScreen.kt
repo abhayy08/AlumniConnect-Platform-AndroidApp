@@ -47,6 +47,7 @@ import com.example.ui.theme.someFontFamily
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController = rememberNavController()) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
@@ -180,11 +181,9 @@ fun BottomNavigationBar(
     isVisible: Boolean = true
 ) {
 
-
     if (isVisible) {
-
         NavigationBar(
-            modifier = modifier,
+            modifier = modifier.height(90.dp),
             containerColor = MaterialTheme.colorScheme.surface,
             tonalElevation = 30.dp
         ) {
@@ -200,7 +199,9 @@ fun BottomNavigationBar(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     },
+                    label = { Text(item.title) },
                     onClick = { onNavItemClick(item.route) },
+                    alwaysShowLabel = false,
                 )
             }
         }
