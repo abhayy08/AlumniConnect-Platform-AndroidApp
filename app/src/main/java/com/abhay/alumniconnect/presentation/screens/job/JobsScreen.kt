@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.presentation.dummyJobs
 import com.abhay.alumniconnect.presentation.screens.job.pages.ApplicationsPage
+import com.abhay.alumniconnect.presentation.screens.job.pages.OffersPage
 import com.abhay.alumniconnect.presentation.screens.job.pages.OpportunitiesPage
 import com.example.compose.AlumniConnectTheme
 import kotlinx.coroutines.launch
@@ -111,7 +112,10 @@ fun JobsScreen(
                         }
 
                         "Offers" -> {
-
+                            OffersPage(
+                                jobs = jobScreenState.jobsOffered,
+                                onJobCardClick = onJobCardClick
+                            )
                         }
                     }
                 }

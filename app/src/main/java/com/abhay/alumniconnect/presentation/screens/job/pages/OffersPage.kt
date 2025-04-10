@@ -12,7 +12,7 @@ import com.abhay.alumniconnect.data.remote.dto.Job
 import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
 
 @Composable
-fun ApplicationsPage(
+fun OffersPage(
     modifier: Modifier = Modifier,
     jobs: List<Job> = emptyList(),
     onJobCardClick: (id: String, applied: Boolean) -> Unit = { _, _ -> }

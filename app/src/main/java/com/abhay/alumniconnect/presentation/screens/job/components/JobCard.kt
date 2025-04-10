@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.presentation.components.CustomChip
 import com.abhay.alumniconnect.presentation.components.InfoLabel
+import com.abhay.alumniconnect.utils.capitalize
 import com.abhay.alumniconnect.utils.formatDateForDisplay
 import com.example.compose.AlumniConnectTheme
 
@@ -40,7 +41,8 @@ fun JobCard(
     requiredSkills: List<String>,
     applicationDeadline: String,
     onApplyClick: () -> Unit = {},
-    alreadyApplied: Boolean = false
+    alreadyApplied: Boolean = false,
+    status: String = ""
 ) {
     Card(
         modifier = modifier
@@ -57,8 +59,22 @@ fun JobCard(
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
 
-            Text(text = title, style = MaterialTheme.typography.titleMedium)
-            Text(text = company, style = MaterialTheme.typography.labelLarge, color = Color.Gray)
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = title, style = MaterialTheme.typography.titleMedium)
+                    if(alreadyApplied) {
+                        CustomChip(
+                            value = status.capitalize(),
+                            color = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    }
+                }
+                Text(text = company, style = MaterialTheme.typography.labelLarge, color = Color.Gray)
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 

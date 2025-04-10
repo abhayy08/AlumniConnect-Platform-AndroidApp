@@ -62,6 +62,9 @@ interface AlumniApi {
     @GET("jobs/applied")
     suspend fun getAppliedJobs(): Response<List<Job>>
 
+    @GET("jobs/offered")
+    suspend fun getOfferedJobs(): Response<List<Job>>
+
     @POST("jobs")
     suspend fun createJob(@Body requestBody: Job): Response<ApiResponse>
 

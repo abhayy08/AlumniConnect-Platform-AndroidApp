@@ -1,5 +1,6 @@
 package com.abhay.alumniconnect.presentation.screens.job
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abhay.alumniconnect.data.remote.dto.Job
@@ -29,6 +30,7 @@ class JobViewModel @Inject constructor(
     init {
         getJobs()
         getAppliedJobs()
+        getOfferedJobs()
     }
 
     private val _selectedJob = MutableStateFlow(SelectedJobState())
@@ -59,6 +61,24 @@ class JobViewModel @Inject constructor(
                     _jobScreenState.value = _jobScreenState.value.copy(
                         jobsAppliedTo = result.data as List<Job>
                     )
+                    _jobUiState.value = JobUIState.Success()
+                }
+                is Result.Error<*> -> {
+                    _jobUiState.value = JobUIState.Error(result.message.toString())
+                }
+            }
+        }
+    }
+
+    private fun getOfferedJobs() {
+        _jobUiState.value = JobUIState.Loading
+        viewModelScope.launch {
+            when(val result = jobsRepository.getOfferedJobs()) {
+                is Result.Success<*> -> {
+                    _jobScreenState.value = _jobScreenState.value.copy(
+                        jobsOffered = result.data as List<Job>
+                    )
+                    Log.d("JobViewModel", "getOfferedJobs: ${_jobScreenState.value.jobsOffered}")
                     _jobUiState.value = JobUIState.Success()
                 }
                 is Result.Error<*> -> {

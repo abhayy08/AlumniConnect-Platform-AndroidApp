@@ -7,6 +7,7 @@ interface JobsRepository {
     suspend fun getJobs(): Result<List<Job>>
     suspend fun getJobById(id: String): Result<Job>
     suspend fun getAppliedJobs(): Result<List<Job>>
+    suspend fun getOfferedJobs(): Result<List<Job>>
     suspend fun applyForJob(jobId: String, resumeLink: String, coverLetter: String): Result<String>
 
     suspend fun createJob(job: Job): Result<String>
