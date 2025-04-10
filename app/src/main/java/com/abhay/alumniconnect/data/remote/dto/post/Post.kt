@@ -8,5 +8,6 @@ data class Post(
     val content: String,
     val createdAt: String,
     val likes: List<Like>,
-    val updatedAt: String
+    val updatedAt: String,
+    val likedByCurrentUser: Boolean = false
 )

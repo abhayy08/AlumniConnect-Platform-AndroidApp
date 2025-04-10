@@ -5,6 +5,11 @@ import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.data.remote.dto.job.PostedBy
 import com.abhay.alumniconnect.data.remote.dto.user.PrivacySettings
 import com.abhay.alumniconnect.data.remote.dto.job.RequiredEducation
+import com.abhay.alumniconnect.data.remote.dto.post.Author
+import com.abhay.alumniconnect.data.remote.dto.post.Comment
+import com.abhay.alumniconnect.data.remote.dto.post.CommentAuthor
+import com.abhay.alumniconnect.data.remote.dto.post.Like
+import com.abhay.alumniconnect.data.remote.dto.post.Post
 import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
 
@@ -91,4 +96,63 @@ val dummyJobs = listOf(
         applications = emptyList()
     ),
 
+)
+
+val dummyPosts = listOf(
+    Post(
+        __v = 0,
+        _id = "post1",
+        author = Author(
+            _id = "user1",
+            company = "TechCorp",
+            jobTitle = "Software Engineer",
+            name = "Alice Johnson"
+        ),
+        comments = listOf(
+            Comment(
+                _id = "comment1",
+                author = CommentAuthor(
+                    _id = "user2",
+                    name = "Bob Smith"
+                ),
+                comment = "Great post!",
+                createdAt = "2025-04-09T10:00:00Z"
+            ),
+            Comment(
+                _id = "comment2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            )
+        ),
+        content = "Today I learned about MongoDB relationships in Mongoose.",
+        createdAt = "2025-04-09T09:45:00Z",
+        updatedAt = "2025-04-09T11:00:00Z",
+        likes = listOf(
+            Like(_id = "user2", name = "Bob Smith"),
+            Like(_id = "user4", name = "Dana Lee")
+        ),
+        likedByCurrentUser = true
+    ),
+    Post(
+        __v = 0,
+        _id = "post2",
+        author = Author(
+            _id = "user5",
+            company = "DesignHub",
+            jobTitle = "UX Designer",
+            name = "Emily Chen"
+        ),
+        comments = emptyList(),
+        content = "Design is not just what it looks like and feels like. Design is how it works. - Steve Jobs",
+        createdAt = "2025-04-08T14:20:00Z",
+        updatedAt = "2025-04-08T14:20:00Z",
+        likes = listOf(
+            Like(_id = "user1", name = "Alice Johnson")
+        ),
+        likedByCurrentUser = false
+    )
 )

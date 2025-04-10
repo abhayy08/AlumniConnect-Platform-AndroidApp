@@ -18,6 +18,7 @@ import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobScre
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails
 import com.abhay.alumniconnect.presentation.screens.main.HomeScreen
+import com.abhay.alumniconnect.presentation.screens.main.HomeViewModel
 import com.abhay.alumniconnect.presentation.screens.profile.ConnectionsScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreenViewModel
@@ -33,7 +34,18 @@ fun NavGraphBuilder.MainNavGraph(
     navController: NavHostController, onShowSnackbarMessage: (String) -> Unit = { _ -> }
 ) {
     composable<Route.MainRoute.Home> {
-        HomeScreen()
+        val viewModel = hiltViewModel<HomeViewModel>()
+        val uiState = viewModel.uiState.collectAsState().value
+        val postsState = viewModel.postsState.collectAsState().value
+        val commentsState = viewModel.commentsState.collectAsState().value
+
+        HomeScreen(
+            uiState = uiState,
+            postsState = postsState,
+            commentsState = commentsState,
+            onEvent = viewModel::onEvent,
+            showSnackbar = onShowSnackbarMessage
+        )
     }
 
     composable<Route.MainRoute.Search> {
@@ -106,8 +118,8 @@ fun NavGraphBuilder.MainNavGraph(
             state = state,
             uiState = uiState,
             onEvent = viewModel::onEvent,
-            onBackClick = { navController.popUp() })
-
+            onBackClick = { navController.popUp() }
+        )
     }
 
     composable<Route.MainRoute.CreateJob> {

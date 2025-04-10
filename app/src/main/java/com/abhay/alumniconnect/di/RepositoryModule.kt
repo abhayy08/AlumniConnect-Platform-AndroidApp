@@ -3,9 +3,11 @@ package com.abhay.alumniconnect.di
 import com.abhay.alumniconnect.data.repository.AlumniAuthRepositoryImpl
 import com.abhay.alumniconnect.data.repository.AlumniRemoteRepositoryImpl
 import com.abhay.alumniconnect.data.repository.JobsRepositoryImpl
+import com.abhay.alumniconnect.data.repository.PostRepositoryImpl
 import com.abhay.alumniconnect.domain.repository.AlumniAccountRepository
 import com.abhay.alumniconnect.domain.repository.AlumniRemoteRepository
 import com.abhay.alumniconnect.domain.repository.JobsRepository
+import com.abhay.alumniconnect.domain.repository.PostsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,5 +35,11 @@ abstract class RepositoryModule {
     abstract fun bindJobsRepository(
         impl: JobsRepositoryImpl
     ): JobsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPostsRepository(
+        impl: PostRepositoryImpl
+    ): PostsRepository
 
 }

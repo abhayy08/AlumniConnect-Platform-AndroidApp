@@ -3,6 +3,8 @@ package com.abhay.alumniconnect.data.remote
 import com.abhay.alumniconnect.data.remote.dto.ApiResponse
 import com.abhay.alumniconnect.data.remote.dto.Connection
 import com.abhay.alumniconnect.data.remote.dto.job.Job
+import com.abhay.alumniconnect.data.remote.dto.post.Comment
+import com.abhay.alumniconnect.data.remote.dto.post.Post
 import com.abhay.alumniconnect.data.remote.dto.user.UserDetails
 import com.abhay.alumniconnect.data.remote.dto.user.UserToken
 import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
@@ -13,6 +15,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 
 interface AlumniApi {
@@ -70,5 +73,33 @@ interface AlumniApi {
 
     @POST("jobs")
     suspend fun createJob(@Body requestBody: Job): Response<ApiResponse>
+
+    @GET("posts")
+    suspend fun getPosts(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): Response<List<Post>>
+
+    @POST("posts")
+    suspend fun createPost(@Body requestBody: Map<String, String>): Response<ApiResponse>
+
+    @POST("posts/{id}/like")
+    suspend fun likePost(@Path("id") postId: String): Response<ApiResponse>
+
+    @POST("posts/{id}/comment")
+    suspend fun commentOnPost(@Path("id") postId: String): Response<ApiResponse>
+
+    @GET("posts/{postId}/comment")
+    suspend fun getCommentsOnPost(
+        @Path("postId") postId: String,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): Response<List<Comment>>
+
+    @DELETE("posts/{postId}/comment/{commentId}")
+    suspend fun deleteComment(@Path("postId") postId: String, @Path("commentId") commentId: String): Response<ApiResponse>
+
+    @DELETE("posts/{id}")
+    suspend fun deletePost(@Path("id") postId: String): Response<ApiResponse>
 
 }
