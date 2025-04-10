@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.presentation.screens.profile.editprofilescreen
+package com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -7,15 +7,11 @@ import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.domain.repository.AlumniRemoteRepository
 import com.abhay.alumniconnect.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(

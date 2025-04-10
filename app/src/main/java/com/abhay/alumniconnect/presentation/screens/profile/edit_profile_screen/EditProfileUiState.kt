@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.presentation.screens.profile.editprofilescreen
+package com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen
 
 sealed class EditProfileUiState {
     object Loading : EditProfileUiState()

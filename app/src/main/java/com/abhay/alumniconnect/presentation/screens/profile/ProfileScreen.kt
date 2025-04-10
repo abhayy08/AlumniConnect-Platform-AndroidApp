@@ -58,6 +58,9 @@ import com.abhay.alumniconnect.presentation.components.CustomChip
 import com.abhay.alumniconnect.presentation.dummyJobs
 import com.abhay.alumniconnect.presentation.dummyUser
 import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
+import com.abhay.alumniconnect.presentation.screens.profile.pages.JobsPostedPage
+import com.abhay.alumniconnect.presentation.screens.profile.pages.ProfileDetailsPage
+import com.abhay.alumniconnect.presentation.screens.profile.pages.UserPostsPage
 import com.example.compose.AlumniConnectTheme
 import com.example.ui.theme.AppShapes
 import kotlinx.coroutines.launch
@@ -174,103 +177,6 @@ fun ProfileTab(
         selectedContentColor = MaterialTheme.colorScheme.primary,
         unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
     )
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun ProfileDetailsPage(
-    user: User, onAddExperienceClick: () -> Unit, onExperienceEditClick: (WorkExperience) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.Start
-    ) {
-        BioSection(user.bio)
-        Spacer(modifier = Modifier.height(12.dp))
-
-        JobAndLinkedInSection(user)
-        Spacer(modifier = Modifier.height(12.dp))
-
-        if (user.achievements.isNotEmpty()) {
-            AchievementsSection(user.achievements)
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-
-        if (user.skills.isNotEmpty() || user.interests.isNotEmpty()) {
-            SkillsAndInterestsSection(user.skills, user.interests)
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-
-        if (user.workExperience.isNotEmpty()) {
-            WorkExperienceSection(
-                user.workExperience,
-                onExperienceEditClick = { onExperienceEditClick(it) },
-                onAddExperienceClick = onAddExperienceClick
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        AccountCreationInfo(user.createdAt)
-    }
-}
-
-@Composable
-fun JobsPostedPage(
-    modifier: Modifier = Modifier,
-    jobs: List<Job> = emptyList(),
-) {
-    if(jobs.isNotEmpty()) {
-        LazyColumn(
-            modifier = modifier.fillMaxSize()
-        ) {
-            items(jobs) {
-                JobCard(
-                    title = it.title,
-                    company = it.company,
-                    location = it.location,
-                    jobType = it.jobType,
-                    experienceLevel = it.experienceLevel,
-                    requiredSkills = it.requiredSkills,
-                    applicationDeadline = it.applicationDeadline,
-                    onApplyClick = {},
-                    alreadyApplied = false,
-                    status = it.status,
-                )
-            }
-        }
-    }else {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp), contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "No posts yet. Jobs shared by you will appear here.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-            )
-        }
-    }
-}
-
-@Composable
-fun UserPostsPage() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp), contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "No posts yet. Updates and content shared by you will appear here.",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-        )
-    }
 }
 
 @Composable

@@ -23,8 +23,8 @@ import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreenViewModel
 import com.abhay.alumniconnect.presentation.screens.profile.add_edit_work_experience.AddEditExperienceScreen
 import com.abhay.alumniconnect.presentation.screens.profile.add_edit_work_experience.AddEditExperienceViewModel
-import com.abhay.alumniconnect.presentation.screens.profile.editprofilescreen.EditProfileScreen
-import com.abhay.alumniconnect.presentation.screens.profile.editprofilescreen.EditProfileViewModel
+import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileScreen
+import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileViewModel
 import com.abhay.alumniconnect.presentation.screens.search.SearchScreen
 import com.abhay.alumniconnect.utils.navigateAndPopUp
 import com.abhay.alumniconnect.utils.popUp

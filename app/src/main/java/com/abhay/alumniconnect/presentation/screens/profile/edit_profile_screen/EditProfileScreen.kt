@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.presentation.screens.profile.editprofilescreen
+package com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
