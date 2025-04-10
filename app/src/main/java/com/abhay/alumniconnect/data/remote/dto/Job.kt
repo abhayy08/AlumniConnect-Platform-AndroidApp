@@ -6,25 +6,26 @@ data class Job(
     val applicationDeadline: String,
     val benefitsOffered: List<String>,
     val company: String,
-    val createdAt: String,
+    val createdAt: String?,
     val description: String,
     val experienceLevel: String,
     val graduationYear: Int,
     val jobType: String,
     val location: String,
     val minExperience: Int,
-    val postedBy: PostedBy,
+    val postedBy: PostedBy?,
     val requiredEducation: List<RequiredEducation>,
     val applications: List<Application>,
     val requiredSkills: List<String>,
     val status: String,
     val title: String,
-    val updatedAt: String
+    val updatedAt: String?
 )
 
 data class PostedBy (
     val _id: String,
-    val name: String
+    val name: String,
+    val email: String?
 )
 
 data class Application (

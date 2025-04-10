@@ -20,7 +20,8 @@ fun DatePickerTextField(
     label: String,
     value: String,
     onDateSelected: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+     isError: Boolean = false,
 ) {
     val context = LocalContext.current
 
@@ -86,6 +87,7 @@ fun DatePickerTextField(
             ) {
                 Icon(imageVector = Icons.Rounded.CalendarMonth, contentDescription = "Select Date")
             }
-        }
+        },
+        isError = isError
     )
 }

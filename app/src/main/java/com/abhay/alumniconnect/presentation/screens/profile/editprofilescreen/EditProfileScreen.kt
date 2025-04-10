@@ -23,6 +23,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,9 +39,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.abhay.alumniconnect.presentation.components.CustomChip
 import com.abhay.alumniconnect.presentation.components.ChipsInputField
-import com.abhay.alumniconnect.presentation.components.CustomOutlinedTextField
+import com.abhay.alumniconnect.presentation.components.CustomChipWithDeleteOption
 import com.example.compose.AlumniConnectTheme
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -94,23 +94,25 @@ fun EditProfileScreen(
                     )
                 }
 
-                CustomOutlinedTextField(
+                OutlinedTextField(
                     value = editProfileState.bio,
                     onValueChange = { onEvent(EditProfileActions.UpdateBio(it)) },
-                    label = "Bio",
+                    label = { Text("Bio") },
                     modifier = Modifier.fillMaxWidth(),
-                    maxLines = 5
+                    maxLines = 5,
+                    shape = MaterialTheme.shapes.small
                 )
 
-                CustomOutlinedTextField(
+                OutlinedTextField(
                     value = editProfileState.linkedInProfile,
                     onValueChange = { onEvent(EditProfileActions.UpdateLinkedInProfile(it)) },
-                    label = "LinkedIn Profile",
+                    label = { Text("LinkedIn Profile") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Uri,
                         imeAction = ImeAction.Next
-                    )
+                    ),
+                    shape = MaterialTheme.shapes.small
                 )
 
                 Column(
@@ -129,10 +131,10 @@ fun EditProfileScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        CustomOutlinedTextField(
+                        OutlinedTextField(
                             value = achievementInput,
                             onValueChange = { achievementInput = it },
-                            label = "Add an achievement",
+                            label = { Text("Add an achievement") },
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(end = 8.dp),
@@ -144,7 +146,8 @@ fun EditProfileScreen(
                                         achievementInput = ""
                                     }
                                 }
-                            )
+                            ),
+                            shape = MaterialTheme.shapes.small
                         )
                         IconButton(
                             onClick = {
@@ -161,11 +164,13 @@ fun EditProfileScreen(
                         }
                     }
 
-                    FlowRow(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)) {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    ) {
                         editProfileState.achievements.forEach { achievement ->
-                            CustomChip(
+                            CustomChipWithDeleteOption(
                                 label = achievement,
                                 onDelete = {
                                     onEvent(

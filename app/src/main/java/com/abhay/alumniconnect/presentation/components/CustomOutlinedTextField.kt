@@ -1,6 +1,5 @@
 package com.abhay.alumniconnect.presentation.components
 
-import android.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

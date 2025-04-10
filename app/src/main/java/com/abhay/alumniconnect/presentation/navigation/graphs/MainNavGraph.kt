@@ -15,6 +15,8 @@ import com.abhay.alumniconnect.presentation.screens.job.JobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobsScreen
 import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicationScreen
 import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicationViewModel
+import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobScreen
+import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails
 import com.abhay.alumniconnect.presentation.screens.main.HomeScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ConnectionsScreen
@@ -105,6 +107,19 @@ fun NavGraphBuilder.MainNavGraph(
             onEvent = viewModel::onEvent,
             onBackClick = { navController.popUp() })
 
+    }
+
+    composable<Route.MainRoute.CreateJob> {
+        val viewModel = hiltViewModel< CreateJobViewModel>()
+        val newJobState = viewModel.newJobState.collectAsState().value
+        CreateJobScreen(
+            newJobState = newJobState,
+            onEvent = viewModel::onEvent,
+            onBackClick = {
+                navController.popUp()
+            },
+            showSnackbar = onShowSnackbarMessage
+        )
     }
 
     jobNavGraph(

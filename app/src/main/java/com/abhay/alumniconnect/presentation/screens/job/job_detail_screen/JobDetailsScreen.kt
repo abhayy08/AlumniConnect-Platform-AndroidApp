@@ -42,7 +42,7 @@ import com.abhay.alumniconnect.presentation.components.ListWithBullets
 import com.abhay.alumniconnect.presentation.dummyJobs
 import com.abhay.alumniconnect.presentation.screens.job.SelectedJobState
 import com.abhay.alumniconnect.utils.formatDateForDisplay
-import com.abhay.alumniconnect.utils.titlecase
+import com.abhay.alumniconnect.utils.capitalize
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -74,7 +74,7 @@ fun JobDetails(
 
                 InfoLabelWithChip(
                     label = "Job Type",
-                    value = job.jobType.titlecase(),
+                    value = job.jobType.capitalize(),
                     labelStyle = MaterialTheme.typography.titleMedium,
                     labelColor = MaterialTheme.colorScheme.onBackground
                 )
@@ -82,7 +82,7 @@ fun JobDetails(
 
                 InfoLabelWithChip(
                     label = "Location",
-                    value = job.location.titlecase(),
+                    value = job.location.capitalize(),
                     labelStyle = MaterialTheme.typography.titleMedium,
                     labelColor = MaterialTheme.colorScheme.onBackground
                 )
@@ -90,7 +90,7 @@ fun JobDetails(
 
                 InfoLabelWithChip(
                     label = "Experience",
-                    value = job.experienceLevel.titlecase(),
+                    value = job.experienceLevel.capitalize(),
                     labelStyle = MaterialTheme.typography.titleMedium,
                     labelColor = MaterialTheme.colorScheme.onBackground
                 )

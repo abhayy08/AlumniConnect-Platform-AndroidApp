@@ -6,10 +6,16 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -25,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,7 +60,7 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             if (it.hasRoute(route.route::class)) {
                 currentTitle = route.title
                 true
-            }else {
+            } else {
                 false
             }
         } == true
@@ -90,8 +97,23 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             }
 
         },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = isTopLevel,
+                enter = slideInHorizontally(animationSpec = tween(200)) { -it },
+                exit = slideOutHorizontally(animationSpec = tween(200)) { -it }
+            ) {
+                FloatingActionButton(
+                    navController = navController,
+                    modifier = Modifier.height(70.dp)
+                )
+            }
+        },
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.imePadding()
+            )
         }
     ) { paddingValues ->
         NavHost(
@@ -124,13 +146,31 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
         ) {
             MainNavGraph(
                 navController,
-                onShowSnackbarMessage = {message ->
+                onShowSnackbarMessage = { message ->
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar(message)
                     }
                 }
             )
         }
+    }
+}
+
+@Composable
+fun FloatingActionButton(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
+    FloatingActionButton(
+        onClick = {
+            navController.navigate(Route.MainRoute.CreateJob)
+        },
+        shape = MaterialTheme.shapes.small
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Add,
+            contentDescription = "Add"
+        )
     }
 }
 

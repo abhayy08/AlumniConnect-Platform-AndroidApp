@@ -1,5 +1,5 @@
 package com.abhay.alumniconnect.utils
 
-fun String.titlecase(): String {
-    return this.replaceFirstChar { it.titlecase() }
+fun String.capitalize(): String {
+    return this.split("-").joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
 }

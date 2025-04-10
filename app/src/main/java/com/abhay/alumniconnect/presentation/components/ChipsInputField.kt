@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -54,7 +55,8 @@ import com.example.compose.AlumniConnectTheme
 fun ChipsInputField(
     label: String,
     initialValue: List<String> = emptyList(),
-    onValueChanged: (List<String>) -> Unit
+    onValueChanged: (List<String>) -> Unit,
+    isError: Boolean = false
 ) {
     val value = remember(initialValue) { mutableStateListOf<String>().apply { addAll(initialValue) } }
 
@@ -76,6 +78,8 @@ fun ChipsInputField(
                     width = 1.dp,
                     color = if (isFocused)
                         MaterialTheme.colorScheme.primary
+                    else if(isError)
+                        MaterialTheme.colorScheme.error
                     else
                         MaterialTheme.colorScheme.outline,
                     shape = MaterialTheme.shapes.small
@@ -92,7 +96,7 @@ fun ChipsInputField(
             ) {
                 // Display existing skills as chips
                 value.forEach { skill ->
-                    CustomChip(
+                    CustomChipWithDeleteOption(
                         label = skill,
                         onDelete = {
                             value.remove(skill)
@@ -156,7 +160,7 @@ fun ChipsInputField(
 }
 
 @Composable
-fun CustomChip(label: String, onDelete: () -> Unit) {
+fun CustomChipWithDeleteOption(label: String, onDelete: () -> Unit) {
     Box(
         modifier = Modifier
             .padding(4.dp)

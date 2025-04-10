@@ -1,7 +1,5 @@
 package com.abhay.alumniconnect.presentation.navigation.routes
 
-import com.abhay.alumniconnect.data.remote.dto.Connection
-import com.abhay.alumniconnect.data.remote.dto.UserDetails
 import kotlinx.serialization.Serializable
 
 sealed class Route {
@@ -43,6 +41,9 @@ sealed class Route {
 
         @Serializable
         object Search
+
+        @Serializable
+        object CreateJob
 
         @Serializable
         object Jobs {
