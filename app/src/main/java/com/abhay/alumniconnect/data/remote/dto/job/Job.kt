@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.data.remote.dto
+package com.abhay.alumniconnect.data.remote.dto.job
 
 data class Job(
     val __v: Int,
@@ -20,17 +20,4 @@ data class Job(
     val status: String,
     val title: String,
     val updatedAt: String?
-)
-
-data class PostedBy (
-    val _id: String,
-    val name: String,
-    val email: String?
-)
-
-data class Application (
-    val _id: String,
-    val applicant: String,
-    val status: String,
-    val appliedAt: String
 )

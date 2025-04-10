@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.abhay.alumniconnect.data.remote.dto.Job
+import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.presentation.components.CustomChip
 import com.abhay.alumniconnect.presentation.components.InfoLabel
 import com.abhay.alumniconnect.presentation.components.InfoLabelWithChip

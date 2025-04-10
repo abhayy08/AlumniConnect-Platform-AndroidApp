@@ -1,6 +1,6 @@
 package com.abhay.alumniconnect.domain.mapper
 
-import com.abhay.alumniconnect.data.remote.dto.UserDetails
+import com.abhay.alumniconnect.data.remote.dto.user.UserDetails
 import com.abhay.alumniconnect.domain.model.User
 
 fun UserDetails.toUser(): User {

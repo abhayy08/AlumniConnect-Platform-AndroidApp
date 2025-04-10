@@ -1,8 +1,7 @@
 package com.abhay.alumniconnect.domain.repository
 
 import com.abhay.alumniconnect.data.remote.dto.Connection
-import com.abhay.alumniconnect.data.remote.dto.UserDetails
-import com.abhay.alumniconnect.data.remote.dto.WorkExperience
+import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.utils.Result
 import kotlinx.coroutines.flow.StateFlow

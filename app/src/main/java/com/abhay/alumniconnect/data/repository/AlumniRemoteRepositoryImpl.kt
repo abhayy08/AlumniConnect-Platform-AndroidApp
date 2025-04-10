@@ -3,7 +3,7 @@ package com.abhay.alumniconnect.data.repository
 import android.util.Log
 import com.abhay.alumniconnect.data.remote.AlumniApi
 import com.abhay.alumniconnect.data.remote.dto.Connection
-import com.abhay.alumniconnect.data.remote.dto.WorkExperience
+import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import com.abhay.alumniconnect.domain.mapper.toUser
 import com.abhay.alumniconnect.domain.mapper.toUserDetails
 import com.abhay.alumniconnect.domain.model.User

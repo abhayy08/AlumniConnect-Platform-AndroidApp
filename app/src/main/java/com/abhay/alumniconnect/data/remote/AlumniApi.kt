@@ -2,10 +2,10 @@ package com.abhay.alumniconnect.data.remote
 
 import com.abhay.alumniconnect.data.remote.dto.ApiResponse
 import com.abhay.alumniconnect.data.remote.dto.Connection
-import com.abhay.alumniconnect.data.remote.dto.Job
-import com.abhay.alumniconnect.data.remote.dto.UserDetails
-import com.abhay.alumniconnect.data.remote.dto.UserToken
-import com.abhay.alumniconnect.data.remote.dto.WorkExperience
+import com.abhay.alumniconnect.data.remote.dto.job.Job
+import com.abhay.alumniconnect.data.remote.dto.user.UserDetails
+import com.abhay.alumniconnect.data.remote.dto.user.UserToken
+import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

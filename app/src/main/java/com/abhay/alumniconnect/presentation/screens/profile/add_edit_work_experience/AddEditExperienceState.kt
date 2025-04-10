@@ -1,6 +1,6 @@
 package com.abhay.alumniconnect.presentation.screens.profile.add_edit_work_experience
 
-import com.abhay.alumniconnect.data.remote.dto.WorkExperience
+import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 
 data class AddEditExperienceState(
     val id: String? = null,

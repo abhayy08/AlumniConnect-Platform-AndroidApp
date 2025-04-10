@@ -8,9 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.abhay.alumniconnect.data.remote.dto.Job
-import com.abhay.alumniconnect.presentation.dummyJobs
+import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
 
 @Composable

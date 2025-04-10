@@ -43,7 +43,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.abhay.alumniconnect.data.remote.dto.RequiredEducation
+import com.abhay.alumniconnect.data.remote.dto.job.RequiredEducation
 import com.abhay.alumniconnect.presentation.components.ChipsInputField
 import com.abhay.alumniconnect.presentation.components.CustomChipWithDeleteOption
 import com.abhay.alumniconnect.presentation.components.DatePickerTextField

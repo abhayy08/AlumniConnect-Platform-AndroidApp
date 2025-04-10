@@ -1,6 +1,6 @@
 package com.abhay.alumniconnect.domain.repository
 
-import com.abhay.alumniconnect.data.remote.dto.Job
+import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.utils.Result
 
 interface JobsRepository {

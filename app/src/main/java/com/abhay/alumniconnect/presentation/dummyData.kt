@@ -1,11 +1,11 @@
 package com.abhay.alumniconnect.presentation
 
 import com.abhay.alumniconnect.data.remote.dto.Connection
-import com.abhay.alumniconnect.data.remote.dto.Job
-import com.abhay.alumniconnect.data.remote.dto.PostedBy
-import com.abhay.alumniconnect.data.remote.dto.PrivacySettings
-import com.abhay.alumniconnect.data.remote.dto.RequiredEducation
-import com.abhay.alumniconnect.data.remote.dto.WorkExperience
+import com.abhay.alumniconnect.data.remote.dto.job.Job
+import com.abhay.alumniconnect.data.remote.dto.job.PostedBy
+import com.abhay.alumniconnect.data.remote.dto.user.PrivacySettings
+import com.abhay.alumniconnect.data.remote.dto.job.RequiredEducation
+import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
 
 val dummyUser = User(

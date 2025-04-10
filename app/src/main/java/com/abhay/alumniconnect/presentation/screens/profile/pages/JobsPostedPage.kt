@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.abhay.alumniconnect.data.remote.dto.Job
+import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
 
 

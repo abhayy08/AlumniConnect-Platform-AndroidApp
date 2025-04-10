@@ -1,7 +1,7 @@
 package com.abhay.alumniconnect.presentation.screens.job.create_job
 
-import com.abhay.alumniconnect.data.remote.dto.Job
-import com.abhay.alumniconnect.data.remote.dto.RequiredEducation
+import com.abhay.alumniconnect.data.remote.dto.job.Job
+import com.abhay.alumniconnect.data.remote.dto.job.RequiredEducation
 
 data class NewJobState(
     val title: String = "",

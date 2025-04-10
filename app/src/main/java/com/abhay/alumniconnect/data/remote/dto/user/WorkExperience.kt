@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.data.remote.dto
+package com.abhay.alumniconnect.data.remote.dto.user
 
 import kotlinx.serialization.Serializable
 

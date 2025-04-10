@@ -3,7 +3,7 @@ package com.abhay.alumniconnect.presentation.screens.profile
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abhay.alumniconnect.data.remote.dto.Job
+import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.domain.repository.AlumniAccountRepository
 import com.abhay.alumniconnect.domain.repository.AlumniRemoteRepository

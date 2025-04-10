@@ -1,8 +1,8 @@
 package com.abhay.alumniconnect.domain.model
 
 import com.abhay.alumniconnect.data.remote.dto.Connection
-import com.abhay.alumniconnect.data.remote.dto.PrivacySettings
-import com.abhay.alumniconnect.data.remote.dto.WorkExperience
+import com.abhay.alumniconnect.data.remote.dto.user.PrivacySettings
+import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 
 
 data class User(

@@ -3,7 +3,7 @@ package com.abhay.alumniconnect.presentation.screens.job
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abhay.alumniconnect.data.remote.dto.Job
+import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.domain.repository.JobsRepository
 import com.abhay.alumniconnect.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel

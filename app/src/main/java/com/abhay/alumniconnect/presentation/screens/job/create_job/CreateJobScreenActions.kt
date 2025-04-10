@@ -1,6 +1,6 @@
 package com.abhay.alumniconnect.presentation.screens.job.create_job
 
-import com.abhay.alumniconnect.data.remote.dto.RequiredEducation
+import com.abhay.alumniconnect.data.remote.dto.job.RequiredEducation
 
 sealed class CreateJobScreenActions {
 
