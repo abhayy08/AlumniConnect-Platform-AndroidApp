@@ -16,6 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
 import com.abhay.alumniconnect.presentation.MainScreen
+import com.abhay.alumniconnect.presentation.screens.splash_screen.SplashScreen
+import com.abhay.alumniconnect.utils.navigateAndPopUp
 
 @Composable
 fun RootNavGraph(
@@ -23,7 +25,7 @@ fun RootNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Route.AuthRoute,
+        startDestination = Route.SplashScreen,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { it }, animationSpec = tween(200)
@@ -45,6 +47,14 @@ fun RootNavGraph(
             )
         }
     ) {
+
+        composable<Route.SplashScreen> {
+            SplashScreen {isLoggedIn ->
+                val destination = if (isLoggedIn) Route.MainRoute else Route.AuthRoute
+                navController.navigateAndPopUp(destination, Route.SplashScreen)
+            }
+        }
+
         AuthNavGraph(navController)
         composable<Route.MainRoute> {
             MainScreen()

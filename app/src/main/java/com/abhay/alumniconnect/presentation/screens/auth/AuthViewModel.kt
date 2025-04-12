@@ -113,7 +113,7 @@ class AuthViewModel @Inject constructor(
             }
 
             val result = remoteRepository.loginUser(
-                email = authUiState.value.email, password = authUiState.value.password
+                email = authUiState.value.email.trim(), password = authUiState.value.password.trim()
             )
             when (result) {
                 is Result.Success -> {
@@ -134,8 +134,8 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             if (!validateFields()) return@launch
             val result = remoteRepository.registerUser(
-                email = authUiState.value.email,
-                password = authUiState.value.password,
+                email = authUiState.value.email.trim(),
+                password = authUiState.value.password.trim(),
                 name = authUiState.value.name,
                 graduationYear = authUiState.value.graduationYear.toInt(),
                 currentJob = if (authUiState.value.currentJob.isEmpty()) null else authUiState.value.currentJob,

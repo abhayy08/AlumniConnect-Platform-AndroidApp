@@ -12,6 +12,9 @@ sealed class Route {
         object LoginRegister
     }
 
+    @Serializable
+    object SplashScreen
+
     // Main Graph
     @Serializable
     object MainRoute: Route() {

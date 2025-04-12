@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -93,7 +94,7 @@ dependencies {
     implementation (libs.converter.gson)
 
     // Security Crypto for EncryptedSharedPreferences
-    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation(libs.androidx.security.crypto)
 
     // Material Icons Extended
     implementation(libs.androidx.compose.material.icons.extended)

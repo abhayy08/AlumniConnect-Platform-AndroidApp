@@ -219,7 +219,7 @@ fun SignUp(
             )
 
             Button(
-                modifier = Modifier.fillMaxWidth(0.9f),
+                modifier = Modifier.fillMaxWidth(0.5f),
                 shape = MaterialTheme.shapes.small,
                 onClick = { onEvent(AuthUiActions.SignUp(openAndPopUp)) },
                 elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 6.dp),
@@ -270,7 +270,7 @@ fun Login(
             )
 
             Button(
-                modifier = Modifier.fillMaxWidth(0.9f),
+                modifier = Modifier.fillMaxWidth(0.5f),
                 shape = MaterialTheme.shapes.small,
                 onClick = { onEvent(AuthUiActions.Login(openAndPopUp)) },
                 elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 6.dp),
