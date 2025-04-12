@@ -25,8 +25,6 @@ class HomeViewModel @Inject constructor(
 
     private val _commentsState = MutableStateFlow(CommentsState())
     val commentsState: StateFlow<CommentsState> = _commentsState.asStateFlow()
-    private var previousPostId: String? = null
-    private var previousPostComments: List<Comment>? = null
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -58,7 +56,22 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val result = postsRepository.commentOnPost(postId, comment)
             when (result) {
-                is Result.Success<*> -> {}
+                is Result.Success<*> -> {
+                    _postsState.update {
+                        it.copy(
+                            posts = it.posts.map { post ->
+                                if(post._id == postId) {
+                                    post.copy(
+                                        commentsCount = post.commentsCount + 1
+                                    )
+                                }else {
+                                    post
+                                }
+                            }
+                        )
+                    }
+                    getComments(postId)
+                }
                 is Result.Error<*> -> {
                     _uiState.update { HomeUiState.Error(error = result.message) }
                 }
@@ -75,8 +88,10 @@ class HomeViewModel @Inject constructor(
                         it.copy(
                             posts = it.posts.map { post ->
                                 if (post._id == postId) {
+                                    val wasLiked = post.likedByCurrentUser
                                     post.copy(
-                                        likedByCurrentUser = !post.likedByCurrentUser,
+                                        likedByCurrentUser = !wasLiked,
+                                        likesCount = if (wasLiked) post.likesCount - 1 else post.likesCount + 1
                                     )
                                 } else {
                                     post
@@ -91,6 +106,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+
     private fun getComments(postId: String, getMoreComments: Boolean = false) {
         _commentsState.update {
             it.copy(
@@ -104,7 +120,6 @@ class HomeViewModel @Inject constructor(
                 pageForComments = 1
             }
 
-            previousPostId = postId
             val result =
                 postsRepository.getPostComments(postId, pageForComments++, limitForComments)
             when (result) {

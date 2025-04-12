@@ -1,6 +1,7 @@
 package com.abhay.alumniconnect.presentation.screens.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.presentation.components.CommentItem
@@ -134,7 +136,7 @@ fun HomeScreen(
                             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                         }
                     } else {
-                        if(commentsState.commentsOnPost.isNotEmpty()){
+                        if (commentsState.commentsOnPost.isNotEmpty()) {
                             items(commentsState.commentsOnPost, key = { it._id }) { comment ->
                                 CommentItem(
                                     modifier = Modifier
@@ -144,12 +146,12 @@ fun HomeScreen(
                                 )
                                 HorizontalDivider(modifier = Modifier.fillMaxWidth(0.9f))
                             }
-                        }else {
+                        } else {
                             item {
                                 Box(
                                     modifier = Modifier.fillMaxSize(),
                                     contentAlignment = Alignment.Center
-                                ){
+                                ) {
                                     Text("No comments yet")
                                 }
                             }
@@ -199,11 +201,15 @@ fun HomeScreen(
                                 }
                                 it()
                             }
-                        }
+                        },
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
                     )
 
                     TextButton(
-                        onClick = { onEvent(HomeUiEvents.CommentOnPost(selectedPostId!!, commentTextFieldValue)) },
+                        onClick = {
+                            onEvent(HomeUiEvents.CommentOnPost(selectedPostId!!,commentTextFieldValue))
+                            commentTextFieldValue = ""
+                        },
                         modifier = Modifier.padding(start = 8.dp)
                     ) {
                         Text("Post")

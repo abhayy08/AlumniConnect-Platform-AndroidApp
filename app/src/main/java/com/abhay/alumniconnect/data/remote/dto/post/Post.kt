@@ -10,6 +10,6 @@ data class Post(
     val likes: List<Like>?,
     val updatedAt: String,
     val likedByCurrentUser: Boolean = false,
-    val commentsCount: Int ,
+    val commentsCount: Int,
     val likesCount: Int
 )
