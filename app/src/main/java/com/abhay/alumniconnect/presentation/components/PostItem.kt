@@ -125,7 +125,7 @@ fun PostItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${post.likes.size} likes • ${post.comments.size} comments",
+                    text = "${post.likesCount} likes • ${post.commentsCount} comments",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )

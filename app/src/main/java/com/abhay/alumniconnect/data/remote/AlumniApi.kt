@@ -87,7 +87,7 @@ interface AlumniApi {
     suspend fun likePost(@Path("id") postId: String): Response<ApiResponse>
 
     @POST("posts/{id}/comment")
-    suspend fun commentOnPost(@Path("id") postId: String): Response<ApiResponse>
+    suspend fun commentOnPost(@Path("id") postId: String, @Body requestBody: Map<String, String>): Response<ApiResponse>
 
     @GET("posts/{postId}/comment")
     suspend fun getCommentsOnPost(

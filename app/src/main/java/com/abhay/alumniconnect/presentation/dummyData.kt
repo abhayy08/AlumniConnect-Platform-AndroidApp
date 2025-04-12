@@ -126,6 +126,114 @@ val dummyPosts = listOf(
                 ),
                 comment = "Thanks for sharing!",
                 createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "c1omment2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "comme2nt2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "commen3t2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "comme4nt2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "comm5ent2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "com6ment2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "co7mment2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "comm8ent2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "co9mment2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "comfment2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "comment2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
+            ),
+            Comment(
+                _id = "commdent2",
+                author = CommentAuthor(
+                    _id = "user3",
+                    name = "Charlie Nguyen"
+                ),
+                comment = "Thanks for sharing!",
+                createdAt = "2025-04-09T10:30:00Z"
             )
         ),
         content = "Today I learned about MongoDB relationships in Mongoose.",
@@ -135,7 +243,9 @@ val dummyPosts = listOf(
             Like(_id = "user2", name = "Bob Smith"),
             Like(_id = "user4", name = "Dana Lee")
         ),
-        likedByCurrentUser = true
+        likedByCurrentUser = true,
+        commentsCount = 10,
+        likesCount = 5
     ),
     Post(
         __v = 0,
@@ -153,6 +263,8 @@ val dummyPosts = listOf(
         likes = listOf(
             Like(_id = "user1", name = "Alice Johnson")
         ),
-        likedByCurrentUser = false
+        likedByCurrentUser = false,
+        commentsCount = 0,
+        likesCount = 1
     )
 )

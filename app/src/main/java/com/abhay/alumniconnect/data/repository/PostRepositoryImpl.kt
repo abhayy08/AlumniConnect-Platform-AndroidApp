@@ -71,10 +71,11 @@ class PostRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun commentOnPost(postId: String): Result<Unit> =
+    override suspend fun commentOnPost(postId: String, content: String): Result<Unit> =
         withContext(Dispatchers.IO) {
             try {
-                val response = api.commentOnPost(postId)
+                val requestBody = mapOf("comment" to content)
+                val response = api.commentOnPost(postId, requestBody)
                 if(!response.isSuccessful) {
                     return@withContext Result.Error(
                         message = extractErrorMessage(response, ERROR_TAG)

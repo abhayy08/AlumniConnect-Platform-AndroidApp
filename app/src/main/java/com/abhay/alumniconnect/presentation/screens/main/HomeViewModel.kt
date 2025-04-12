@@ -1,6 +1,5 @@
 package com.abhay.alumniconnect.presentation.screens.main
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abhay.alumniconnect.data.remote.dto.post.Comment
@@ -49,7 +48,21 @@ class HomeViewModel @Inject constructor(
             is HomeUiEvents.Refresh -> {
                 //TODO
             }
+
             is HomeUiEvents.LikePost -> likePost(events.postId)
+            is HomeUiEvents.CommentOnPost -> commentOnPost(events.postId, events.content)
+        }
+    }
+
+    private fun commentOnPost(postId: String, comment: String) {
+        viewModelScope.launch {
+            val result = postsRepository.commentOnPost(postId, comment)
+            when (result) {
+                is Result.Success<*> -> {}
+                is Result.Error<*> -> {
+                    _uiState.update { HomeUiState.Error(error = result.message) }
+                }
+            }
         }
     }
 
@@ -80,7 +93,10 @@ class HomeViewModel @Inject constructor(
 
     private fun getComments(postId: String, getMoreComments: Boolean = false) {
         _commentsState.update {
-            it.copy(isLoadingComments = true, commentsOnPost = if (!getMoreComments) emptyList() else it.commentsOnPost)
+            it.copy(
+                isLoadingComments = true,
+                commentsOnPost = if (!getMoreComments) emptyList() else it.commentsOnPost
+            )
         }
 
         viewModelScope.launch {
@@ -89,7 +105,8 @@ class HomeViewModel @Inject constructor(
             }
 
             previousPostId = postId
-            val result = postsRepository.getPostComments(postId, pageForComments++, limitForComments)
+            val result =
+                postsRepository.getPostComments(postId, pageForComments++, limitForComments)
             when (result) {
                 is Result.Success<*> -> {
                     _commentsState.update {
@@ -141,6 +158,8 @@ sealed class HomeUiEvents {
     data class GetComments(val postId: String) : HomeUiEvents()
     data class GetMoreComments(val postId: String) : HomeUiEvents()
     data class LikePost(val postId: String) : HomeUiEvents()
+
+    data class CommentOnPost(val postId: String, val content: String): HomeUiEvents()
 }
 
 sealed class HomeUiState {
