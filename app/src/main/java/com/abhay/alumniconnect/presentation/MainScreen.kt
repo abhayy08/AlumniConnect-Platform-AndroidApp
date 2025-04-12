@@ -96,16 +96,10 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
 
         },
         floatingActionButton = {
-            AnimatedVisibility(
-                visible = isTopLevel,
-                enter = slideInHorizontally(animationSpec = tween(200)) { -it },
-                exit = slideOutHorizontally(animationSpec = tween(200)) { -it }
-            ) {
-                FloatingActionButton(
-                    navController = navController,
-                    modifier = Modifier.height(70.dp)
-                )
-            }
+            FloatingActionButton(
+                navController = navController,
+                modifier = Modifier.height(70.dp)
+            )
         },
         snackbarHost = {
             SnackbarHost(

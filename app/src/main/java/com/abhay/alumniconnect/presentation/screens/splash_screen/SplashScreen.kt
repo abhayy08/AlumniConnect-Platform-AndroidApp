@@ -45,7 +45,7 @@ fun SplashScreen(
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn != null) {
-            delay(2000)
+            delay(1000)
             onTimeout(isLoggedIn)
         }
     }

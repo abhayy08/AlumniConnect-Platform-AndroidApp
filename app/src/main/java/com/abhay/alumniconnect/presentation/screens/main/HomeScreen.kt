@@ -1,7 +1,17 @@
 package com.abhay.alumniconnect.presentation.screens.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.presentation.components.CommentItem
@@ -41,6 +52,7 @@ import com.abhay.alumniconnect.presentation.components.PostItem
 import com.abhay.alumniconnect.presentation.dummyPosts
 import com.example.compose.AlumniConnectTheme
 import kotlinx.coroutines.launch
+import java.lang.System.exit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +85,11 @@ fun HomeScreen(
     var selectedPostId by rememberSaveable { mutableStateOf<String?>(null) }
 
 
-    if (uiState != HomeUiState.Loading) {
+    AnimatedVisibility(
+        visible = uiState != HomeUiState.Loading,
+        enter = fadeIn(animationSpec = tween(300)),
+        exit = ExitTransition.None
+    ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -107,7 +123,8 @@ fun HomeScreen(
                 }
             }
         }
-    } else {
+    }
+    if (uiState == HomeUiState.Loading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -207,7 +224,12 @@ fun HomeScreen(
 
                     TextButton(
                         onClick = {
-                            onEvent(HomeUiEvents.CommentOnPost(selectedPostId!!,commentTextFieldValue))
+                            onEvent(
+                                HomeUiEvents.CommentOnPost(
+                                    selectedPostId!!,
+                                    commentTextFieldValue
+                                )
+                            )
                             commentTextFieldValue = ""
                         },
                         modifier = Modifier.padding(start = 8.dp)
