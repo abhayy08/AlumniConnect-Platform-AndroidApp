@@ -20,12 +20,15 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +46,7 @@ import com.abhay.alumniconnect.presentation.components.ChipsInputField
 import com.abhay.alumniconnect.presentation.components.CustomChipWithDeleteOption
 import com.example.compose.AlumniConnectTheme
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
     editProfileState: EditProfileState,
@@ -65,161 +68,163 @@ fun EditProfileScreen(
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = onBackClick
-                    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("Edit Profile", style = MaterialTheme.typography.headlineMedium)
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = "Navigate Back"
                         )
                     }
-                    Text(
-                        text = "Edit Profile",
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
-                }
-
-                OutlinedTextField(
-                    value = editProfileState.bio,
-                    onValueChange = { onEvent(EditProfileActions.UpdateBio(it)) },
-                    label = { Text("Bio") },
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 5,
-                    shape = MaterialTheme.shapes.small
-                )
-
-                OutlinedTextField(
-                    value = editProfileState.linkedInProfile,
-                    onValueChange = { onEvent(EditProfileActions.UpdateLinkedInProfile(it)) },
-                    label = { Text("LinkedIn Profile") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Uri,
-                        imeAction = ImeAction.Next
-                    ),
-                    shape = MaterialTheme.shapes.small
-                )
-
+                },
+                actions = {},
+            )
+        },
+        modifier = Modifier.fillMaxSize(),
+        content = { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(16.dp)
                 ) {
-                    Text(
-                        text = "Achievements",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 4.dp)
+                    OutlinedTextField(
+                        value = editProfileState.bio,
+                        onValueChange = { onEvent(EditProfileActions.UpdateBio(it)) },
+                        label = { Text("Bio") },
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 5,
+                        shape = MaterialTheme.shapes.small
                     )
 
-                    var achievementInput by remember { mutableStateOf("") }
-                    Row(
+                    OutlinedTextField(
+                        value = editProfileState.linkedInProfile,
+                        onValueChange = { onEvent(EditProfileActions.UpdateLinkedInProfile(it)) },
+                        label = { Text("LinkedIn Profile") },
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Uri,
+                            imeAction = ImeAction.Next
+                        ),
+                        shape = MaterialTheme.shapes.small
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
                     ) {
-                        OutlinedTextField(
-                            value = achievementInput,
-                            onValueChange = { achievementInput = it },
-                            label = { Text("Add an achievement") },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 8.dp),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
+                        Text(
+                            text = "Achievements",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+
+                        var achievementInput by remember { mutableStateOf("") }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            OutlinedTextField(
+                                value = achievementInput,
+                                onValueChange = { achievementInput = it },
+                                label = { Text("Add an achievement") },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(end = 8.dp),
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        if (achievementInput.isNotBlank()) {
+                                            onEvent(EditProfileActions.AddAchievement(achievementInput))
+                                            achievementInput = ""
+                                        }
+                                    }
+                                ),
+                                shape = MaterialTheme.shapes.small
+                            )
+                            IconButton(
+                                onClick = {
                                     if (achievementInput.isNotBlank()) {
                                         onEvent(EditProfileActions.AddAchievement(achievementInput))
                                         achievementInput = ""
                                     }
                                 }
-                            ),
-                            shape = MaterialTheme.shapes.small
-                        )
-                        IconButton(
-                            onClick = {
-                                if (achievementInput.isNotBlank()) {
-                                    onEvent(EditProfileActions.AddAchievement(achievementInput))
-                                    achievementInput = ""
-                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add Achievement"
+                                )
                             }
+                        }
+
+                        FlowRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add Achievement"
-                            )
+                            editProfileState.achievements.forEach { achievement ->
+                                CustomChipWithDeleteOption(
+                                    label = achievement,
+                                    onDelete = {
+                                        onEvent(
+                                            EditProfileActions.RemoveAchievement(
+                                                achievement
+                                            )
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
 
-                    FlowRow(
+                    ChipsInputField(
+                        label = "Skills",
+                        initialValue = editProfileState.skills,
+                        onValueChanged = { onEvent(EditProfileActions.UpdateSkills(it)) }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    ChipsInputField(
+                        label = "Interests",
+                        initialValue = editProfileState.interests,
+                        onValueChanged = { onEvent(EditProfileActions.UpdateInterests(it)) }
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = {
+                            onEvent(EditProfileActions.SaveProfile(popBack = { onBackClick() }))
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp)
+                            .padding(vertical = 16.dp),
+                        enabled = uiState != EditProfileUiState.Loading,
+                        shape = MaterialTheme.shapes.medium
                     ) {
-                        editProfileState.achievements.forEach { achievement ->
-                            CustomChipWithDeleteOption(
-                                label = achievement,
-                                onDelete = {
-                                    onEvent(
-                                        EditProfileActions.RemoveAchievement(
-                                            achievement
-                                        )
-                                    )
-                                }
-                            )
-                        }
+                        Text("Save Changes")
                     }
                 }
 
-                ChipsInputField(
-                    label = "Skills",
-                    initialValue = editProfileState.skills,
-                    onValueChanged = { onEvent(EditProfileActions.UpdateSkills(it)) }
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                ChipsInputField(
-                    label = "Interests",
-                    initialValue = editProfileState.interests,
-                    onValueChanged = { onEvent(EditProfileActions.UpdateInterests(it)) }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = {
-                        onEvent(EditProfileActions.SaveProfile(popBack = { onBackClick() }))
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    enabled = uiState != EditProfileUiState.Loading,
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Text("Save Changes")
+                // Loading indicator
+                if (uiState == EditProfileUiState.Loading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
             }
-
-            // Loading indicator
-            if (uiState == EditProfileUiState.Loading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
         }
-    }
+    )
 }
 
 @Preview

@@ -17,6 +17,7 @@ import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicati
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobScreen
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails
+import com.abhay.alumniconnect.presentation.screens.main.CreatePostScreen
 import com.abhay.alumniconnect.presentation.screens.main.HomeScreen
 import com.abhay.alumniconnect.presentation.screens.main.HomeViewModel
 import com.abhay.alumniconnect.presentation.screens.profile.ConnectionsScreen
@@ -45,6 +46,14 @@ fun NavGraphBuilder.MainNavGraph(
             commentsState = commentsState,
             onEvent = viewModel::onEvent,
             showSnackbar = onShowSnackbarMessage
+        )
+    }
+
+    composable<Route.MainRoute.CreatePost> {
+        val viewModel = hiltViewModel<HomeViewModel>()
+        CreatePostScreen(
+            currentUser = dummyUser,
+            onNavigateBack = { navController.navigateUp() },
         )
     }
 
@@ -118,7 +127,8 @@ fun NavGraphBuilder.MainNavGraph(
             state = state,
             uiState = uiState,
             onEvent = viewModel::onEvent,
-            onBackClick = { navController.popUp() }
+            onBackClick = { navController.popUp() },
+            showSnackbar = onShowSnackbarMessage
         )
     }
 

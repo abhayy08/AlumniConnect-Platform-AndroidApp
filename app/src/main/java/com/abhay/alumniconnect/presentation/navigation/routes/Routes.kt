@@ -23,6 +23,9 @@ sealed class Route {
         object Home
 
         @Serializable
+        object CreatePost
+
+        @Serializable
         object Profile
 
         @Serializable

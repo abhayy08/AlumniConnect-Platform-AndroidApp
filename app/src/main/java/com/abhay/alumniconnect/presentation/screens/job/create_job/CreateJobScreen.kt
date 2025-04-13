@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -49,6 +51,8 @@ import com.abhay.alumniconnect.presentation.components.CustomChipWithDeleteOptio
 import com.abhay.alumniconnect.presentation.components.DatePickerTextField
 import com.abhay.alumniconnect.utils.capitalize
 import com.example.compose.AlumniConnectTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,35 +64,33 @@ fun CreateJobScreen(
 ) {
 
     LaunchedEffect(newJobState.message) {
-        if(newJobState.message != null){
-            showSnackbar(newJobState.message)
-            onEvent(CreateJobScreenActions.resetError)
-        }
+        snapshotFlow { newJobState.message }
+            .filterNotNull()
+            .collect { message ->
+                delay(100)
+                showSnackbar(message)
+                onEvent(CreateJobScreenActions.resetError)
+            }
     }
 
     val scrollState = rememberScrollState()
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        TopAppBar(
-            modifier = Modifier
-                .zIndex(1f)
-                .align(Alignment.TopCenter),
-            title = { Text("Post New Job") },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Close")
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text("Post New Job") },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Close")
+                    }
                 }
-            }
-        )
+            )
+        }
+    ) {paddingValues ->
         Column(
             modifier = Modifier
-                .padding(top = TopAppBarDefaults.MediumAppBarExpandedHeight)
+                .padding(paddingValues)
                 .padding(8.dp)
                 .fillMaxSize()
                 .imePadding()
