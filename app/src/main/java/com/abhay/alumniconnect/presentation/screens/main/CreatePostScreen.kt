@@ -70,7 +70,7 @@ import java.util.regex.Pattern
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePostScreen(
-    currentUser: User? = null,
+    currentUser: User?,
     postContent: TextFieldValue = TextFieldValue(""),
     onPostContentChange: (TextFieldValue) -> Unit = {},
     onPostSubmit: () -> Unit = {},

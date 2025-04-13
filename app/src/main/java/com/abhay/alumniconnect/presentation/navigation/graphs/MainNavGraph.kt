@@ -10,6 +10,7 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.abhay.alumniconnect.presentation.dummyUser
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
+import com.abhay.alumniconnect.presentation.screens.MainViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobsScreen
 import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicationScreen
@@ -32,7 +33,9 @@ import com.abhay.alumniconnect.utils.navigateAndPopUp
 import com.abhay.alumniconnect.utils.popUp
 
 fun NavGraphBuilder.MainNavGraph(
-    navController: NavHostController, onShowSnackbarMessage: (String) -> Unit = { _ -> }
+    navController: NavHostController,
+    onShowSnackbarMessage: (String) -> Unit = { _ -> },
+    mainViewModel: MainViewModel
 ) {
     composable<Route.MainRoute.Home> {
         val viewModel = hiltViewModel<HomeViewModel>()
@@ -51,8 +54,9 @@ fun NavGraphBuilder.MainNavGraph(
 
     composable<Route.MainRoute.CreatePost> {
         val viewModel = hiltViewModel<HomeViewModel>()
+        val currentUser = mainViewModel.currentUser.collectAsState().value
         CreatePostScreen(
-            currentUser = dummyUser,
+            currentUser = currentUser,
             onNavigateBack = { navController.navigateUp() },
         )
     }

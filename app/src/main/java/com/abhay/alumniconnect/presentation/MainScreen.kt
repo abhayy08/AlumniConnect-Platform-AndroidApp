@@ -1,10 +1,8 @@
 package com.abhay.alumniconnect.presentation
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -49,6 +47,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -59,9 +58,9 @@ import androidx.navigation.compose.rememberNavController
 import com.abhay.alumniconnect.R
 import com.abhay.alumniconnect.presentation.navigation.graphs.MainNavGraph
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
+import com.abhay.alumniconnect.presentation.screens.MainViewModel
 import com.abhay.alumniconnect.utils.navigateWithStateAndPopToStart
 import com.example.ui.theme.someFontFamily
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -79,6 +78,8 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+
+    val mainViewModel = hiltViewModel<MainViewModel>()
 
     Scaffold(bottomBar = {
         AnimatedVisibility(
@@ -138,11 +139,14 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
                 )
             }) {
             MainNavGraph(
-                navController, onShowSnackbarMessage = { message ->
+                mainViewModel = mainViewModel,
+                navController = navController,
+                onShowSnackbarMessage = { message ->
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar(message)
                     }
-                })
+                }
+            )
         }
     }
 }
