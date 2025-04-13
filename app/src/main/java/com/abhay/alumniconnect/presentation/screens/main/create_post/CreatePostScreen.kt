@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.presentation.screens.main
+package com.abhay.alumniconnect.presentation.screens.main.create_post
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,10 +22,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.InsertLink
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -56,12 +54,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.abhay.alumniconnect.data.remote.dto.user.PrivacySettings
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.presentation.dummyUser
 import com.example.compose.AlumniConnectTheme
@@ -71,51 +69,53 @@ import java.util.regex.Pattern
 @Composable
 fun CreatePostScreen(
     currentUser: User?,
-    postContent: TextFieldValue = TextFieldValue(""),
-    onPostContentChange: (TextFieldValue) -> Unit = {},
+    postState: CreatePostState,
+    onPostContentChange: (String) -> Unit = {},
     onPostSubmit: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
     onAddImage: () -> Unit = {},
-    onAddLink: () -> Unit = {}
+    onAddLink: () -> Unit = {},
+    resetError: () -> Unit = {},
+    showSnackbar: (String) -> Unit = {}
 ) {
     val focusRequester = remember { FocusRequester() }
     val scrollState = rememberScrollState()
 
-    // This will auto-focus on the text field when the screen opens
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 
+    LaunchedEffect(postState.error) {
+        if(postState.error != null) {
+            showSnackbar(postState.error)
+            resetError()
+        }
+    }
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Create Post") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                actions = {
-                    Button(
-                        onClick = onPostSubmit,
-                        enabled = postContent.text.isNotBlank(),
-                        modifier = Modifier.padding(end = 16.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Send,
-                            contentDescription = "Post",
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Post")
-                    }
+            TopAppBar(title = { Text("Create Post") }, navigationIcon = {
+                IconButton(onClick = onNavigateBack) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack, contentDescription = "Back"
+                    )
                 }
-            )
-        }
-    ) { paddingValues ->
+            }, actions = {
+                Button(
+                    onClick = onPostSubmit,
+                    enabled = postState.content.isNotBlank(),
+                    modifier = Modifier.padding(end = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = "Post",
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Post")
+                }
+            })
+        }) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -173,7 +173,7 @@ fun CreatePostScreen(
             ) {
                 // Basic text field for input
                 BasicTextField(
-                    value = postContent,
+                    value = postState.content,
                     onValueChange = onPostContentChange,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -181,13 +181,15 @@ fun CreatePostScreen(
                         .focusRequester(focusRequester),
                     textStyle = TextStyle(
                         fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Start
                     ),
                     decorationBox = { innerTextField ->
                         Box(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                         ) {
-                            if (postContent.text.isEmpty()) {
+                            if (postState.content.isEmpty()) {
                                 Text(
                                     text = "What's on your mind?",
                                     color = Color.Gray,
@@ -199,8 +201,9 @@ fun CreatePostScreen(
                     }
                 )
 
+
                 // Preview of the post with formatted links
-                if (postContent.text.isNotEmpty()) {
+                if (postState.content.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Preview:",
@@ -221,8 +224,7 @@ fun CreatePostScreen(
                         color = MaterialTheme.colorScheme.surface
                     ) {
                         LinkifiedText(
-                            text = postContent.text,
-                            modifier = Modifier.padding(12.dp)
+                            text = postState.content, modifier = Modifier.padding(12.dp)
                         )
                     }
                 }
@@ -264,32 +266,26 @@ fun CreatePostScreen(
 
 @Composable
 fun LinkifiedText(
-    text: String,
-    modifier: Modifier = Modifier
+    text: String, modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
     val annotatedString = buildLinkifiedText(text)
     var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
 
     Text(
-        text = annotatedString,
-        style = TextStyle(
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSurface
-        ),
-        onTextLayout = { layoutResult = it },
-        modifier = modifier.pointerInput(Unit) {
-            detectTapGestures { offset ->
-                layoutResult?.let { layout ->
-                    val position = layout.getOffsetForPosition(offset)
-                    annotatedString.getStringAnnotations("URL", position, position)
-                        .firstOrNull()?.let { annotation ->
-                            uriHandler.openUri(annotation.item)
-                        }
-                }
+        text = annotatedString, style = TextStyle(
+        fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface
+    ), onTextLayout = { layoutResult = it }, modifier = modifier.pointerInput(Unit) {
+        detectTapGestures { offset ->
+            layoutResult?.let { layout ->
+                val position = layout.getOffsetForPosition(offset)
+                annotatedString.getStringAnnotations("URL", position, position).firstOrNull()
+                    ?.let { annotation ->
+                        uriHandler.openUri(annotation.item)
+                    }
             }
         }
-    )
+    })
 }
 
 @Composable
@@ -340,10 +336,7 @@ private fun CreatePostScreenPreview() {
     val textFieldValue = remember {
         mutableStateOf(
             TextFieldValue(
-                "I've just published a new article about Jetpack Compose! " +
-                        "Check it out at www.medium.com/android-dev/jetpack-compose-tutorial " +
-                        "and let me know what you think. Also, there's a GitHub repo at " +
-                        "https://github.com/johndoe/compose-samples with sample code."
+                "I've just published a new article about Jetpack Compose! " + "Check it out at www.medium.com/android-dev/jetpack-compose-tutorial " + "and let me know what you think. Also, there's a GitHub repo at " + "https://github.com/johndoe/compose-samples with sample code."
             )
         )
     }
@@ -351,9 +344,8 @@ private fun CreatePostScreenPreview() {
     AlumniConnectTheme {
         CreatePostScreen(
             currentUser = previewUser,
-            postContent = textFieldValue.value,
-            onPostContentChange = { textFieldValue.value = it }
-        )
+            postState = CreatePostState(content = textFieldValue.value.text),
+            onPostContentChange = { })
     }
 }
 
@@ -362,8 +354,7 @@ private fun CreatePostScreenPreview() {
 private fun CreatePostScreenEmptyPreview() {
     AlumniConnectTheme {
         CreatePostScreen(
-            currentUser = dummyUser,
-            postContent = TextFieldValue("")
+            currentUser = dummyUser, postState = CreatePostState()
         )
     }
 }

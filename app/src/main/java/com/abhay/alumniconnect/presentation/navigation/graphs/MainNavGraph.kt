@@ -18,9 +18,10 @@ import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicati
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobScreen
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails
-import com.abhay.alumniconnect.presentation.screens.main.CreatePostScreen
 import com.abhay.alumniconnect.presentation.screens.main.HomeScreen
 import com.abhay.alumniconnect.presentation.screens.main.HomeViewModel
+import com.abhay.alumniconnect.presentation.screens.main.create_post.CreatePostScreen
+import com.abhay.alumniconnect.presentation.screens.main.create_post.CreatePostViewModel
 import com.abhay.alumniconnect.presentation.screens.profile.ConnectionsScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreenViewModel
@@ -53,11 +54,21 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.CreatePost> {
-        val viewModel = hiltViewModel<HomeViewModel>()
+        val viewModel = hiltViewModel<CreatePostViewModel>()
         val currentUser = mainViewModel.currentUser.collectAsState().value
+        val state = viewModel.createPostState.collectAsState().value
         CreatePostScreen(
             currentUser = currentUser,
             onNavigateBack = { navController.navigateUp() },
+            postState = state,
+            onPostContentChange = {viewModel.onContentChange(it)},
+            onPostSubmit = {
+                viewModel.createPost {
+                    navController.navigateUp()
+                }
+            },
+            resetError = viewModel::resetError,
+            showSnackbar = onShowSnackbarMessage
         )
     }
 
@@ -137,7 +148,7 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.CreateJob> {
-        val viewModel = hiltViewModel< CreateJobViewModel>()
+        val viewModel = hiltViewModel<CreateJobViewModel>()
         val newJobState = viewModel.newJobState.collectAsState().value
         CreateJobScreen(
             newJobState = newJobState,
@@ -173,9 +184,11 @@ fun NavGraphBuilder.jobNavGraph(
                 onApplyClick = { navController.navigate(Route.MainRoute.Jobs.Application(it)) },
                 onJobCardClick = { id, appliedOrNot ->
                     viewModel.getJobById(id, appliedOrNot)
-                    navController.navigate(Route.MainRoute.Jobs.JobDetails(
-                        applied = appliedOrNot
-                    ))
+                    navController.navigate(
+                        Route.MainRoute.Jobs.JobDetails(
+                            applied = appliedOrNot
+                        )
+                    )
                 },
                 onShowSnackbarMessage = showSnackbar
             )
@@ -222,12 +235,12 @@ fun NavGraphBuilder.jobNavGraph(
                 onBackClick = {
                     sharedJobViewModel.onNavigateBack { navController.popUp() }
                 },
-                navigateAndPopUp = {route, popUp ->
+                navigateAndPopUp = { route, popUp ->
                     sharedJobViewModel.refreshData()
                     navController.navigateAndPopUp(route, popUp)
                 },
 
-            )
+                )
         }
     }
 }
