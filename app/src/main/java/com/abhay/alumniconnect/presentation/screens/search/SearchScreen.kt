@@ -1,12 +1,12 @@
 package com.abhay.alumniconnect.presentation.screens.search
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,16 +24,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FilterAlt
-import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.School
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.WorkOutline
+import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.FilterAlt
+import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material.icons.rounded.School
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -41,7 +37,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -58,19 +53,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
-import com.abhay.alumniconnect.utils.capitalize
-import com.abhay.alumniconnect.utils.formatDateForDisplay
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,161 +77,112 @@ fun SearchScreen(
     val jobResults by viewModel.jobResults.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
-
-    val nameFilter by viewModel.nameFilter.collectAsState()
-    val graduationYearFilter by viewModel.graduationYearFilter.collectAsState()
-    val majorFilter by viewModel.majorFilter.collectAsState()
-    val companyFilter by viewModel.companyFilter.collectAsState()
-    val jobTitleFilter by viewModel.jobTitleFilter.collectAsState()
-    val skillsFilter by viewModel.skillsFilter.collectAsState()
-    val universityFilter by viewModel.universityFilter.collectAsState()
-    val locationFilter by viewModel.locationFilter.collectAsState()
-
-    val jobLocationFilter by viewModel.jobLocationFilter.collectAsState()
-    val minExperienceFilter by viewModel.minExperienceFilter.collectAsState()
-    val jobGraduationYearFilter by viewModel.jobGraduationYearFilter.collectAsState()
-    val jobTypeFilter by viewModel.jobTypeFilter.collectAsState()
-    val branchFilter by viewModel.branchFilter.collectAsState()
-    val degreeFilter by viewModel.degreeFilter.collectAsState()
+    val alumniFilters by viewModel.alumniFilters.collectAsState()
+    val jobFilters by viewModel.jobFilters.collectAsState()
 
     var showFilters by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 4.dp)
+            .padding(horizontal = 16.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(top = 12.dp, bottom = 4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             SearchTypeButton(
                 text = "Alumni",
                 isSelected = searchType == SearchType.ALUMNI,
-                onClick = { viewModel.onEvent(SearchEvent.SetSearchType(SearchType.ALUMNI)) }
-            )
+                onClick = { viewModel.onEvent(SearchUiEvent.SetSearchType(SearchType.ALUMNI)) })
             SearchTypeButton(
                 text = "Jobs",
                 isSelected = searchType == SearchType.JOBS,
-                onClick = { viewModel.onEvent(SearchEvent.SetSearchType(SearchType.JOBS)) }
-            )
+                onClick = { viewModel.onEvent(SearchUiEvent.SetSearchType(SearchType.JOBS)) })
         }
 
         SearchBar(
             query = searchQuery,
-            onQueryChange = { viewModel.onEvent(SearchEvent.SetSearchQuery(it)) },
-            onSearch = { viewModel.onEvent(SearchEvent.PerformSearch) },
+            onQueryChange = { viewModel.onEvent(SearchUiEvent.SetSearchQuery(it)) },
+            onSearch = { viewModel.onEvent(SearchUiEvent.PerformSearch) },
             toggleFilters = { showFilters = !showFilters },
             showFilters = showFilters
         )
 
         AnimatedVisibility(visible = showFilters) {
-            FilterSection(
-                searchType = searchType,
-                nameFilter = nameFilter,
-                graduationYearFilter = graduationYearFilter,
-                majorFilter = majorFilter,
-                companyFilter = companyFilter,
-                jobTitleFilter = jobTitleFilter,
-                skillsFilter = skillsFilter,
-                universityFilter = universityFilter,
-                locationFilter = locationFilter,
-                jobLocationFilter = jobLocationFilter,
-                minExperienceFilter = minExperienceFilter,
-                jobGraduationYearFilter = jobGraduationYearFilter,
-                jobTypeFilter = jobTypeFilter,
-                branchFilter = branchFilter,
-                degreeFilter = degreeFilter,
-                onNameFilterChange = { viewModel.onEvent(SearchEvent.SetNameFilter(it)) },
-                onGraduationYearFilterChange = {
-                    viewModel.onEvent(
-                        SearchEvent.SetGraduationYearFilter(
-                            it
-                        )
-                    )
-                },
-                onMajorFilterChange = { viewModel.onEvent(SearchEvent.SetMajorFilter(it)) },
-                onCompanyFilterChange = { viewModel.onEvent(SearchEvent.SetCompanyFilter(it)) },
-                onJobTitleFilterChange = { viewModel.onEvent(SearchEvent.SetJobTitleFilter(it)) },
-                onSkillsFilterChange = { viewModel.onEvent(SearchEvent.SetSkillsFilter(it)) },
-                onUniversityFilterChange = { viewModel.onEvent(SearchEvent.SetUniversityFilter(it)) },
-                onLocationFilterChange = { viewModel.onEvent(SearchEvent.SetLocationFilter(it)) },
-                onJobLocationFilterChange = { viewModel.onEvent(SearchEvent.SetJobLocationFilter(it)) },
-                onMinExperienceFilterChange = {
-                    viewModel.onEvent(
-                        SearchEvent.SetMinExperienceFilter(
-                            it
-                        )
-                    )
-                },
-                onJobGraduationYearFilterChange = {
-                    viewModel.onEvent(
-                        SearchEvent.SetJobGraduationYearFilter(
-                            it
-                        )
-                    )
-                },
-                onJobTypeFilterChange = { viewModel.onEvent(SearchEvent.SetJobTypeFilter(it)) },
-                onBranchFilterChange = { viewModel.onEvent(SearchEvent.SetBranchFilter(it)) },
-                onDegreeFilterChange = { viewModel.onEvent(SearchEvent.SetDegreeFilter(it)) },
-                onClearFilters = { viewModel.onEvent(SearchEvent.ClearFilters) }
+            Column(modifier = Modifier.padding(bottom = 8.dp)) {
+                when (searchType) {
+                    SearchType.ALUMNI -> {
+                        AlumniFiltersUI(
+                            filters = alumniFilters,
+                            onUpdate = { viewModel.onEvent(SearchUiEvent.UpdateAlumniFilters(it)) },
+                            onClear = { viewModel.onEvent(SearchUiEvent.ClearFilters) })
+                    }
+
+                    SearchType.JOBS -> {
+                        JobFiltersUI(
+                            filters = jobFilters,
+                            onUpdate = { viewModel.onEvent(SearchUiEvent.UpdateJobFilters(it)) },
+                            onClear = { viewModel.onEvent(SearchUiEvent.ClearFilters) })
+                    }
+                }
+            }
+        }
+
+        error?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.bodyMedium
             )
         }
 
-        AnimatedVisibility(visible = error != null) {
-            error?.let {
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
-        }
-
-        AnimatedVisibility(visible = isLoading) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-            }
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 8.dp)
-        ) {
-            when (searchType) {
-                SearchType.ALUMNI -> {
-                    if (alumniResults.isEmpty() && !isLoading) {
-                        item { EmptyResultsMessage(searchType = searchType) }
-                    } else {
-                        items(alumniResults) { alumni ->
-                            AlumniCard(alumni = alumni) {
-                                onAlumniSelected(alumni.id)
+        Box(modifier = Modifier.weight(1f)) {
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 32.dp),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    when (searchType) {
+                        SearchType.ALUMNI -> {
+                            if (alumniResults.isEmpty()) {
+                                item { EmptyResultsMessage(SearchType.ALUMNI) }
+                            } else {
+                                items(alumniResults, key = { it.id }) { user ->
+                                    AlumniCard(alumni = user) {
+                                        onAlumniSelected(user.id)
+                                    }
+                                }
                             }
                         }
-                    }
-                }
 
-                SearchType.JOBS -> {
-                    if (jobResults.isEmpty() && !isLoading) {
-                        item { EmptyResultsMessage(searchType = searchType) }
-                    } else {
-                        items(jobResults, key = {it._id}) { job ->
-                            JobCard(
-                                job = job,
-                                onApplyClick = {},
-                                alreadyApplied = false,
-                                showApplyButton = false,
-                                onClick = {
-                                    onJobSelected(job._id)
+                        SearchType.JOBS -> {
+                            if (jobResults.isEmpty()) {
+                                item { EmptyResultsMessage(SearchType.JOBS) }
+                            } else {
+                                items(jobResults, key = { it._id }) { job ->
+                                    JobCard(
+                                        job = job,
+                                        onClick = { onJobSelected(job._id) },
+                                        onApplyClick = {},
+                                        alreadyApplied = false,
+                                        showApplyButton = false
+                                    )
                                 }
-                            )
+                            }
                         }
                     }
                 }
@@ -248,7 +190,6 @@ fun SearchScreen(
         }
     }
 }
-
 
 @Composable
 fun SearchTypeButton(
@@ -258,21 +199,21 @@ fun SearchTypeButton(
 ) {
     Button(
         onClick = onClick,
-        shape = MaterialTheme.shapes.small,
+        shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
             contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
         ),
+        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = if (isSelected) 4.dp else 1.dp),
         modifier = Modifier
-            .padding(4.dp)
-            .widthIn(min = 120.dp)
-            .height(40.dp),
-        elevation = ButtonDefaults.elevatedButtonElevation(
-            defaultElevation = if (isSelected) 4.dp else 0.dp,
-            pressedElevation = 8.dp
-        )
+            .padding(horizontal = 8.dp)
+            .height(42.dp)
+            .widthIn(min = 100.dp)
     ) {
-        Text(text = text)
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
+        )
     }
 }
 
@@ -287,314 +228,133 @@ fun SearchBar(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        shape = MaterialTheme.shapes.small,
+            .padding(vertical = 10.dp)
+            .shadow(2.dp, RoundedCornerShape(12.dp)),
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surface
     ) {
         TextField(
             value = query,
             onValueChange = onQueryChange,
-            placeholder = { Text("Search...") },
+            placeholder = { Text("Search alumni or jobs...") },
             singleLine = true,
             leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
-                )
+                Icon(imageVector = Icons.Rounded.Search, contentDescription = "Search")
             },
             trailingIcon = {
-                IconButton(onClick = { toggleFilters() }) {
+                IconButton(onClick = toggleFilters) {
                     Icon(
-                        imageVector = if (showFilters) Icons.Default.FilterList else Icons.Default.FilterAlt,
-                        contentDescription = "Filter"
+                        imageVector = if (showFilters) Icons.Rounded.FilterList else Icons.Rounded.FilterAlt,
+                        contentDescription = "Toggle filters"
                     )
                 }
             },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Search
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = { onSearch() }
-            ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { onSearch() }),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
+                focusedContainerColor = MaterialTheme.colorScheme.background,
+                unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                disabledContainerColor = MaterialTheme.colorScheme.background
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp)
         )
     }
 }
 
 @Composable
-fun FilterSection(
-    searchType: SearchType,
-    nameFilter: String,
-    graduationYearFilter: Int?,
-    majorFilter: String,
-    companyFilter: String,
-    jobTitleFilter: String,
-    skillsFilter: String,
-    universityFilter: String,
-    locationFilter: String,
-    jobLocationFilter: JobLocation?,
-    minExperienceFilter: Int?,
-    jobGraduationYearFilter: Int?,
-    jobTypeFilter: JobType?,
-    branchFilter: String,
-    degreeFilter: DegreeType?,
-    onNameFilterChange: (String) -> Unit,
-    onGraduationYearFilterChange: (Int?) -> Unit,
-    onMajorFilterChange: (String) -> Unit,
-    onCompanyFilterChange: (String) -> Unit,
-    onJobTitleFilterChange: (String) -> Unit,
-    onSkillsFilterChange: (String) -> Unit,
-    onUniversityFilterChange: (String) -> Unit,
-    onLocationFilterChange: (String) -> Unit,
-    onJobLocationFilterChange: (JobLocation?) -> Unit,
-    onMinExperienceFilterChange: (Int?) -> Unit,
-    onJobGraduationYearFilterChange: (Int?) -> Unit,
-    onJobTypeFilterChange: (JobType?) -> Unit,
-    onBranchFilterChange: (String) -> Unit,
-    onDegreeFilterChange: (DegreeType?) -> Unit,
-    onClearFilters: () -> Unit
+fun AlumniFiltersUI(
+    filters: AlumniFilters,
+    onUpdate: (AlumniFilters) -> Unit,
+    onClear: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Filters",
-                style = MaterialTheme.typography.labelSmall
-            )
-            TextButton(onClick = onClearFilters) {
-                Text("Clear All")
+    Column(modifier = Modifier.padding(8.dp)) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            item {
+                GraduationYearChip(filters.graduationYear) { onUpdate(filters.copy(graduationYear = it)) }
+            }
+            item {
+                FilterChip("Major", filters.major) { onUpdate(filters.copy(major = it)) }
+            }
+            item {
+                FilterChip("Company", filters.company) { onUpdate(filters.copy(company = it)) }
+            }
+            item {
+                FilterChip("Job Title", filters.jobTitle) { onUpdate(filters.copy(jobTitle = it)) }
+            }
+            item {
+                FilterChip("Skills", filters.skills) { onUpdate(filters.copy(skills = it)) }
+            }
+            item {
+                FilterChip(
+                    "University", filters.university
+                ) { onUpdate(filters.copy(university = it)) }
             }
         }
-
-        when (searchType) {
-            SearchType.ALUMNI -> {
-                AlumniFilters(
-                    nameFilter = nameFilter,
-                    graduationYearFilter = graduationYearFilter,
-                    majorFilter = majorFilter,
-                    companyFilter = companyFilter,
-                    jobTitleFilter = jobTitleFilter,
-                    skillsFilter = skillsFilter,
-                    universityFilter = universityFilter,
-                    locationFilter = locationFilter,
-                    onNameFilterChange = onNameFilterChange,
-                    onGraduationYearFilterChange = onGraduationYearFilterChange,
-                    onMajorFilterChange = onMajorFilterChange,
-                    onCompanyFilterChange = onCompanyFilterChange,
-                    onJobTitleFilterChange = onJobTitleFilterChange,
-                    onSkillsFilterChange = onSkillsFilterChange,
-                    onUniversityFilterChange = onUniversityFilterChange,
-                    onLocationFilterChange = onLocationFilterChange
-                )
-            }
-
-            SearchType.JOBS -> {
-                JobFilters(
-                    jobLocationFilter = jobLocationFilter,
-                    minExperienceFilter = minExperienceFilter,
-                    jobGraduationYearFilter = jobGraduationYearFilter,
-                    jobTypeFilter = jobTypeFilter,
-                    branchFilter = branchFilter,
-                    degreeFilter = degreeFilter,
-                    onJobLocationFilterChange = onJobLocationFilterChange,
-                    onMinExperienceFilterChange = onMinExperienceFilterChange,
-                    onJobGraduationYearFilterChange = onJobGraduationYearFilterChange,
-                    onJobTypeFilterChange = onJobTypeFilterChange,
-                    onBranchFilterChange = onBranchFilterChange,
-                    onDegreeFilterChange = onDegreeFilterChange
-                )
-            }
-        }
+        TextButton(onClick = onClear) { Text("Clear All") }
     }
 }
 
 @Composable
-fun AlumniFilters(
-    nameFilter: String,
-    graduationYearFilter: Int?,
-    majorFilter: String,
-    companyFilter: String,
-    jobTitleFilter: String,
-    skillsFilter: String,
-    universityFilter: String,
-    locationFilter: String,
-    onNameFilterChange: (String) -> Unit,
-    onGraduationYearFilterChange: (Int?) -> Unit,
-    onMajorFilterChange: (String) -> Unit,
-    onCompanyFilterChange: (String) -> Unit,
-    onJobTitleFilterChange: (String) -> Unit,
-    onSkillsFilterChange: (String) -> Unit,
-    onUniversityFilterChange: (String) -> Unit,
-    onLocationFilterChange: (String) -> Unit
+fun JobFiltersUI(
+    filters: JobFilters,
+    onUpdate: (JobFilters) -> Unit,
+    onClear: () -> Unit
 ) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        item {
-            FilterChip(
-                label = "Name",
-                value = nameFilter,
-                onValueChange = onNameFilterChange
-            )
-        }
-        item {
-            GraduationYearChip(
-                value = graduationYearFilter,
-                onValueChange = onGraduationYearFilterChange
-            )
-        }
-        item {
-            FilterChip(
-                label = "Major",
-                value = majorFilter,
-                onValueChange = onMajorFilterChange
-            )
-        }
-        item {
-            FilterChip(
-                label = "Company",
-                value = companyFilter,
-                onValueChange = onCompanyFilterChange
-            )
-        }
-        item {
-            FilterChip(
-                label = "Job Title",
-                value = jobTitleFilter,
-                onValueChange = onJobTitleFilterChange
-            )
-        }
-        item {
-            FilterChip(
-                label = "Skills",
-                value = skillsFilter,
-                onValueChange = onSkillsFilterChange
-            )
-        }
-        item {
-            FilterChip(
-                label = "University",
-                value = universityFilter,
-                onValueChange = onUniversityFilterChange
-            )
-        }
-        item {
-            FilterChip(
-                label = "Location",
-                value = locationFilter,
-                onValueChange = onLocationFilterChange
-            )
-        }
-    }
-}
-
-@Composable
-fun JobFilters(
-    jobLocationFilter: JobLocation?,
-    minExperienceFilter: Int?,
-    jobGraduationYearFilter: Int?,
-    jobTypeFilter: JobType?,
-    branchFilter: String,
-    degreeFilter: DegreeType?,
-    onJobLocationFilterChange: (JobLocation?) -> Unit,
-    onMinExperienceFilterChange: (Int?) -> Unit,
-    onJobGraduationYearFilterChange: (Int?) -> Unit,
-    onJobTypeFilterChange: (JobType?) -> Unit,
-    onBranchFilterChange: (String) -> Unit,
-    onDegreeFilterChange: (DegreeType?) -> Unit
-) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        item {
-            DropdownFilterChip(
-                label = "Location",
-                selectedValue = jobLocationFilter?.toString()?.capitalize(),
-                options = JobLocation.entries.map { it.toString().capitalize() },
-                onSelect = { selection ->
-                    val newFilter = when (selection) {
-                        null -> null
-                        else -> JobLocation.entries
-                            .first { it.toString().capitalize() == selection }
-                    }
-                    onJobLocationFilterChange(newFilter)
+    Column(modifier = Modifier.padding(8.dp)) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            item {
+                DropdownFilterChip(
+                    label = "Location",
+                    selectedValue = filters.jobLocation?.name,
+                    options = JobLocation.entries.map { it.name },
+                    onSelect = {
+                        val loc = JobLocation.entries.firstOrNull { it.name == it.toString() }
+                        onUpdate(filters.copy(jobLocation = loc))
+                    })
+            }
+            item {
+                NumberInputChip("Min Experience", filters.minExperience) {
+                    onUpdate(filters.copy(minExperience = it))
                 }
-            )
-        }
-        item {
-            NumberInputChip(
-                label = "Min Experience",
-                value = minExperienceFilter,
-                onValueChange = onMinExperienceFilterChange
-            )
-        }
-        item {
-            GraduationYearChip(
-                value = jobGraduationYearFilter,
-                onValueChange = onJobGraduationYearFilterChange
-            )
-        }
-        item {
-            DropdownFilterChip(
-                label = "Job Type",
-                selectedValue = jobTypeFilter?.toString()?.split('_')
-                    ?.joinToString(" ") { it.capitalize() },
-                options = JobType.entries.map {
-                    it.toString().split('_').joinToString(" ") { word -> word.capitalize() }
-                },
-                onSelect = { selection ->
-                    val newFilter = when (selection) {
-                        null -> null
-                        else -> JobType.entries.first {
-                            it.toString().split('_')
-                                .joinToString(" ") { word -> word.capitalize() } == selection
-                        }
-                    }
-                    onJobTypeFilterChange(newFilter)
+            }
+            item {
+                GraduationYearChip(filters.graduationYear) {
+                    onUpdate(filters.copy(graduationYear = it))
                 }
-            )
+            }
+            item {
+                DropdownFilterChip(
+                    label = "Job Type",
+                    selectedValue = filters.jobType?.name,
+                    options = JobType.entries.map { it.name },
+                    onSelect = {
+                        val jt = JobType.entries.firstOrNull { it.name == it.toString() }
+                        onUpdate(filters.copy(jobType = jt))
+                    })
+            }
+            item {
+                FilterChip("Branch", filters.branch) { onUpdate(filters.copy(branch = it)) }
+            }
+            item {
+                DropdownFilterChip(
+                    label = "Degree",
+                    selectedValue = filters.degree?.name,
+                    options = DegreeType.entries.map { it.name },
+                    onSelect = {
+                        val d = DegreeType.entries.firstOrNull { it.name == it.toString() }
+                        onUpdate(filters.copy(degree = d))
+                    })
+            }
         }
-        item {
-            FilterChip(
-                label = "Branch",
-                value = branchFilter,
-                onValueChange = onBranchFilterChange
-            )
-        }
-        item {
-            DropdownFilterChip(
-                label = "Degree",
-                selectedValue = degreeFilter?.toString(),
-                options = DegreeType.entries.map { it.toString() },
-                onSelect = { selection ->
-                    val newFilter = when (selection) {
-                        null -> null
-                        else -> DegreeType.entries.first { it.toString() == selection }
-                    }
-                    onDegreeFilterChange(newFilter)
-                }
-            )
-        }
+        TextButton(onClick = onClear) { Text("Clear All") }
     }
 }
 
 @Composable
 fun FilterChip(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit
+    label: String, value: String, onValueChange: (String) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -612,8 +372,7 @@ fun FilterChip(
             modifier = Modifier
                 .clickable { showDialog = true }
                 .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = if (value.isEmpty()) label else "$label: $value",
                 style = MaterialTheme.typography.bodyMedium,
@@ -622,7 +381,7 @@ fun FilterChip(
             if (value.isNotEmpty()) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    imageVector = Icons.Default.Close,
+                    imageVector = Icons.Rounded.Close,
                     contentDescription = "Clear",
                     modifier = Modifier
                         .size(16.dp)
@@ -635,6 +394,7 @@ fun FilterChip(
 
     if (showDialog) {
         AlertDialog(
+            shape = MaterialTheme.shapes.small,
             onDismissRequest = { showDialog = false },
             title = { Text("Enter $label") },
             text = {
@@ -649,15 +409,13 @@ fun FilterChip(
                 TextButton(onClick = { showDialog = false }) {
                     Text("Done")
                 }
-            }
-        )
+            })
     }
 }
 
 @Composable
 fun GraduationYearChip(
-    value: Int?,
-    onValueChange: (Int?) -> Unit
+    value: Int?, onValueChange: (Int?) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -677,8 +435,7 @@ fun GraduationYearChip(
             modifier = Modifier
                 .clickable { showDialog = true }
                 .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = if (value == null) "Graduation Year" else "Year: $value",
                 style = MaterialTheme.typography.bodyMedium,
@@ -687,7 +444,7 @@ fun GraduationYearChip(
             if (value != null) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    imageVector = Icons.Default.Close,
+                    imageVector = Icons.Rounded.Close,
                     contentDescription = "Clear",
                     modifier = Modifier
                         .size(16.dp)
@@ -700,6 +457,7 @@ fun GraduationYearChip(
 
     if (showDialog) {
         AlertDialog(
+            shape = MaterialTheme.shapes.small,
             onDismissRequest = { showDialog = false },
             title = { Text("Select Graduation Year") },
             text = {
@@ -717,8 +475,7 @@ fun GraduationYearChip(
                                 }
                                 .padding(vertical = 12.dp, horizontal = 16.dp),
                             style = MaterialTheme.typography.bodyLarge,
-                            color = if (value == year) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                        )
+                            color = if (value == year) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
                     }
                 }
             },
@@ -726,16 +483,13 @@ fun GraduationYearChip(
                 TextButton(onClick = { showDialog = false }) {
                     Text("Cancel")
                 }
-            }
-        )
+            })
     }
 }
 
 @Composable
 fun NumberInputChip(
-    label: String,
-    value: Int?,
-    onValueChange: (Int?) -> Unit
+    label: String, value: Int?, onValueChange: (Int?) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var textValue by remember { mutableStateOf(value?.toString() ?: "") }
@@ -754,8 +508,7 @@ fun NumberInputChip(
             modifier = Modifier
                 .clickable { showDialog = true }
                 .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = if (value == null) label else "$label: $value",
                 style = MaterialTheme.typography.bodyMedium,
@@ -764,7 +517,7 @@ fun NumberInputChip(
             if (value != null) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    imageVector = Icons.Default.Close,
+                    imageVector = Icons.Rounded.Close,
                     contentDescription = "Clear",
                     modifier = Modifier
                         .size(16.dp)
@@ -777,6 +530,7 @@ fun NumberInputChip(
 
     if (showDialog) {
         AlertDialog(
+            shape = MaterialTheme.shapes.small,
             onDismissRequest = { showDialog = false },
             title = { Text("Enter $label") },
             text = {
@@ -796,8 +550,7 @@ fun NumberInputChip(
                     onClick = {
                         onValueChange(textValue.toIntOrNull())
                         showDialog = false
-                    }
-                ) {
+                    }) {
                     Text("Done")
                 }
             },
@@ -805,17 +558,13 @@ fun NumberInputChip(
                 TextButton(onClick = { showDialog = false }) {
                     Text("Cancel")
                 }
-            }
-        )
+            })
     }
 }
 
 @Composable
 fun DropdownFilterChip(
-    label: String,
-    selectedValue: String?,
-    options: List<String>,
-    onSelect: (String?) -> Unit
+    label: String, selectedValue: String?, options: List<String>, onSelect: (String?) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -833,8 +582,7 @@ fun DropdownFilterChip(
             modifier = Modifier
                 .clickable { showDialog = true }
                 .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = if (selectedValue == null) label else "$label: $selectedValue",
                 style = MaterialTheme.typography.bodyMedium,
@@ -843,7 +591,7 @@ fun DropdownFilterChip(
             if (selectedValue != null) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    imageVector = Icons.Default.Close,
+                    imageVector = Icons.Rounded.Close,
                     contentDescription = "Clear",
                     modifier = Modifier
                         .size(16.dp)
@@ -856,6 +604,7 @@ fun DropdownFilterChip(
 
     if (showDialog) {
         AlertDialog(
+            shape = MaterialTheme.shapes.small,
             onDismissRequest = { showDialog = false },
             title = { Text("Select $label") },
             text = {
@@ -873,8 +622,7 @@ fun DropdownFilterChip(
                                 }
                                 .padding(vertical = 12.dp, horizontal = 16.dp),
                             style = MaterialTheme.typography.bodyLarge,
-                            color = if (selectedValue == option) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                        )
+                            color = if (selectedValue == option) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
                     }
                 }
             },
@@ -882,8 +630,7 @@ fun DropdownFilterChip(
                 TextButton(onClick = { showDialog = false }) {
                     Text("Cancel")
                 }
-            }
-        )
+            })
     }
 }
 
@@ -896,7 +643,7 @@ fun EmptyResultsMessage(searchType: SearchType) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = Icons.Default.Search,
+            imageVector = Icons.Rounded.Search,
             contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
@@ -923,8 +670,7 @@ fun EmptyResultsMessage(searchType: SearchType) {
 
 @Composable
 fun AlumniCard(
-    alumni: User,
-    onClick: () -> Unit
+    alumni: User, onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -934,8 +680,7 @@ fun AlumniCard(
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             // Profile image
             Surface(
@@ -978,7 +723,7 @@ fun AlumniCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Default.School,
+                        imageVector = Icons.Rounded.School,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
@@ -994,154 +739,10 @@ fun AlumniCard(
 
             // Arrow icon
             Icon(
-                imageVector = Icons.Default.ChevronRight,
+                imageVector = Icons.Rounded.ChevronRight,
                 contentDescription = "View profile",
                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
             )
         }
-    }
-}
-
-@Composable
-fun JobCard(
-    job: Job,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            // Header - title and company
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = job.title,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = job.company,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                }
-
-                // Logo placeholder or company logo
-                Surface(
-                    modifier = Modifier.size(40.dp),
-                    shape = RoundedCornerShape(4.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = job.company.first().toString(),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            }
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-            )
-
-            // Job details
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                JobDetailChip(
-                    icon = Icons.Default.LocationOn,
-                    text = job.location
-                )
-
-                JobDetailChip(
-                    icon = Icons.Default.WorkOutline,
-                    text = job.jobType.toString().split('-').joinToString(" ") { word ->
-                        word.capitalize()
-                    }
-                )
-
-                JobDetailChip(
-                    icon = Icons.Default.Star,
-                    text = "${job.minExperience}+ yrs"
-                )
-
-            }
-
-            // Short description
-            Text(
-                text = job.description.take(100) + if (job.description.length > 100) "..." else "",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 8.dp),
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-
-
-            // Posted date
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AccessTime,
-                    contentDescription = null,
-                    modifier = Modifier.size(12.dp),
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-
-                Text(
-                    text = "Posted on ${formatDateForDisplay((job.createdAt.toString()))}",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                )
-            }
-        }
-    }
-}
-
-
-@Composable
-fun JobDetailChip(
-    icon: ImageVector,
-    text: String
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(end = 4.dp)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(12.dp),
-            tint = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.width(2.dp))
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-        )
     }
 }

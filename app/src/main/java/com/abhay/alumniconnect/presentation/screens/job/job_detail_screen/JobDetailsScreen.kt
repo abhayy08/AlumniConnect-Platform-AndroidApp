@@ -24,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,24 +47,33 @@ fun JobDetails(
     onApplyClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {},
     alreadyApplied: Boolean,
+    resetError: () -> Unit,
+    showSnackbar: (String) -> Unit,
 ) {
     BackHandler { onBackClick() }
+
+    LaunchedEffect(jobState.error) {
+        if (jobState.error != null) {
+            showSnackbar(jobState.error)
+            resetError()
+        }
+    }
 
     jobState.job?.let { job ->
         Scaffold(
             topBar = {
-            JobDetailsTopBar(
-                job = job, isInDeadline = jobState.isInDeadline, onBackClick = onBackClick
-            )
-        }, bottomBar = {
-            JobDetailsBottomBar(
-                isInDeadline = jobState.isInDeadline,
-                deadline = job.applicationDeadline,
-                onApplyClick = { onApplyClick(job._id) },
-                alreadyApplied = alreadyApplied,
-                appliedAt = if (alreadyApplied) formatDateForDisplay(job.applications.first().appliedAt.toString()) else null
-            )
-        }, containerColor = MaterialTheme.colorScheme.background
+                JobDetailsTopBar(
+                    job = job, isInDeadline = jobState.isInDeadline, onBackClick = onBackClick
+                )
+            }, bottomBar = {
+                JobDetailsBottomBar(
+                    isInDeadline = jobState.isInDeadline,
+                    deadline = job.applicationDeadline,
+                    onApplyClick = { onApplyClick(job._id) },
+                    alreadyApplied = alreadyApplied,
+                    appliedAt = if (alreadyApplied) formatDateForDisplay(job.applications.first().appliedAt.toString()) else null
+                )
+            }, containerColor = MaterialTheme.colorScheme.background
         ) { innerPadding ->
 
             Column(

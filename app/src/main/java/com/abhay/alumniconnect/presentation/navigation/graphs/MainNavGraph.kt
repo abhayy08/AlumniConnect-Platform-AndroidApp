@@ -62,7 +62,7 @@ fun NavGraphBuilder.MainNavGraph(
             currentUser = currentUser,
             onNavigateBack = { navController.navigateUp() },
             postState = state,
-            onPostContentChange = {viewModel.onContentChange(it)},
+            onPostContentChange = { viewModel.onContentChange(it) },
             onPostSubmit = {
                 viewModel.createPost {
                     navController.navigateUp()
@@ -75,9 +75,14 @@ fun NavGraphBuilder.MainNavGraph(
 
     composable<Route.MainRoute.Search> {
         SearchScreen(
-            onAlumniSelected = { userId -> },
+            onAlumniSelected = { },
             onJobSelected = { jobId ->
-                navController.navigate(Route.MainRoute.JobDetail(alreadyApplied = false, jobId = jobId))
+                navController.navigate(
+                    Route.MainRoute.JobDetail(
+                        alreadyApplied = false,
+                        jobId = jobId
+                    )
+                )
             }
         )
     }
@@ -88,9 +93,9 @@ fun NavGraphBuilder.MainNavGraph(
         val jobDetailsState = viewmodel.jobDetailsState.collectAsState().value
 
         LaunchedEffect(args.jobId) {
-            if (args.jobId != null){
+            if (args.jobId != null) {
                 viewmodel.setJobId(args.jobId)
-            }else {
+            } else {
                 onShowSnackbarMessage("Unable to get Job Details")
                 navController.popUp()
             }
@@ -102,7 +107,9 @@ fun NavGraphBuilder.MainNavGraph(
             onBackClick = { navController.popUp() },
             onApplyClick = {
                 navController.navigate(Route.MainRoute.Jobs.Application(id = it))
-            }
+            },
+            resetError = { viewmodel.resetError() },
+            showSnackbar = onShowSnackbarMessage
         )
     }
 

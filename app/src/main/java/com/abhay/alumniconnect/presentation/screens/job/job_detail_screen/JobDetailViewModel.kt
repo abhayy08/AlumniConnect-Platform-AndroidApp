@@ -31,6 +31,7 @@ class JobDetailViewModel @Inject constructor(
     }
 
     private fun loadJobDetails() {
+        _jobDetailsState.value = _jobDetailsState.value.copy(isLoading = true)
         viewModelScope.launch {
             val result = jobsRepository.getJobById(jobId!!)
             when(result){
@@ -47,21 +48,31 @@ class JobDetailViewModel @Inject constructor(
 
                     _jobDetailsState.value = _jobDetailsState.value.copy(
                         job = result.data,
-                        isInDeadline = isInDeadline
+                        isInDeadline = isInDeadline,
+                        isLoading = false
                     )
                 }
                 is Result.Error<*> -> {
                     Log.e("JobDetailViewModel", "Error loading job details ${result.message}")
+                    _jobDetailsState.value = _jobDetailsState.value.copy(
+                        error = result.message,
+                        isLoading = false
+                    )
                 }
             }
         }
     }
 
+    fun resetError() {
+        _jobDetailsState.value = _jobDetailsState.value.copy(error = null)
+    }
 
 
 }
 
 data class JobDetailsState(
     val job: Job? = null,
-    val isInDeadline: Boolean = true
+    val isInDeadline: Boolean = true,
+    val isLoading: Boolean = false,
+    val error: String? = null,
 )

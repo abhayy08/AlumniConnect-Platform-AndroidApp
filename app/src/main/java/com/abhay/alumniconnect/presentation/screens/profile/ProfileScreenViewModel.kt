@@ -30,7 +30,7 @@ class ProfileScreenViewModel @Inject constructor(
     private val _jobsState = MutableStateFlow<List<Job>>(emptyList())
     val jobsState = _jobsState.asStateFlow()
 
-    val _uiState: MutableStateFlow<ProfileUiState> = MutableStateFlow(ProfileUiState.Success())
+    val _uiState: MutableStateFlow<ProfileUiState> = MutableStateFlow(ProfileUiState.Loading)
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     init {
