@@ -1,7 +1,6 @@
 package com.abhay.alumniconnect.presentation.screens.job.create_job
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
@@ -31,20 +30,17 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.abhay.alumniconnect.data.remote.dto.job.RequiredEducation
 import com.abhay.alumniconnect.presentation.components.ChipsInputField
 import com.abhay.alumniconnect.presentation.components.CustomChipWithDeleteOption
@@ -52,7 +48,6 @@ import com.abhay.alumniconnect.presentation.components.DatePickerTextField
 import com.abhay.alumniconnect.utils.capitalize
 import com.example.compose.AlumniConnectTheme
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,23 +57,17 @@ fun CreateJobScreen(
     onBackClick: () -> Unit = {},
     showSnackbar: (String) -> Unit = {}
 ) {
-
     LaunchedEffect(Unit) {
-        onEvent(CreateJobScreenActions.resetError)
+        onEvent(CreateJobScreenActions.resetMessage)
     }
 
-    LaunchedEffect(Unit) {
-        snapshotFlow { newJobState.message }
-            .filterNotNull()
-            .collect { message ->
-                delay(100)
-                showSnackbar(message)
-                onEvent(CreateJobScreenActions.resetError)
-            }
+    LaunchedEffect(newJobState.message) {
+        if (newJobState.message != null) {
+            showSnackbar(newJobState.message)
+            delay(1000)
+            onEvent(CreateJobScreenActions.resetMessage)
+        }
     }
-
-
-
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -93,24 +82,22 @@ fun CreateJobScreen(
                 }
             )
         }
-    ) {paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(8.dp)
                 .fillMaxSize()
                 .imePadding()
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .verticalScroll(scrollState), verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Title
             OutlinedTextField(
-                value = newJobState.title ,
+                value = newJobState.title,
                 onValueChange = { onEvent(CreateJobScreenActions.onTitleChange(it)) },
                 label = { Text("Job Title *") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.small,
-                isError = newJobState.title.isEmpty()
             )
 
             // Company
@@ -120,7 +107,6 @@ fun CreateJobScreen(
                 label = { Text("Company *") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.small,
-                isError = newJobState.company.isEmpty()
             )
 
             // Description
@@ -132,7 +118,6 @@ fun CreateJobScreen(
                     .fillMaxWidth()
                     .defaultMinSize(minHeight = 120.dp),
                 shape = MaterialTheme.shapes.small,
-                isError = newJobState.description.isEmpty()
             )
 
             // Location
@@ -196,7 +181,6 @@ fun CreateJobScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.small,
-                isError = newJobState.minExperience.toString().isEmpty()
             )
 
             // Application Deadline
@@ -206,7 +190,6 @@ fun CreateJobScreen(
                 onDateSelected = { date ->
                     onEvent(CreateJobScreenActions.onApplicationDeadlineChange(date))
                 },
-                isError = newJobState.applicationDeadline.isEmpty()
             )
 
             // Required Skills
@@ -214,7 +197,6 @@ fun CreateJobScreen(
                 label = "Skills *",
                 initialValue = newJobState.requiredSkills,
                 onValueChanged = { onEvent(CreateJobScreenActions.onRequiredSkillsChange(it)) },
-                isError = newJobState.requiredSkills.isEmpty()
             )
 
             // Required Education
@@ -230,7 +212,6 @@ fun CreateJobScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.small,
-                isError = newJobState.graduationYear.toString().isEmpty()
             )
 
             // Benefits Offered
@@ -369,8 +350,7 @@ fun BenefitsSection(
             benefits.forEachIndexed { index, benefit ->
                 CustomChipWithDeleteOption(
                     label = benefit,
-                    onDelete = { onBenefitsChanged(benefits.filterIndexed { i, _ -> i != index }) }
-                )
+                    onDelete = { onBenefitsChanged(benefits.filterIndexed { i, _ -> i != index }) })
             }
         }
     }
@@ -383,21 +363,19 @@ fun BenefitsSection(
 private fun CreateJobPreview() {
     AlumniConnectTheme {
         CreateJobScreen(
-            newJobState =
-                NewJobState(
-                    applicationDeadline = "2025-04-08T00:00:00.000Z",
-                    benefitsOffered = listOf(),
-                    company = "solet",
-                    description = "litora",
-                    experienceLevel = "entry",
-                    graduationYear = "2021",
-                    jobType = "full-time",
-                    location = "in-office",
-                    minExperience = "2",
-                    requiredEducation = listOf(RequiredEducation("B.Tech", "CSE")),
-                    requiredSkills = listOf("Kotlin", "Android", "Jetpack Compose"),
-                    title = "eros",
-                ), onEvent = {}, showSnackbar = {}
-        )
+            newJobState = NewJobState(
+                applicationDeadline = "2025-04-08T00:00:00.000Z",
+                benefitsOffered = listOf(),
+                company = "solet",
+                description = "litora",
+                experienceLevel = "entry",
+                graduationYear = "2021",
+                jobType = "full-time",
+                location = "in-office",
+                minExperience = "2",
+                requiredEducation = listOf(RequiredEducation("B.Tech", "CSE")),
+                requiredSkills = listOf("Kotlin", "Android", "Jetpack Compose"),
+                title = "eros",
+            ), onEvent = {}, showSnackbar = {})
     }
 }

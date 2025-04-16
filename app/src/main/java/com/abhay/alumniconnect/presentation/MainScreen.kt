@@ -10,10 +10,12 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,7 +65,6 @@ import com.abhay.alumniconnect.utils.navigateWithStateAndPopToStart
 import com.example.ui.theme.someFontFamily
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController = rememberNavController()) {
@@ -75,44 +76,68 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
     val isTopLevel = topLevelRoute != null
     val currentTitle = topLevelRoute?.title ?: "Alumni Connect"
 
+    val topBarOffsetY by animateDpAsState(
+        targetValue = if (isTopLevel) 0.dp else (-100).dp,
+        animationSpec = tween(300),
+        label = "TopBarAnimation"
+    )
+
+    val bottomBarOffsetY by animateDpAsState(
+        targetValue = if (isTopLevel) 0.dp else 100.dp,
+        animationSpec = tween(300),
+        label = "BottomBarAnimation"
+    )
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
     val mainViewModel = hiltViewModel<MainViewModel>()
 
-    Scaffold(bottomBar = {
-        AnimatedVisibility(
-            visible = isTopLevel,
-            enter = slideInVertically(animationSpec = tween(200)) { it },
-            exit = slideOutVertically(animationSpec = tween(200)) { it }) {
-            BottomNavigationBar(
-                currentDestination = currentDestination, onNavItemClick = { route ->
-                    navController.navigateWithStateAndPopToStart(route)
-                }, isVisible = isTopLevel
+    Scaffold(
+        bottomBar = {
+            if (isTopLevel || bottomBarOffsetY < 100.dp) {
+                Box(
+                    modifier = Modifier.offset(y = bottomBarOffsetY)
+                ) {
+                    BottomNavigationBar(
+                        currentDestination = currentDestination,
+                        onNavItemClick = { route ->
+                            navController.navigateWithStateAndPopToStart(route)
+                        },
+                        isVisible = true
+                    )
+                }
+            }
+        },
+        topBar = {
+            if (isTopLevel || topBarOffsetY > (-100).dp) {
+                Box(
+                    modifier = Modifier.offset(y = topBarOffsetY)
+                ) {
+                    AlumniTopAppBar(
+                        isVisible = true,
+                        title = currentTitle
+                    )
+                }
+            }
+        },
+        floatingActionButton = {
+            if (isTopLevel || bottomBarOffsetY < 100.dp) {
+                Box(
+                    modifier = Modifier.offset(y = bottomBarOffsetY)
+                ) {
+                    AppFloatingActionButton(
+                        navController = navController,
+                    )
+                }
+            }
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState, modifier = Modifier.imePadding()
             )
         }
-    }, topBar = {
-        AnimatedVisibility(
-            visible = isTopLevel,
-            enter = slideInVertically(animationSpec = tween(200)) { -it },
-            exit = slideOutVertically(animationSpec = tween(200)) { -it }) {
-            AlumniTopAppBar(
-                isVisible = isTopLevel, title = currentTitle
-            )
-        }
-
-    }, floatingActionButton = {
-        if(isTopLevel) {
-            AppFloatingActionButton(
-                navController = navController,
-            )
-        }
-    }, snackbarHost = {
-        SnackbarHost(
-            hostState = snackbarHostState, modifier = Modifier.imePadding()
-        )
-    }) { paddingValues ->
+    ) { paddingValues ->
         NavHost(
             modifier = then(
                 if (isTopLevel) Modifier.padding(paddingValues)
@@ -139,7 +164,8 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
                 slideOutHorizontally(
                     targetOffsetX = { it }, animationSpec = tween(500)
                 )
-            }) {
+            }
+        ) {
             MainNavGraph(
                 mainViewModel = mainViewModel,
                 navController = navController,
@@ -152,6 +178,7 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
         }
     }
 }
+
 
 @Composable
 fun AppFloatingActionButton(

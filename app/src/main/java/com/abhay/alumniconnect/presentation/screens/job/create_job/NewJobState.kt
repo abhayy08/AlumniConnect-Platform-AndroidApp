@@ -20,25 +20,28 @@ data class NewJobState(
 ) {
 
     fun toJob(): Job {
+        val minExp = minExperience.toIntOrNull() ?: 0
+        val gradYear = graduationYear.toIntOrNull() ?: 0
+
         return Job(
-            applicationDeadline = this.applicationDeadline,
-            benefitsOffered = this.benefitsOffered,
-            company = this.company,
+            applicationDeadline = applicationDeadline,
+            benefitsOffered = benefitsOffered,
+            company = company,
             createdAt = null,
-            description = this.description,
-            experienceLevel = this.experienceLevel,
-            graduationYear = this.graduationYear.toInt(),
-            jobType = this.jobType,
-            location = this.location,
-            minExperience = this.minExperience.toInt(),
+            description = description,
+            experienceLevel = experienceLevel,
+            graduationYear = gradYear,
+            jobType = jobType,
+            location = location,
+            minExperience = minExp,
             postedBy = null,
-            requiredEducation = this.requiredEducation,
+            requiredEducation = requiredEducation,
             applications = emptyList(),
-            requiredSkills = this.requiredSkills,
+            requiredSkills = requiredSkills,
             status = "open",
-            title = this.title,
+            title = title,
             updatedAt = null,
-            __v = 0 ,
+            __v = 0,
             _id = ""
         )
     }

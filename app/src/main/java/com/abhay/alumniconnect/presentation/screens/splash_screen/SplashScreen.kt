@@ -3,9 +3,11 @@ package com.abhay.alumniconnect.presentation.screens.splash_screen
 import android.content.res.Configuration
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,15 +16,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,43 +43,81 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     onTimeout: (Boolean) -> Unit
 ) {
-
     val viewModel = hiltViewModel<SplashViewModel>()
     val isLoggedIn = viewModel.isLoggedIn.collectAsState().value
 
+    // Animation states
+    val splitAnimation = remember { Animatable(0f) }
+    val contentAlpha = remember { Animatable(0f) }
+    val iconScale = remember { Animatable(0f) }
+
+    // Split animation progress (0f to 1f)
+    // 0f = screens closed (centered), 1f = screens fully open
+    val splitProgress by splitAnimation.asState()
+
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn != null) {
-            delay(1000)
+            delay(2500) // Wait for animation to complete
             onTimeout(isLoggedIn)
         }
     }
-    val scale = remember { Animatable(0f) }
-    val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
-        // Scaling icon to 1.2 then back to 1
-        scale.animateTo(
-            targetValue = 1.2f, animationSpec = tween(
-                durationMillis = 400, easing = FastOutSlowInEasing
-            )
-        )
-        scale.animateTo(
-            targetValue = 1f, animationSpec = tween(
-                durationMillis = 200, easing = LinearOutSlowInEasing
+        // First phase: split the screen
+        splitAnimation.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(
+                durationMillis = 800,
+                easing = FastOutSlowInEasing
             )
         )
 
-        // Text fade in
-        alpha.animateTo(
-            targetValue = 1f, animationSpec = tween(
-                durationMillis = 300, delayMillis = 200
+        // Second phase: Show content
+        iconScale.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(
+                durationMillis = 500,
+                easing = FastOutSlowInEasing
+            )
+        )
+
+        // Third phase: Fade in text
+        contentAlpha.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(
+                durationMillis = 400,
+                delayMillis = 100
             )
         )
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
+        // Split screen animation
+        Box(modifier = Modifier.fillMaxSize()) {
+            val primaryColor = MaterialTheme.colorScheme.primary
+            Canvas(modifier = Modifier.fillMaxSize()) {
+
+                // Left half (moves left)
+                drawRect(
+                    color = primaryColor,
+                    topLeft = Offset(0f, 0f),
+                    size = Size(size.width / 2 * (1f - splitProgress), size.height)
+                )
+
+                // Right half (moves right)
+                drawRect(
+                    color = primaryColor,
+                    topLeft = Offset(size.width - (size.width / 2 * (1f - splitProgress)), 0f),
+                    size = Size(size.width / 2 * (1f - splitProgress), size.height)
+                )
+            }
+        }
+
+        // Content (visible once split animation completes)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,7 +125,7 @@ fun SplashScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
+            // Logo appears and scales in
             Icon(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = null,
@@ -91,15 +133,17 @@ fun SplashScreen(
                 modifier = Modifier
                     .size(120.dp)
                     .graphicsLayer {
-                        scaleX = scale.value
-                        scaleY = scale.value
-                    })
+                        scaleX = iconScale.value
+                        scaleY = iconScale.value
+                    }
+            )
 
             Spacer(modifier = Modifier.height(48.dp))
 
+            // Text fades in
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.alpha(alpha.value)
+                modifier = Modifier.alpha(contentAlpha.value)
             ) {
                 Text(
                     text = "Alumni",
@@ -120,7 +164,6 @@ fun SplashScreen(
             }
         }
     }
-
 }
 
 @Preview(

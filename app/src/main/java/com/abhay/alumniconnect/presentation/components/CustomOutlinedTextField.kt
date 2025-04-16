@@ -48,9 +48,7 @@ fun CustomOutlinedTextField(
                     }
                 }
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
+            modifier = modifier,
             keyboardOptions = keyboardOptions,
             singleLine = true,
             isError = error != null || isError,

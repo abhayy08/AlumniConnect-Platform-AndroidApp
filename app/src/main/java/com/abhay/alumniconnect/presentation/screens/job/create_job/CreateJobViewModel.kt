@@ -36,15 +36,12 @@ class CreateJobViewModel @Inject constructor(
             is CreateJobScreenActions.onLocationChange -> updateField { it.copy(location = event.location) }
             is CreateJobScreenActions.onMinExperienceChange -> updateField { it.copy(minExperience = event.minExperience) }
             is CreateJobScreenActions.onRequiredEducationChange -> updateField {
-                it.copy(
-                    requiredEducation = event.requiredEducation
-                )
+                it.copy(requiredEducation = event.requiredEducation)
             }
-
             is CreateJobScreenActions.onRequiredSkillsChange -> updateField { it.copy(requiredSkills = event.requiredSkills) }
             is CreateJobScreenActions.onCreateJob -> postJob(event.popBack)
             is CreateJobScreenActions.onTitleChange -> updateField { it.copy(title = event.title) }
-            is CreateJobScreenActions.resetError -> updateField { it.copy(message = null) }
+            is CreateJobScreenActions.resetMessage -> updateField { it.copy(message = null) }
         }
     }
 
@@ -55,12 +52,11 @@ class CreateJobViewModel @Inject constructor(
     private fun postJob(popBack: () -> Unit) {
         viewModelScope.launch {
             if (!validateFields()) {
-                updateField { it.copy(message = "Required Fields cannot be empty!") }
+                updateField { it.copy(message = "Required Fields (*) cannot be empty!") }
                 return@launch
             }
-            updateField { it.copy(message = null) }
-            val result = jobRepository.createJob(_newJobState.value.toJob())
-            when(result) {
+
+            when(val result = jobRepository.createJob(_newJobState.value.toJob())) {
                 is Result.Success<*> -> {
                     updateField { it.copy(message = result.data) }
                     popBack()
@@ -71,17 +67,13 @@ class CreateJobViewModel @Inject constructor(
     }
 
     private fun validateFields(): Boolean {
-        var validate = true
-        _newJobState.value.apply {
-            if (title.isEmpty() || company.isEmpty() || description.isEmpty() || location.isEmpty()
-                || jobType.isEmpty() || experienceLevel.isEmpty() || minExperience.isEmpty() ||
-                applicationDeadline.isEmpty() || requiredSkills.isEmpty() || requiredEducation.isEmpty() ||
-                graduationYear.isEmpty() || benefitsOffered.isEmpty()
-            ) {
-                validate = false
-            }
+        with(_newJobState.value) {
+            return !(title.isEmpty() || company.isEmpty() || description.isEmpty() ||
+                    location.isEmpty() || jobType.isEmpty() || experienceLevel.isEmpty() ||
+                    minExperience.isEmpty() || applicationDeadline.isEmpty() ||
+                    requiredSkills.isEmpty() || requiredEducation.isEmpty() ||
+                    graduationYear.isEmpty() || benefitsOffered.isEmpty())
         }
-        return validate
     }
 
 }
