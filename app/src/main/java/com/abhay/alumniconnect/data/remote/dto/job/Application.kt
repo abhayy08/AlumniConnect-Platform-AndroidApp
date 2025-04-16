@@ -1,8 +1,9 @@
 package com.abhay.alumniconnect.data.remote.dto.job
 
-data class Application (
+data class Application(
     val _id: String,
-    val applicant: String,
-    val status: String,
-    val appliedAt: String
+    val applicant: Any,
+    val appliedAt: String,
+    val resumeLink: String,
+    val status: String
 )

@@ -17,7 +17,9 @@ import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicati
 import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicationViewModel
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobScreen
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobViewModel
+import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetailViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails
+import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails2
 import com.abhay.alumniconnect.presentation.screens.main.HomeScreen
 import com.abhay.alumniconnect.presentation.screens.main.HomeViewModel
 import com.abhay.alumniconnect.presentation.screens.main.create_post.CreatePostScreen
@@ -30,6 +32,7 @@ import com.abhay.alumniconnect.presentation.screens.profile.add_edit_work_experi
 import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileViewModel
 import com.abhay.alumniconnect.presentation.screens.search.SearchScreen
+import com.abhay.alumniconnect.presentation.screens.search.SearchViewModel
 import com.abhay.alumniconnect.utils.navigateAndPopUp
 import com.abhay.alumniconnect.utils.popUp
 
@@ -73,7 +76,33 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.Search> {
-        SearchScreen()
+        SearchScreen(
+            onAlumniSelected = { userId -> },
+            onJobSelected = { jobId ->
+                navController.navigate(Route.MainRoute.JobDetail(alreadyApplied = false, jobId = jobId))
+            }
+        )
+    }
+
+    composable<Route.MainRoute.JobDetail> {
+        val args = it.toRoute<Route.MainRoute.JobDetail>()
+        val viewmodel = hiltViewModel<JobDetailViewModel>(it)
+        val jobDetailsState = viewmodel.jobDetailsState.collectAsState().value
+
+        LaunchedEffect(args.jobId) {
+            if (args.jobId != null){
+                viewmodel.setJobId(args.jobId)
+            }else {
+                onShowSnackbarMessage("Unable to get Job Details")
+                navController.popUp()
+            }
+        }
+
+        JobDetails2(
+            jobState = jobDetailsState,
+            alreadyApplied = args.alreadyApplied,
+            onBackClick = { navController.popUp() }
+        )
     }
 
     composable<Route.MainRoute.Profile> {
@@ -183,10 +212,11 @@ fun NavGraphBuilder.jobNavGraph(
                 uiState = jobUiState,
                 onApplyClick = { navController.navigate(Route.MainRoute.Jobs.Application(it)) },
                 onJobCardClick = { id, appliedOrNot ->
-                    viewModel.getJobById(id, appliedOrNot)
+//                    viewModel.getJobById(id, appliedOrNot)
                     navController.navigate(
-                        Route.MainRoute.Jobs.JobDetails(
-                            applied = appliedOrNot
+                        Route.MainRoute.JobDetail(
+                            jobId = id,
+                            alreadyApplied = appliedOrNot
                         )
                     )
                 },

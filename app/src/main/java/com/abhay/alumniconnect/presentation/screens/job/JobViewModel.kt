@@ -162,5 +162,4 @@ class JobViewModel @Inject constructor(
 data class SelectedJobState(
     val job: Job? = null,
     val isInDeadline: Boolean = true
-
 )

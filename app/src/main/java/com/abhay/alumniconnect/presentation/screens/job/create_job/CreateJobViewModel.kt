@@ -58,6 +58,7 @@ class CreateJobViewModel @Inject constructor(
                 updateField { it.copy(message = "Required Fields cannot be empty!") }
                 return@launch
             }
+            updateField { it.copy(message = null) }
             val result = jobRepository.createJob(_newJobState.value.toJob())
             when(result) {
                 is Result.Success<*> -> {

@@ -25,16 +25,9 @@ fun ApplicationsPage(
         ) {
             items(jobs, key = { it._id }) { job ->
                 JobCard(
-                    modifier = Modifier.clickable { onJobCardClick(job._id, true) },
-                    title = job.title,
-                    company = job.company,
-                    location = job.location,
-                    jobType = job.jobType,
-                    experienceLevel = job.experienceLevel,
-                    requiredSkills = job.requiredSkills,
-                    applicationDeadline = job.applicationDeadline,
+                    job = job,
                     alreadyApplied = true,
-                    status = job.applications.first().status
+                    onClick = { onJobCardClick(job._id, true) }
                 )
             }
         }

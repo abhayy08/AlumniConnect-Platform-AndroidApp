@@ -49,6 +49,12 @@ sealed class Route {
         object Search
 
         @Serializable
+        data class JobDetail(
+            val alreadyApplied: Boolean = false,
+            val jobId: String? = null
+        )
+
+        @Serializable
         object CreateJob
 
         @Serializable

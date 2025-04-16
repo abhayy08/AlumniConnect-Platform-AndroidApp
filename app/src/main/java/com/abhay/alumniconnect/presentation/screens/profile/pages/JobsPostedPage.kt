@@ -27,16 +27,9 @@ fun JobsPostedPage(
         ) {
             items(jobs) {
                 JobCard(
-                    title = it.title,
-                    company = it.company,
-                    location = it.location,
-                    jobType = it.jobType,
-                    experienceLevel = it.experienceLevel,
-                    requiredSkills = it.requiredSkills,
-                    applicationDeadline = it.applicationDeadline,
+                    job = it,
                     onApplyClick = {},
                     alreadyApplied = false,
-                    status = it.status,
                     showApplyButton = false
                 )
             }

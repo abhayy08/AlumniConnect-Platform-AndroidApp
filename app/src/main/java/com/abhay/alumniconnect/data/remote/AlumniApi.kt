@@ -8,6 +8,7 @@ import com.abhay.alumniconnect.data.remote.dto.post.Post
 import com.abhay.alumniconnect.data.remote.dto.user.UserDetails
 import com.abhay.alumniconnect.data.remote.dto.user.UserToken
 import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
+import com.abhay.alumniconnect.domain.model.User
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -16,6 +17,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 
 interface AlumniApi {
@@ -101,5 +103,15 @@ interface AlumniApi {
 
     @DELETE("posts/{id}")
     suspend fun deletePost(@Path("id") postId: String): Response<ApiResponse>
+
+    @GET("jobs/search")
+    suspend fun searchJobs(
+        @QueryMap filters: Map<String, String?>
+    ): Response<List<Job>>
+
+    @GET("profile/search")
+    suspend fun searchAlumni(
+        @QueryMap filters: Map<String, String?>
+    ): Response<List<User>>
 
 }

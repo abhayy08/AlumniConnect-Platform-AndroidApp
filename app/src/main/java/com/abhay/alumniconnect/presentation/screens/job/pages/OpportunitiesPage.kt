@@ -27,15 +27,9 @@ fun OpportunitiesPage(
         ){
             items(jobs, key = {it._id}) {
                 JobCard(
-                    modifier = Modifier.clickable { onJobCardClick(it._id, false) },
-                    title = it.title,
-                    company = it.company,
-                    location = it.location,
-                    jobType = it.jobType,
-                    experienceLevel = it.experienceLevel,
-                    requiredSkills = it.requiredSkills,
-                    applicationDeadline = it.applicationDeadline,
+                    job = it,
                     onApplyClick = { onApplyClick(it._id) },
+                    onClick = { onJobCardClick(it._id, false) }
                 )
             }
         }

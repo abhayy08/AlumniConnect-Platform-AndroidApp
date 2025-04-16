@@ -103,9 +103,11 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
         }
 
     }, floatingActionButton = {
-        AppFloatingActionButton(
-            navController = navController,
-        )
+        if(isTopLevel) {
+            AppFloatingActionButton(
+                navController = navController,
+            )
+        }
     }, snackbarHost = {
         SnackbarHost(
             hostState = snackbarHostState, modifier = Modifier.imePadding()

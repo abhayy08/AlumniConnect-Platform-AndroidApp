@@ -63,7 +63,11 @@ fun CreateJobScreen(
     showSnackbar: (String) -> Unit = {}
 ) {
 
-    LaunchedEffect(newJobState.message) {
+    LaunchedEffect(Unit) {
+        onEvent(CreateJobScreenActions.resetError)
+    }
+
+    LaunchedEffect(Unit) {
         snapshotFlow { newJobState.message }
             .filterNotNull()
             .collect { message ->
@@ -72,6 +76,8 @@ fun CreateJobScreen(
                 onEvent(CreateJobScreenActions.resetError)
             }
     }
+
+
 
     val scrollState = rememberScrollState()
 

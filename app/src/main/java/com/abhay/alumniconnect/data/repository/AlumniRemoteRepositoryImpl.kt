@@ -186,6 +186,24 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun searchAlumni(query: Map<String, String?>): Result<List<User>>  =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.searchAlumni(query)
+                if (!response.isSuccessful) return@withContext Result.Error(
+                    extractErrorMessage(
+                        response, ERROR_TAG
+                    )
+                )
+                response.body()?.let {
+                    return@withContext Result.Success(it)
+                }
+                Result.Error("Invalid response from server")
+            }catch(e: java.lang.Exception) {
+                Result.Error(e.message ?: "Something went wrong")
+            }
+        }
+
 
     override suspend fun connectUser(targetUserId: String): Result<String> {
         TODO("Not yet implemented")
