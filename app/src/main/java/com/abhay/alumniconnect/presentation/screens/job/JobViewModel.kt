@@ -33,9 +33,6 @@ class JobViewModel @Inject constructor(
         getOfferedJobs()
     }
 
-    private val _selectedJob = MutableStateFlow(SelectedJobState())
-    val selectedJob: StateFlow<SelectedJobState> = _selectedJob.asStateFlow()
-
     private fun getJobs() {
         _jobUiState.value = JobUIState.Loading
         viewModelScope.launch {
@@ -88,78 +85,13 @@ class JobViewModel @Inject constructor(
         }
     }
 
-    fun getJobById(id: String, isApplied: Boolean) {
-        if(isApplied) {
-            getJobByIdFromAppliedJobList(id)
-        }else {
-            getJobByIdFromJobList(id)
-        }
-    }
-
-    private fun getJobByIdFromAppliedJobList(id: String) {
-        if(_selectedJob.value.job == null) {
-            _jobUiState.value = JobUIState.Loading
-            val appliedJob = _jobScreenState.value.jobsAppliedTo.find { it._id == id }
-            if (appliedJob != null) {
-                val deadline = LocalDateTime.parse(
-                    appliedJob.applicationDeadline,
-                    DateTimeFormatter.ISO_DATE_TIME
-                )
-                val now = LocalDateTime.now()
-                val daysBetween = ChronoUnit.DAYS.between(now, deadline)
-
-                val isInDeadline = daysBetween >= 0
-
-                _selectedJob.value = _selectedJob.value.copy(
-                    job = appliedJob,
-                    isInDeadline = isInDeadline
-                )
-                _jobUiState.value = JobUIState.Success()
-            } else {
-                _jobUiState.value = JobUIState.Error("Job not found")
-            }
-        }
-    }
-
-    private fun getJobByIdFromJobList(id: String) {
-        if(_selectedJob.value.job == null) {
-            _jobUiState.value = JobUIState.Loading
-            val job = _jobScreenState.value.jobs.find { it._id == id }
-            if (job != null) {
-                val deadline = LocalDateTime.parse(
-                    job.applicationDeadline,
-                    DateTimeFormatter.ISO_DATE_TIME
-                )
-                val now = LocalDateTime.now()
-                val daysBetween = ChronoUnit.DAYS.between(now, deadline)
-
-                val isInDeadline = daysBetween >= 0
-
-                _selectedJob.value = _selectedJob.value.copy(
-                    job = job,
-                    isInDeadline = isInDeadline
-                )
-                _jobUiState.value = JobUIState.Success()
-            } else {
-                _jobUiState.value = JobUIState.Error("Job not found")
-            }
-        }
-    }
-
     fun refreshData() {
-        _selectedJob.value = SelectedJobState()
         getJobs()
         getAppliedJobs()
     }
 
     fun onNavigateBack(onBackClick: () -> Unit) {
-        _selectedJob.value = SelectedJobState()
         onBackClick()
     }
 
 }
-
-data class SelectedJobState(
-    val job: Job? = null,
-    val isInDeadline: Boolean = true
-)

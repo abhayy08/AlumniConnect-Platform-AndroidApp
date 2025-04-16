@@ -61,7 +61,7 @@ class JobApplicationViewModel @Inject constructor(
                             message = result.data.toString(),
                             isLoading = false
                         )
-                        navigateAndPopUp(Route.MainRoute.Jobs.JobsLists, Route.MainRoute.Jobs.JobDetails())
+                        navigateAndPopUp(Route.MainRoute.Jobs.JobsLists, Route.MainRoute.JobDetail())
                     }
                     is Result.Error<*> -> {
                         Log.d("JobApplicationViewModel", "applyForJob: ${result.message}")

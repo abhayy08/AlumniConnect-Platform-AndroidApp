@@ -2,14 +2,10 @@ package com.abhay.alumniconnect.presentation.screens.job.job_detail_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.abhay.alumniconnect.data.remote.dto.job.Job
@@ -40,41 +35,35 @@ import com.abhay.alumniconnect.presentation.components.CustomChip
 import com.abhay.alumniconnect.presentation.components.InfoLabel
 import com.abhay.alumniconnect.presentation.components.InfoLabelWithChip
 import com.abhay.alumniconnect.presentation.components.ListWithBullets
-import com.abhay.alumniconnect.presentation.dummyJobs
-import com.abhay.alumniconnect.presentation.screens.job.SelectedJobState
-import com.abhay.alumniconnect.utils.formatDateForDisplay
 import com.abhay.alumniconnect.utils.capitalize
+import com.abhay.alumniconnect.utils.formatDateForDisplay
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun JobDetails(
-    jobState: SelectedJobState,
-    onApplyClick: () -> Unit = {},
+    jobState: JobDetailsState,
+    onApplyClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {},
     alreadyApplied: Boolean,
 ) {
     BackHandler { onBackClick() }
 
     jobState.job?.let { job ->
-
         Scaffold(
             topBar = {
-                JobDetailsTopBar(
-                    job = job,
-                    isInDeadline = jobState.isInDeadline,
-                    onBackClick = onBackClick
-                )
-            },
-            bottomBar = {
-                JobDetailsBottomBar(
-                    isInDeadline = jobState.isInDeadline,
-                    deadline = job.applicationDeadline,
-                    onApplyClick = onApplyClick,
-                    alreadyApplied = alreadyApplied,
-                    appliedAt = if (alreadyApplied) formatDateForDisplay(job.applications!!.first().appliedAt.toString()) else null
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.background
+            JobDetailsTopBar(
+                job = job, isInDeadline = jobState.isInDeadline, onBackClick = onBackClick
+            )
+        }, bottomBar = {
+            JobDetailsBottomBar(
+                isInDeadline = jobState.isInDeadline,
+                deadline = job.applicationDeadline,
+                onApplyClick = { onApplyClick(job._id) },
+                alreadyApplied = alreadyApplied,
+                appliedAt = if (alreadyApplied) formatDateForDisplay(job.applications.first().appliedAt.toString()) else null
+            )
+        }, containerColor = MaterialTheme.colorScheme.background
         ) { innerPadding ->
 
             Column(
@@ -151,8 +140,7 @@ fun JobDetails(
                     labelColor = MaterialTheme.colorScheme.onBackground
                 )
                 ListWithBullets(
-                    value = job.benefitsOffered,
-                    modifier = Modifier.fillMaxWidth()
+                    value = job.benefitsOffered, modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -162,28 +150,22 @@ fun JobDetails(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun JobDetailsTopBar(job: Job, isInDeadline: Boolean, onBackClick: () -> Unit) {
-    TopAppBar(
-        modifier = Modifier
-            .zIndex(1f),
-        title = {
-            Column {
-                Text(job.title, style = MaterialTheme.typography.titleLarge)
-                Text(job.company, style = MaterialTheme.typography.labelLarge, color = Color.Gray)
-            }
-        },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
-            }
-        },
-        actions = {
-            CustomChip(
-                value = if (isInDeadline) "Open" else "Closed",
-                color = if (isInDeadline) Color.Green.copy(0.3f) else Color.Red.copy(0.3f),
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
+    TopAppBar(modifier = Modifier.zIndex(1f), title = {
+        Column {
+            Text(job.title, style = MaterialTheme.typography.titleLarge)
+            Text(job.company, style = MaterialTheme.typography.labelLarge, color = Color.Gray)
         }
-    )
+    }, navigationIcon = {
+        IconButton(onClick = onBackClick) {
+            Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
+        }
+    }, actions = {
+        CustomChip(
+            value = if (isInDeadline) "Open" else "Closed",
+            color = if (isInDeadline) Color.Green.copy(0.3f) else Color.Red.copy(0.3f),
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+    })
 }
 
 @Composable
@@ -195,8 +177,7 @@ private fun JobDetailsBottomBar(
     appliedAt: String? = null
 ) {
     Column(
-        modifier = Modifier.padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (isInDeadline) {
             Text(
@@ -249,9 +230,3 @@ private fun JobDescriptionCard(description: String) {
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-private fun JobDetailsPreview() {
-    JobDetails(jobState = SelectedJobState(job = dummyJobs[0]), alreadyApplied = false)
-}

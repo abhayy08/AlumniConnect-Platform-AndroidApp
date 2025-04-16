@@ -64,11 +64,6 @@ sealed class Route {
             object JobsLists
 
             @Serializable
-            data class JobDetails(
-                val applied: Boolean = false
-            )
-
-            @Serializable
             data class Application(val id: String? = null)
         }
 

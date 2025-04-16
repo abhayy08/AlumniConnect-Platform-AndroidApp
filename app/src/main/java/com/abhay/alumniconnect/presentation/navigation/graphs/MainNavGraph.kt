@@ -19,7 +19,6 @@ import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobScre
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetailViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails
-import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails2
 import com.abhay.alumniconnect.presentation.screens.main.HomeScreen
 import com.abhay.alumniconnect.presentation.screens.main.HomeViewModel
 import com.abhay.alumniconnect.presentation.screens.main.create_post.CreatePostScreen
@@ -32,7 +31,6 @@ import com.abhay.alumniconnect.presentation.screens.profile.add_edit_work_experi
 import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileViewModel
 import com.abhay.alumniconnect.presentation.screens.search.SearchScreen
-import com.abhay.alumniconnect.presentation.screens.search.SearchViewModel
 import com.abhay.alumniconnect.utils.navigateAndPopUp
 import com.abhay.alumniconnect.utils.popUp
 
@@ -98,10 +96,13 @@ fun NavGraphBuilder.MainNavGraph(
             }
         }
 
-        JobDetails2(
+        JobDetails(
             jobState = jobDetailsState,
             alreadyApplied = args.alreadyApplied,
-            onBackClick = { navController.popUp() }
+            onBackClick = { navController.popUp() },
+            onApplyClick = {
+                navController.navigate(Route.MainRoute.Jobs.Application(id = it))
+            }
         )
     }
 
@@ -212,7 +213,6 @@ fun NavGraphBuilder.jobNavGraph(
                 uiState = jobUiState,
                 onApplyClick = { navController.navigate(Route.MainRoute.Jobs.Application(it)) },
                 onJobCardClick = { id, appliedOrNot ->
-//                    viewModel.getJobById(id, appliedOrNot)
                     navController.navigate(
                         Route.MainRoute.JobDetail(
                             jobId = id,
@@ -221,24 +221,6 @@ fun NavGraphBuilder.jobNavGraph(
                     )
                 },
                 onShowSnackbarMessage = showSnackbar
-            )
-        }
-
-        composable<Route.MainRoute.Jobs.JobDetails> {
-            val args = it.toRoute<Route.MainRoute.Jobs.JobDetails>()
-            val viewmodel = it.sharedViewModel<JobViewModel>(navController)
-
-            val selectedJobState = viewmodel.selectedJob.collectAsState().value
-
-            JobDetails(
-                jobState = selectedJobState,
-                onApplyClick = {
-                    navController.navigate(Route.MainRoute.Jobs.Application(id = selectedJobState.job?._id))
-                },
-                onBackClick = {
-                    viewmodel.onNavigateBack { navController.popUp() }
-                },
-                alreadyApplied = args.applied
             )
         }
 
