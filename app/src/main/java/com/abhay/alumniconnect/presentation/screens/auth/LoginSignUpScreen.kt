@@ -152,6 +152,7 @@ fun SignUp(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.name,
                 onValueChange = { onEvent(AuthUiActions.onNameChange(it)) },
                 label = "Name",
@@ -160,6 +161,7 @@ fun SignUp(
             )
 
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.email,
                 onValueChange = { onEvent(AuthUiActions.onEmailChange(it)) },
                 label = "Email",
@@ -168,6 +170,7 @@ fun SignUp(
             )
 
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.password,
                 onValueChange = { onEvent(AuthUiActions.onPasswordChange(it)) },
                 label = "Password",
@@ -177,6 +180,7 @@ fun SignUp(
             )
 
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.confirmPassword,
                 onValueChange = { onEvent(AuthUiActions.onConfirmPasswordChange(it)) },
                 label = "Confirm Password",
@@ -186,6 +190,7 @@ fun SignUp(
             )
 
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.graduationYear,
                 onValueChange = { onEvent(AuthUiActions.onGraduationYearChange(it)) },
                 label = "Graduation Year",
@@ -195,6 +200,7 @@ fun SignUp(
             )
 
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.university,
                 onValueChange = { onEvent(AuthUiActions.onUniversityChange(it)) },
                 label = "University",
@@ -203,6 +209,7 @@ fun SignUp(
             )
 
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.degree,
                 onValueChange = { onEvent(AuthUiActions.onDegreeChange(it)) },
                 label = "Degree",
@@ -211,12 +218,15 @@ fun SignUp(
             )
 
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.major,
                 onValueChange = { onEvent(AuthUiActions.onMajorChange(it)) },
                 label = "Major",
                 isRequired = true,
                 error = uiState.majorError
             )
+
+            Spacer(Modifier.height(12.dp))
 
             Button(
                 modifier = Modifier.fillMaxWidth(0.5f),
@@ -251,10 +261,13 @@ fun Login(
         Spacer(Modifier.height(18.dp))
 
         Column(
-            modifier = Modifier.padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.email,
                 onValueChange = { onEvent(AuthUiActions.onEmailChange(it)) },
                 label = "Email",
@@ -262,12 +275,15 @@ fun Login(
             )
 
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(0.9f),
                 value = uiState.password,
                 onValueChange = { onEvent(AuthUiActions.onPasswordChange(it)) },
                 label = "Password",
                 visualTransformation = PasswordVisualTransformation(),
                 error = uiState.passwordError
             )
+
+            Spacer(Modifier.height(12.dp))
 
             Button(
                 modifier = Modifier.fillMaxWidth(0.5f),

@@ -33,8 +33,9 @@ fun CustomOutlinedTextField(
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     readOnly: Boolean = false
 ) {
-    Column(modifier = modifier) {
+    Column() {
         OutlinedTextField(
+            modifier = modifier,
             value = value,
             onValueChange = onValueChange,
             label = {
@@ -48,7 +49,6 @@ fun CustomOutlinedTextField(
                     }
                 }
             },
-            modifier = modifier,
             keyboardOptions = keyboardOptions,
             singleLine = true,
             isError = error != null || isError,

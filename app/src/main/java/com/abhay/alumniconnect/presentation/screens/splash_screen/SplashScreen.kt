@@ -46,7 +46,6 @@ fun SplashScreen(
     val viewModel = hiltViewModel<SplashViewModel>()
     val isLoggedIn = viewModel.isLoggedIn.collectAsState().value
 
-    // Animation states
     val splitAnimation = remember { Animatable(0f) }
     val contentAlpha = remember { Animatable(0f) }
     val iconScale = remember { Animatable(0f) }
@@ -57,7 +56,7 @@ fun SplashScreen(
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn != null) {
-            delay(2500) // Wait for animation to complete
+            delay(2000)
             onTimeout(isLoggedIn)
         }
     }
@@ -67,7 +66,7 @@ fun SplashScreen(
         splitAnimation.animateTo(
             targetValue = 1f,
             animationSpec = tween(
-                durationMillis = 800,
+                durationMillis = 500,
                 easing = FastOutSlowInEasing
             )
         )
@@ -76,7 +75,7 @@ fun SplashScreen(
         iconScale.animateTo(
             targetValue = 1f,
             animationSpec = tween(
-                durationMillis = 500,
+                durationMillis = 300,
                 easing = FastOutSlowInEasing
             )
         )
@@ -85,7 +84,7 @@ fun SplashScreen(
         contentAlpha.animateTo(
             targetValue = 1f,
             animationSpec = tween(
-                durationMillis = 400,
+                durationMillis = 300,
                 delayMillis = 100
             )
         )
