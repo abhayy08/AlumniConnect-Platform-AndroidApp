@@ -19,22 +19,17 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.FilterAlt
 import androidx.compose.material.icons.rounded.FilterList
-import androidx.compose.material.icons.rounded.School
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -60,7 +55,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.abhay.alumniconnect.domain.model.User
+import com.abhay.alumniconnect.presentation.components.AlumniCard
 import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
 import java.util.Calendar
 
@@ -69,7 +64,7 @@ import java.util.Calendar
 fun SearchScreen(
     viewModel: SearchViewModel = hiltViewModel(),
     onAlumniSelected: (userId: String) -> Unit,
-    onJobSelected: (jobId: String) -> Unit
+    onJobSelected: (jobId: String, alreadyApplied: Boolean) -> Unit
 ) {
     val searchType by viewModel.searchType.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -162,7 +157,12 @@ fun SearchScreen(
                                 item { EmptyResultsMessage(SearchType.ALUMNI) }
                             } else {
                                 items(alumniResults, key = { it.id }) { user ->
-                                    AlumniCard(alumni = user) {
+                                    AlumniCard(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp),
+                                        alumni = user
+                                    ) {
                                         onAlumniSelected(user.id)
                                     }
                                 }
@@ -176,7 +176,7 @@ fun SearchScreen(
                                 items(jobResults, key = { it._id }) { job ->
                                     JobCard(
                                         job = job,
-                                        onClick = { onJobSelected(job._id) },
+                                        onClick = { onJobSelected(job._id, job.alreadyApplied == true) },
                                         onApplyClick = {},
                                         alreadyApplied = false,
                                         showApplyButton = false
@@ -665,84 +665,5 @@ fun EmptyResultsMessage(searchType: SearchType) {
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
             textAlign = TextAlign.Center
         )
-    }
-}
-
-@Composable
-fun AlumniCard(
-    alumni: User, onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Profile image
-            Surface(
-                modifier = Modifier.size(48.dp),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        text = alumni.name.first().toString(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                }
-            }
-
-            // Info
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 16.dp)
-            ) {
-                Text(
-                    text = alumni.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-
-                if (alumni.currentJob.isNotEmpty()) {
-                    Text(
-                        text = "${alumni.jobTitle} at ${alumni.company}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.padding(top = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.School,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "${alumni.degree} in ${alumni.major}, ${alumni.graduationYear}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                }
-            }
-
-            // Arrow icon
-            Icon(
-                imageVector = Icons.Rounded.ChevronRight,
-                contentDescription = "View profile",
-                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-            )
-        }
     }
 }

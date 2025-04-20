@@ -19,5 +19,6 @@ data class Job(
     val requiredSkills: List<String>,
     val status: String,
     val title: String,
-    val updatedAt: String?
+    val updatedAt: String?,
+    val alreadyApplied: Boolean? = false
 )

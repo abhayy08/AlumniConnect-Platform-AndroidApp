@@ -76,10 +76,10 @@ fun NavGraphBuilder.MainNavGraph(
     composable<Route.MainRoute.Search> {
         SearchScreen(
             onAlumniSelected = { },
-            onJobSelected = { jobId ->
+            onJobSelected = { jobId, alreadyApplied ->
                 navController.navigate(
                     Route.MainRoute.JobDetail(
-                        alreadyApplied = false,
+                        alreadyApplied = alreadyApplied,
                         jobId = jobId
                     )
                 )

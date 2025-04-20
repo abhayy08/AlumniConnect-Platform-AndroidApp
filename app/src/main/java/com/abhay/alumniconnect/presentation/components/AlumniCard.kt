@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,15 +28,15 @@ import com.abhay.alumniconnect.domain.model.User
 
 @Composable
 fun AlumniCard(
+    modifier: Modifier,
     alumni: User,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
+        modifier = modifier
             .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(2.dp),
+        shape = MaterialTheme.shapes.small
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -98,7 +97,6 @@ fun AlumniCard(
                 }
             }
 
-            // Arrow icon
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = "View profile",
