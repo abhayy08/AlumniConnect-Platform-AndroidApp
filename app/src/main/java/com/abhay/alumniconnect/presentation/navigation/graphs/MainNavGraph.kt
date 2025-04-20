@@ -25,9 +25,11 @@ import com.abhay.alumniconnect.presentation.screens.main.create_post.CreatePostS
 import com.abhay.alumniconnect.presentation.screens.main.create_post.CreatePostViewModel
 import com.abhay.alumniconnect.presentation.screens.profile.ConnectionsScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreen
-import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreenViewModel
+import com.abhay.alumniconnect.presentation.screens.profile.ProfileViewModel
 import com.abhay.alumniconnect.presentation.screens.profile.add_edit_work_experience.AddEditExperienceScreen
 import com.abhay.alumniconnect.presentation.screens.profile.add_edit_work_experience.AddEditExperienceViewModel
+import com.abhay.alumniconnect.presentation.screens.profile.applicants.ApplicantsScreen
+import com.abhay.alumniconnect.presentation.screens.profile.applicants.ApplicantsViewModel
 import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileViewModel
 import com.abhay.alumniconnect.presentation.screens.search.SearchScreen
@@ -113,8 +115,24 @@ fun NavGraphBuilder.MainNavGraph(
         )
     }
 
+    composable<Route.MainRoute.Applicants> {
+        val args = it.toRoute<Route.MainRoute.Applicants>()
+        val viewModel = hiltViewModel<ApplicantsViewModel>()
+
+        LaunchedEffect(args.jobId) {
+            viewModel.getApplicantsOfJob(args.jobId)
+        }
+
+        val state = viewModel.applicantsState.collectAsState().value
+        ApplicantsScreen(
+            applications = state,
+            onApplicantStatusUpdate = { applicantId, status -> },
+            onUserClick = {userId -> }
+        )
+    }
+
     composable<Route.MainRoute.Profile> {
-        val viewModel = hiltViewModel<ProfileScreenViewModel>()
+        val viewModel = hiltViewModel<ProfileViewModel>()
         val profileUiState = viewModel.profileState.collectAsState().value
         val jobsState = viewModel.jobsState.collectAsState().value
         val uiState = viewModel.uiState.collectAsState().value
@@ -140,7 +158,10 @@ fun NavGraphBuilder.MainNavGraph(
                     )
                 )
             },
-            showSnackbar = onShowSnackbarMessage
+            showSnackbar = onShowSnackbarMessage,
+            onJobClick = {jobId ->
+                navController.navigate(Route.MainRoute.Applicants(jobId = jobId))
+            }
         )
     }
 

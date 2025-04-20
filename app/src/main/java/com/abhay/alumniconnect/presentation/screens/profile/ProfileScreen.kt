@@ -72,6 +72,7 @@ fun ProfileScreen(
     onAddExperienceClick: () -> Unit = {},
     onExperienceEditClick: (WorkExperience) -> Unit = {},
     showSnackbar: (String) -> Unit = {},
+    onJobClick: (String) -> Unit = {}
 ) {
 
     LaunchedEffect(uiState) {
@@ -135,7 +136,7 @@ fun ProfileScreen(
                             onExperienceEditClick = onExperienceEditClick
                         )
 
-                        1 -> JobsPostedPage(jobs = jobsState)
+                        1 -> JobsPostedPage(jobs = jobsState, onJobClick = onJobClick)
                         2 -> UserPostsPage()
                     }
                 }

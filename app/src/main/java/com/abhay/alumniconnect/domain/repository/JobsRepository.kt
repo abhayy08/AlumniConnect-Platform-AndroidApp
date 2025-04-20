@@ -1,5 +1,6 @@
 package com.abhay.alumniconnect.domain.repository
 
+import com.abhay.alumniconnect.data.remote.dto.job.Application
 import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.utils.Result
 
@@ -13,5 +14,7 @@ interface JobsRepository {
 
     suspend fun createJob(job: Job): Result<String>
     suspend fun searchJobs(query: Map<String, String>): Result<List<Job>>
+
+    suspend fun getJobApplicants(jobId: String): Result<List<Application>>
 
 }

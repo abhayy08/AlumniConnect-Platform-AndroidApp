@@ -2,6 +2,7 @@ package com.abhay.alumniconnect.data.remote
 
 import com.abhay.alumniconnect.data.remote.dto.ApiResponse
 import com.abhay.alumniconnect.data.remote.dto.Connection
+import com.abhay.alumniconnect.data.remote.dto.job.Application
 import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.data.remote.dto.post.Comment
 import com.abhay.alumniconnect.data.remote.dto.post.Post
@@ -108,6 +109,9 @@ interface AlumniApi {
     suspend fun searchJobs(
         @QueryMap filters: Map<String, String?>
     ): Response<List<Job>>
+
+    @GET("jobs/{id}/applicants")
+    suspend fun getApplicantsOfJob(@Path("id") jobId: String): Response<List<Application>>
 
     @GET("profile/search")
     suspend fun searchAlumni(

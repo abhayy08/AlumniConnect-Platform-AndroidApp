@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileScreenViewModel @Inject constructor(
+class ProfileViewModel @Inject constructor(
     private val alumniRemoteRepository: AlumniRemoteRepository,
     private val jobsRepository: JobsRepository,
     private val authRepository: AlumniAccountRepository

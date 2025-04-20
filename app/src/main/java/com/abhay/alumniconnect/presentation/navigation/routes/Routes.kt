@@ -32,6 +32,11 @@ sealed class Route {
         object EditProfile
 
         @Serializable
+        data class Applicants(
+            val jobId: String
+        )
+
+        @Serializable
         data class AddEditExperience(
             val experienceId: String? = null,
             val company: String? = null,

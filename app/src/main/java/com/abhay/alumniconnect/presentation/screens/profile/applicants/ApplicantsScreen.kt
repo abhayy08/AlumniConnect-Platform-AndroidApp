@@ -16,17 +16,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,125 +44,139 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.data.remote.dto.job.Applicant
+import com.abhay.alumniconnect.data.remote.dto.job.Application
+import com.abhay.alumniconnect.presentation.navigation.routes.Route
+import com.abhay.alumniconnect.utils.capitalize
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApplicantsScreen(
-    applicants: List<Applicant>,
-    onApplicantStatusUpdate: (String, String) -> Unit = { applicantId, status -> },
-    onUserClick: (String) -> Unit
+    applications: List<Application>,
+    onApplicantStatusUpdate: (String, String) -> Unit = { _, _ -> },
+    onUserClick: (String) -> Unit,
+    onBackClick: () -> Unit = {}
 ) {
     val statusOptions = listOf("pending", "reviewed", "interviewed", "rejected", "accepted")
     var showStatusDialog by remember { mutableStateOf(false) }
-    var selectedApplicant by remember { mutableStateOf<Applicant?>(null) }
+    var selectedApplicant by remember { mutableStateOf<Application?>(null) }
     var currentStatus by remember { mutableStateOf("pending") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Text(
-                text = "Applicants",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            if (applicants.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No applicants found",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {Text(text = "Applicants")},
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Close")
+                    }
                 }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(applicants) { applicant ->
-                        ApplicantCard(
-                            applicant = applicant,
-                            onStatusUpdateClick = {
-                                selectedApplicant = applicant
-                                showStatusDialog = true
-                            },
-                            onUserClick = { onUserClick(applicant._id) }
+            )
+        }
+    ) { paddingValues ->
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(paddingValues)  // <-- respect the topBar padding
+                .padding(16.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+
+                if (applications.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No applicants found",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(applications) { application ->
+                            ApplicantCard(
+                                applicant = application,
+                                onStatusUpdateClick = {
+                                    selectedApplicant = application
+                                    showStatusDialog = true
+                                },
+                                onUserClick = { onUserClick(application._userId) }
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        if (showStatusDialog && selectedApplicant != null) {
-            AlertDialog(
-                onDismissRequest = { showStatusDialog = false },
-                title = {
-                    Text(text = "Update Application Status")
-                },
-                text = {
-                    Column {
-                        Text(
-                            text = "Select a new status for ${selectedApplicant?.name}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
+            if (showStatusDialog && selectedApplicant != null) {
+                AlertDialog(
+                    onDismissRequest = { showStatusDialog = false },
+                    title = {
+                        Text(text = "Update Application Status")
+                    },
+                    text = {
+                        Column {
+                            Text(
+                                text = "Select a new status for ${selectedApplicant?.name}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
 
-                        statusOptions.forEach { status ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { currentStatus = status }
-                                    .padding(vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = status == currentStatus,
-                                    onClick = { currentStatus = status }
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = status.capitalize(),
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
+                            statusOptions.forEach { status ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable { currentStatus = status }
+                                        .padding(vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = status == currentStatus,
+                                        onClick = { currentStatus = status }
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = status.replaceFirstChar { it.uppercaseChar() },
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
                             }
                         }
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            selectedApplicant?.let { applicant ->
-                                onApplicantStatusUpdate(applicant._id, currentStatus)
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                selectedApplicant?.let { applicant ->
+                                    onApplicantStatusUpdate(applicant._applicationId, currentStatus)
+                                }
+                                showStatusDialog = false
                             }
-                            showStatusDialog = false
+                        ) {
+                            Text("Update")
                         }
-                    ) {
-                        Text("Update")
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { showStatusDialog = false }
+                        ) {
+                            Text("Cancel")
+                        }
                     }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = { showStatusDialog = false }
-                    ) {
-                        Text("Cancel")
-                    }
-                }
-            )
+                )
+            }
         }
     }
 }
 
+
 @Composable
 private fun ApplicantCard(
-    applicant: Applicant,
+    applicant: Application,
     onStatusUpdateClick: () -> Unit,
     onUserClick: () -> Unit
 ) {
@@ -234,36 +253,36 @@ private fun ApplicantCard(
 fun ApplicantsScreenPreview() {
     // Sample applicants data
     val sampleApplicants = listOf(
-        Applicant(
-            _id = "1",
+        Application(
+            _applicationId = "1",
             name = "John Doe",
-            email = "john.doe@example.com"
+            email = "john.doe@example.com",
+            _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
+
+        ),Application(
+            _applicationId = "1",
+            name = "John Doe",
+            email = "john.doe@example.com",
+            _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
+
+        ),Application(
+            _applicationId = "1",
+            name = "John Doe",
+            email = "john.doe@example.com",
+            _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
+
+        ),Application(
+            _applicationId = "1",
+            name = "John Doe",
+            email = "john.doe@example.com",
+            _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
+
         ),
-        Applicant(
-            _id = "2",
-            name = "Jane Smith",
-            email = "jane.smith@example.com"
-        ),
-        Applicant(
-            _id = "3",
-            name = "Robert Johnson",
-            email = "robert.johnson@example.com"
-        ),
-        Applicant(
-            _id = "4",
-            name = "Emily Williams",
-            email = "emily.williams@example.com"
-        ),
-        Applicant(
-            _id = "5",
-            name = "Michael Brown",
-            email = "michael.brown@example.com"
-        )
     )
 
     MaterialTheme {
         ApplicantsScreen(
-            applicants = sampleApplicants,
+            applications = sampleApplicants,
             onApplicantStatusUpdate = { _, _ -> },
             onUserClick = {}
         )
