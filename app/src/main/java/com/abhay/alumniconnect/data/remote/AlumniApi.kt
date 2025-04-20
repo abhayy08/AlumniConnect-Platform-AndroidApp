@@ -14,6 +14,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -112,6 +113,9 @@ interface AlumniApi {
 
     @GET("jobs/{id}/applicants")
     suspend fun getApplicantsOfJob(@Path("id") jobId: String): Response<List<Application>>
+
+    @PATCH("jobs/{id}/application")
+    suspend fun updateApplicationStatus(@Path("id") jobId: String, @Body requestBody: Map<String, String>): Response<ApiResponse>
 
     @GET("profile/search")
     suspend fun searchAlumni(

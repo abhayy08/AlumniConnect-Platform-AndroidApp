@@ -123,10 +123,20 @@ fun NavGraphBuilder.MainNavGraph(
             viewModel.getApplicantsOfJob(args.jobId)
         }
 
-        val state = viewModel.applicantsState.collectAsState().value
+        val applications = viewModel.applicantsState.collectAsState().value
+        val messagesState = viewModel.messageState.collectAsState()
+
+        LaunchedEffect(messagesState.value) {
+            if (messagesState.value != null) {
+                onShowSnackbarMessage(messagesState.value!!)
+                viewModel.resetMessageState()
+            }
+        }
         ApplicantsScreen(
-            applications = state,
-            onApplicantStatusUpdate = { applicantId, status -> },
+            applications = applications,
+            onApplicationStatusUpdate = { applicationId, status ->
+                viewModel.updateApplicationState(args.jobId, applicationId, status)
+            },
             onUserClick = {userId -> }
         )
     }

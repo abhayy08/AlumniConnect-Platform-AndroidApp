@@ -10,6 +10,7 @@ import com.abhay.alumniconnect.domain.repository.JobsRepository
 import com.abhay.alumniconnect.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
 import javax.inject.Inject
 
 class JobsRepositoryImpl @Inject constructor(
@@ -190,6 +191,35 @@ class JobsRepositoryImpl @Inject constructor(
                 response.body()?.let {
                     Log.d(ERROR_TAG, "getJobApplicants: $it")
                     return@withContext Result.Success(it)
+                }
+                Result.Error(message = "An unknown error has occurred!")
+            }catch(e: java.lang.Exception) {
+                Result.Error(message = e.message ?: "An unknown error has occurred!")
+            }
+        }
+
+    override suspend fun updateApplicationStatus(
+        jobId: String,
+        applicationId: String,
+        status: String
+    ): Result<String> =
+        withContext(Dispatchers.IO) {
+            try {
+                val requestBody = mapOf(
+                    "applicationId" to applicationId,
+                    "status" to status
+                )
+                val response = api.updateApplicationStatus(jobId, requestBody)
+                Log.d(ERROR_TAG, "updateApplicationStatus: $response")
+                if (!response.isSuccessful) {
+                    return@withContext Result.Error(
+                        message = extractErrorMessage(response, ERROR_TAG)
+                    )
+                }
+
+                response.body()?.let {
+                    Log.d(ERROR_TAG, "updateApplicationStatus: ${it.message}")
+                    return@withContext Result.Success(it.message)
                 }
                 Result.Error(message = "An unknown error has occurred!")
             }catch(e: java.lang.Exception) {

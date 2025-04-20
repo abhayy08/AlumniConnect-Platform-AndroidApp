@@ -31,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,28 +42,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.abhay.alumniconnect.data.remote.dto.job.Applicant
 import com.abhay.alumniconnect.data.remote.dto.job.Application
-import com.abhay.alumniconnect.presentation.navigation.routes.Route
-import com.abhay.alumniconnect.utils.capitalize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApplicantsScreen(
     applications: List<Application>,
-    onApplicantStatusUpdate: (String, String) -> Unit = { _, _ -> },
+    onApplicationStatusUpdate: (String, String) -> Unit = { _, _ -> },
     onUserClick: (String) -> Unit,
     onBackClick: () -> Unit = {}
 ) {
     val statusOptions = listOf("pending", "reviewed", "interviewed", "rejected", "accepted")
     var showStatusDialog by remember { mutableStateOf(false) }
-    var selectedApplicant by remember { mutableStateOf<Application?>(null) }
+    var selectedApplication by remember { mutableStateOf<Application?>(null) }
     var currentStatus by remember { mutableStateOf("pending") }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text(text = "Applicants")},
+                title = { Text(text = "Applicants") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Close")
@@ -73,48 +69,46 @@ fun ApplicantsScreen(
             )
         }
     ) { paddingValues ->
-
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(paddingValues)  // <-- respect the topBar padding
+                .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
 
-                if (applications.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No applicants found",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+            if (applications.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No applicants found",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(applications) { application ->
+                        ApplicantCard(
+                            applicant = application,
+                            onStatusUpdateClick = {
+                                selectedApplication = application
+                                currentStatus = application.status
+                                showStatusDialog = true
+                            },
+                            onUserClick = { onUserClick(application._userId) }
                         )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(applications) { application ->
-                            ApplicantCard(
-                                applicant = application,
-                                onStatusUpdateClick = {
-                                    selectedApplicant = application
-                                    showStatusDialog = true
-                                },
-                                onUserClick = { onUserClick(application._userId) }
-                            )
-                        }
                     }
                 }
             }
 
-            if (showStatusDialog && selectedApplicant != null) {
+            if (showStatusDialog && selectedApplication != null) {
                 AlertDialog(
+                    shape = MaterialTheme.shapes.small,
                     onDismissRequest = { showStatusDialog = false },
                     title = {
                         Text(text = "Update Application Status")
@@ -122,7 +116,7 @@ fun ApplicantsScreen(
                     text = {
                         Column {
                             Text(
-                                text = "Select a new status for ${selectedApplicant?.name}",
+                                text = "Select a new status for ${selectedApplication?.name}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(bottom = 16.dp)
                             )
@@ -151,8 +145,11 @@ fun ApplicantsScreen(
                     confirmButton = {
                         Button(
                             onClick = {
-                                selectedApplicant?.let { applicant ->
-                                    onApplicantStatusUpdate(applicant._applicationId, currentStatus)
+                                selectedApplication?.let { applicant ->
+                                    onApplicationStatusUpdate(
+                                        applicant._applicationId,
+                                        currentStatus
+                                    )
                                 }
                                 showStatusDialog = false
                             }
@@ -259,19 +256,22 @@ fun ApplicantsScreenPreview() {
             email = "john.doe@example.com",
             _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
 
-        ),Application(
+        ),
+        Application(
             _applicationId = "1",
             name = "John Doe",
             email = "john.doe@example.com",
             _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
 
-        ),Application(
+        ),
+        Application(
             _applicationId = "1",
             name = "John Doe",
             email = "john.doe@example.com",
             _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
 
-        ),Application(
+        ),
+        Application(
             _applicationId = "1",
             name = "John Doe",
             email = "john.doe@example.com",
@@ -283,7 +283,7 @@ fun ApplicantsScreenPreview() {
     MaterialTheme {
         ApplicantsScreen(
             applications = sampleApplicants,
-            onApplicantStatusUpdate = { _, _ -> },
+            onApplicationStatusUpdate = { _, _ -> },
             onUserClick = {}
         )
     }

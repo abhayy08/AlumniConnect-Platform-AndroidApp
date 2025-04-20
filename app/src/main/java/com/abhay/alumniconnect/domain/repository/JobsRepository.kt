@@ -17,4 +17,5 @@ interface JobsRepository {
 
     suspend fun getJobApplicants(jobId: String): Result<List<Application>>
 
+    suspend fun updateApplicationStatus(jobId: String, applicationId: String, status: String): Result<String>
 }

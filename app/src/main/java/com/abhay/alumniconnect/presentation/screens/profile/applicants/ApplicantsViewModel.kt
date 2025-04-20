@@ -23,6 +23,9 @@ class ApplicantsViewModel @Inject constructor(
     private val _applicantsState = MutableStateFlow(emptyList<Application>())
     val applicantsState: StateFlow<List<Application>> = _applicantsState.asStateFlow()
 
+    private val _messageState = MutableStateFlow<String?>(null)
+    val messageState: StateFlow<String?> = _messageState.asStateFlow()
+
     fun getApplicantsOfJob(jobId: String) {
         viewModelScope.launch {
             val result = jobRepository.getJobApplicants(jobId)
@@ -32,10 +35,29 @@ class ApplicantsViewModel @Inject constructor(
                     _applicantsState.update { result.data!! }
                 }
                 is Result.Error<*> -> {
-                    Log.d("ApplicantsViewModel", "getApplicantsOfJob: ${result.message}")
+                    _messageState.update { result.message }
                 }
             }
         }
+    }
+
+    fun updateApplicationState(jobId: String, applicationId: String, status: String) {
+        Log.d("ApplicantsViewModel", "updateApplicationState: $jobId, $applicationId, $status")
+        viewModelScope.launch {
+            val result = jobRepository.updateApplicationStatus(jobId, applicationId, status)
+            when(result) {
+                is Result.Success<*> -> {
+                    _messageState.update { result.data }
+                }
+                is Result.Error<*> -> {
+                    _messageState.update { result.message }
+                }
+            }
+        }
+    }
+
+    fun resetMessageState() {
+        _messageState.update { null }
     }
 
 }
