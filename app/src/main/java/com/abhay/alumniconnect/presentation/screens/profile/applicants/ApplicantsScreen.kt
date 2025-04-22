@@ -1,10 +1,12 @@
 package com.abhay.alumniconnect.presentation.screens.profile.applicants
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,19 +19,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,6 +43,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.data.remote.dto.job.Application
+import com.abhay.alumniconnect.utils.capitalize
+import com.example.compose.AlumniConnectTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,34 +54,23 @@ fun ApplicantsScreen(
     onUserClick: (String) -> Unit,
     onBackClick: () -> Unit = {}
 ) {
-    val statusOptions = listOf("pending", "reviewed", "interviewed", "rejected", "accepted")
-    var showStatusDialog by remember { mutableStateOf(false) }
-    var selectedApplication by remember { mutableStateOf<Application?>(null) }
-    var currentStatus by remember { mutableStateOf("pending") }
-
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = "Applicants") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Close")
-                    }
+            TopAppBar(title = { Text(text = "Applicants") }, navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Close")
                 }
-            )
-        }
-    ) { paddingValues ->
+            })
+        }) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-
             if (applications.isEmpty()) {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "No applicants found",
@@ -93,90 +84,24 @@ fun ApplicantsScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(applications) { application ->
-                        ApplicantCard(
-                            applicant = application,
-                            onStatusUpdateClick = {
-                                selectedApplication = application
-                                currentStatus = application.status
-                                showStatusDialog = true
-                            },
-                            onUserClick = { onUserClick(application._userId) }
-                        )
+                        ApplicantCard(applicant = application, onStatusUpdate = { newStatus ->
+                            onApplicationStatusUpdate(application._applicationId, newStatus)
+                        }, onUserClick = { onUserClick(application._userId) })
                     }
                 }
-            }
-
-            if (showStatusDialog && selectedApplication != null) {
-                AlertDialog(
-                    shape = MaterialTheme.shapes.small,
-                    onDismissRequest = { showStatusDialog = false },
-                    title = {
-                        Text(text = "Update Application Status")
-                    },
-                    text = {
-                        Column {
-                            Text(
-                                text = "Select a new status for ${selectedApplication?.name}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            )
-
-                            statusOptions.forEach { status ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable { currentStatus = status }
-                                        .padding(vertical = 8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = status == currentStatus,
-                                        onClick = { currentStatus = status }
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = status.replaceFirstChar { it.uppercaseChar() },
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                }
-                            }
-                        }
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                selectedApplication?.let { applicant ->
-                                    onApplicationStatusUpdate(
-                                        applicant._applicationId,
-                                        currentStatus
-                                    )
-                                }
-                                showStatusDialog = false
-                            }
-                        ) {
-                            Text("Update")
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(
-                            onClick = { showStatusDialog = false }
-                        ) {
-                            Text("Cancel")
-                        }
-                    }
-                )
             }
         }
     }
 }
 
-
 @Composable
 private fun ApplicantCard(
-    applicant: Application,
-    onStatusUpdateClick: () -> Unit,
-    onUserClick: () -> Unit
+    applicant: Application, onStatusUpdate: (String) -> Unit, onUserClick: () -> Unit
 ) {
+    val statusOptions = listOf("pending", "reviewed", "interviewed", "rejected", "accepted")
+    var expanded by remember { mutableStateOf(false) }
+    var currentStatus by remember { mutableStateOf(applicant.status) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -190,7 +115,7 @@ private fun ApplicantCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Profile icon/avatar
@@ -200,8 +125,7 @@ private fun ApplicantCard(
                     .background(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = MaterialTheme.shapes.small
-                    ),
-                contentAlignment = Alignment.Center
+                    ), contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = applicant.name.first().toString(),
@@ -212,34 +136,77 @@ private fun ApplicantCard(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Applicant info
-            Column(
-                modifier = Modifier.weight(1f)
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = applicant.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = applicant.email,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+                // Name and email
+                Column(
+                    modifier = Modifier.weight(1f, fill = false)
+                ) {
+                    Text(
+                        text = applicant.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = applicant.email,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
 
-            // Action buttons
-            IconButton(onClick = onStatusUpdateClick) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Update Status",
-                    tint = MaterialTheme.colorScheme.primary
-                )
+                Box(
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .background(
+                            MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.shapes.small
+                        )
+                        .border(
+                            1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.small
+                        )
+                ) {
+                    Row(modifier = Modifier
+                        .clickable { expanded = true }
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = currentStatus.capitalize(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Rounded.KeyboardArrowDown,
+                            contentDescription = "Change Status",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier.width(IntrinsicSize.Min),
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        statusOptions.forEach { status ->
+                            DropdownMenuItem(text = {
+                                Text(status.replaceFirstChar { it.uppercaseChar() })
+                            }, onClick = {
+                                currentStatus = status
+                                onStatusUpdate(status)
+                                expanded = false
+                            })
+                        }
+                    }
+                }
             }
         }
     }
@@ -254,37 +221,44 @@ fun ApplicantsScreenPreview() {
             _applicationId = "1",
             name = "John Doe",
             email = "john.doe@example.com",
-            _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
-
+            _userId = "1",
+            appliedAt = "recteque",
+            resumeLink = "penatibus",
+            status = "pending"
         ),
         Application(
-            _applicationId = "1",
-            name = "John Doe",
-            email = "john.doe@example.com",
-            _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
-
+            _applicationId = "2",
+            name = "Jane Smith",
+            email = "jane.smith@example.com",
+            _userId = "2",
+            appliedAt = "recteque",
+            resumeLink = "penatibus",
+            status = "reviewed"
         ),
         Application(
-            _applicationId = "1",
-            name = "John Doe",
-            email = "john.doe@example.com",
-            _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
-
+            _applicationId = "3",
+            name = "Alex Johnson",
+            email = "alex.johnson@example.com",
+            _userId = "3",
+            appliedAt = "recteque",
+            resumeLink = "penatibus",
+            status = "interviewed"
         ),
         Application(
-            _applicationId = "1",
-            name = "John Doe",
-            email = "john.doe@example.com",
-            _userId = "1", appliedAt = "recteque", resumeLink = "penatibus", status = "novum"
-
+            _applicationId = "4",
+            name = "Sarah Williams",
+            email = "sarah.williams@example.com",
+            _userId = "4",
+            appliedAt = "recteque",
+            resumeLink = "penatibus",
+            status = "accepted"
         ),
     )
 
-    MaterialTheme {
+    AlumniConnectTheme {
         ApplicantsScreen(
             applications = sampleApplicants,
             onApplicationStatusUpdate = { _, _ -> },
-            onUserClick = {}
-        )
+            onUserClick = {})
     }
 }
