@@ -72,7 +72,8 @@ fun ProfileScreen(
     onAddExperienceClick: () -> Unit = {},
     onExperienceEditClick: (WorkExperience) -> Unit = {},
     showSnackbar: (String) -> Unit = {},
-    onJobClick: (String) -> Unit = {}
+    onJobClick: (String) -> Unit = {},
+    onLinkClick: (String) -> Unit = {}
 ) {
 
     LaunchedEffect(uiState) {
@@ -133,7 +134,8 @@ fun ProfileScreen(
                         0 -> ProfileDetailsPage(
                             user = user,
                             onAddExperienceClick = onAddExperienceClick,
-                            onExperienceEditClick = onExperienceEditClick
+                            onExperienceEditClick = onExperienceEditClick,
+                            onLinkClick = onLinkClick
                         )
 
                         1 -> JobsPostedPage(jobs = jobsState, onJobClick = onJobClick)
@@ -249,7 +251,7 @@ fun BioSection(bio: String) {
 }
 
 @Composable
-fun JobAndLinkedInSection(user: User) {
+fun JobAndLinkedInSection(user: User, onLinkClick: (String) -> Unit) {
     Column {
         if (user.currentJob.isNotEmpty()) {
             Text(
@@ -263,7 +265,8 @@ fun JobAndLinkedInSection(user: User) {
                 text = "🔗 LinkedIn Profile",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { /* Open LinkedIn */ })
+                modifier = Modifier.clickable { onLinkClick(user.linkedInProfile) }
+            )
         }
     }
 }

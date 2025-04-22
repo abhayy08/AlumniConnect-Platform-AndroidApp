@@ -2,6 +2,7 @@ package com.abhay.alumniconnect.presentation.navigation.graphs
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -33,6 +34,7 @@ import com.abhay.alumniconnect.presentation.screens.profile.applicants.Applicant
 import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.edit_profile_screen.EditProfileViewModel
 import com.abhay.alumniconnect.presentation.screens.search.SearchScreen
+import com.abhay.alumniconnect.utils.AppUtils
 import com.abhay.alumniconnect.utils.navigateAndPopUp
 import com.abhay.alumniconnect.utils.popUp
 
@@ -76,17 +78,13 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.Search> {
-        SearchScreen(
-            onAlumniSelected = { },
-            onJobSelected = { jobId, alreadyApplied ->
-                navController.navigate(
-                    Route.MainRoute.JobDetail(
-                        alreadyApplied = alreadyApplied,
-                        jobId = jobId
-                    )
+        SearchScreen(onAlumniSelected = { }, onJobSelected = { jobId, alreadyApplied ->
+            navController.navigate(
+                Route.MainRoute.JobDetail(
+                    alreadyApplied = alreadyApplied, jobId = jobId
                 )
-            }
-        )
+            )
+        })
     }
 
     composable<Route.MainRoute.JobDetail> {
@@ -132,13 +130,16 @@ fun NavGraphBuilder.MainNavGraph(
                 viewModel.resetMessageState()
             }
         }
+
         ApplicantsScreen(
             applications = applications,
             onApplicationStatusUpdate = { applicationId, status ->
                 viewModel.updateApplicationState(args.jobId, applicationId, status)
             },
-            onUserClick = {userId -> }
-        )
+            onUserClick = { userId -> },
+            onResumeClick = { link ->
+                AppUtils.openLink(link)
+            })
     }
 
     composable<Route.MainRoute.Profile> {
@@ -169,8 +170,11 @@ fun NavGraphBuilder.MainNavGraph(
                 )
             },
             showSnackbar = onShowSnackbarMessage,
-            onJobClick = {jobId ->
+            onJobClick = { jobId ->
                 navController.navigate(Route.MainRoute.Applicants(jobId = jobId))
+            },
+            onLinkClick = { link ->
+                AppUtils.openLink(link)
             }
         )
     }
@@ -219,12 +223,9 @@ fun NavGraphBuilder.MainNavGraph(
         val viewModel = hiltViewModel<CreateJobViewModel>()
         val newJobState = viewModel.newJobState.collectAsState().value
         CreateJobScreen(
-            newJobState = newJobState,
-            onEvent = viewModel::onEvent,
-            onBackClick = {
+            newJobState = newJobState, onEvent = viewModel::onEvent, onBackClick = {
                 navController.popUp()
-            },
-            showSnackbar = onShowSnackbarMessage
+            }, showSnackbar = onShowSnackbarMessage
         )
     }
 
@@ -253,8 +254,7 @@ fun NavGraphBuilder.jobNavGraph(
                 onJobCardClick = { id, appliedOrNot ->
                     navController.navigate(
                         Route.MainRoute.JobDetail(
-                            jobId = id,
-                            alreadyApplied = appliedOrNot
+                            jobId = id, alreadyApplied = appliedOrNot
                         )
                     )
                 },
