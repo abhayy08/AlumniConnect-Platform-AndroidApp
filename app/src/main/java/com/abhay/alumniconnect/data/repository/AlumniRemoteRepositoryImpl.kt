@@ -66,6 +66,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             try {
                 val response = api.getUserById(id)
+                Log.d(ERROR_TAG, "getUserById: $response")
                 if (!response.isSuccessful) return@withContext Result.Error(
                     extractErrorMessage(
                         response, ERROR_TAG
@@ -156,7 +157,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
                     response, ERROR_TAG
                 )
             )
-            response.body()?.let {data ->
+            response.body()?.let { data ->
                 Log.d(ERROR_TAG, "addWorkExperience: ${data}")
                 _currentUserFlow.update { Result.Success(data.user!!.toUser()) }
                 return@withContext Result.Success(data = data.message)
@@ -176,7 +177,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
                         response, ERROR_TAG
                     )
                 )
-                response.body()?.let {data ->
+                response.body()?.let { data ->
                     _currentUserFlow.update { Result.Success(data.user!!.toUser()) }
                     return@withContext Result.Success(data = data.message)
                 }
@@ -186,7 +187,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun searchAlumni(query: Map<String, String?>): Result<List<User>>  =
+    override suspend fun searchAlumni(query: Map<String, String?>): Result<List<User>> =
         withContext(Dispatchers.IO) {
             try {
                 val response = api.searchAlumni(query)
@@ -195,11 +196,12 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
                         response, ERROR_TAG
                     )
                 )
-                response.body()?.let {
-                    return@withContext Result.Success(it)
+                response.body()?.let { data ->
+                    val mappedData = data.map { it.toUser() }
+                    return@withContext Result.Success(mappedData)
                 }
                 Result.Error("Invalid response from server")
-            }catch(e: java.lang.Exception) {
+            } catch (e: java.lang.Exception) {
                 Result.Error(e.message ?: "Something went wrong")
             }
         }

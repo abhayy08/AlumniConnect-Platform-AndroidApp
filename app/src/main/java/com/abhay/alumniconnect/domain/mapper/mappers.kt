@@ -26,7 +26,7 @@ fun UserDetails.toUser(): User {
         achievements = this.achievements,
         interests = this.interests,
         skills = this.skills,
-        connections = this.connections,
+        connections = this.connections ?: emptyList(),
         workExperience = this.workExperience,
         privacySettings = this.privacySettings
     )

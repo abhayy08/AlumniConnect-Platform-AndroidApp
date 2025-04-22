@@ -29,6 +29,9 @@ sealed class Route {
         object Profile
 
         @Serializable
+        data class UserProfile(val userId: String)
+
+        @Serializable
         object EditProfile
 
         @Serializable

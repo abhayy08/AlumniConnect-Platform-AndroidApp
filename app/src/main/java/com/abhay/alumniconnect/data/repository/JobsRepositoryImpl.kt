@@ -142,6 +142,25 @@ class JobsRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun getJobsByUserId(userId: String): Result<List<Job>> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.getJobsByUserId(userId)
+                if (!response.isSuccessful) {
+                    return@withContext Result.Error(
+                        message = extractErrorMessage(response, ERROR_TAG)
+                    )
+                }
+
+                response.body()?.let {
+                    return@withContext Result.Success(it)
+                }
+                Result.Error(message = "An unknown error has occurred!")
+            }catch(e: Exception) {
+                Result.Error(message = e.message ?: "An unknown error has occurred!")
+            }
+        }
+
     override suspend fun createJob(job: Job): Result<String> =
         withContext(Dispatchers.IO) {
             try {

@@ -25,7 +25,11 @@ import com.abhay.alumniconnect.presentation.screens.profile.WorkExperienceSectio
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProfileDetailsPage(
-    user: User, onAddExperienceClick: () -> Unit, onExperienceEditClick: (WorkExperience) -> Unit, onLinkClick: (String) -> Unit
+    user: User,
+    onAddExperienceClick: () -> Unit,
+    onExperienceEditClick: (WorkExperience) -> Unit,
+    onLinkClick: (String) -> Unit,
+    isCurrentUser: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -54,7 +58,8 @@ fun ProfileDetailsPage(
             WorkExperienceSection(
                 user.workExperience,
                 onExperienceEditClick = { onExperienceEditClick(it) },
-                onAddExperienceClick = onAddExperienceClick
+                onAddExperienceClick = onAddExperienceClick,
+                isCurrentUser = isCurrentUser
             )
             Spacer(modifier = Modifier.height(16.dp))
         }

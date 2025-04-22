@@ -1,7 +1,9 @@
 package com.abhay.alumniconnect.presentation.screens.search
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,6 +39,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -48,12 +54,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.abhay.alumniconnect.presentation.components.AlumniCard
 import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
@@ -82,20 +91,16 @@ fun SearchScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp, bottom = 4.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+
+        SearchTypeRow(
+            searchType = searchType
         ) {
-            SearchTypeButton(
-                text = "Alumni",
-                isSelected = searchType == SearchType.ALUMNI,
-                onClick = { viewModel.onEvent(SearchUiEvent.SetSearchType(SearchType.ALUMNI)) })
-            SearchTypeButton(
-                text = "Jobs",
-                isSelected = searchType == SearchType.JOBS,
-                onClick = { viewModel.onEvent(SearchUiEvent.SetSearchType(SearchType.JOBS)) })
+            val selectedType = when (it) {
+                0 -> SearchType.ALUMNI
+                1 -> SearchType.JOBS
+                else -> SearchType.ALUMNI
+            }
+            viewModel.onEvent(SearchUiEvent.SetSearchType(selectedType))
         }
 
         SearchBar(
@@ -157,12 +162,14 @@ fun SearchScreen(
                                 item { EmptyResultsMessage(SearchType.ALUMNI) }
                             } else {
                                 items(alumniResults, key = { it.id }) { user ->
+                                    Log.d("AlumniCard", "$user")
                                     AlumniCard(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = 4.dp),
-                                        alumni = user
-                                    ) {
+                                        alumni = user,
+                                    )
+                                    {
                                         onAlumniSelected(user.id)
                                     }
                                 }
@@ -176,7 +183,12 @@ fun SearchScreen(
                                 items(jobResults, key = { it._id }) { job ->
                                     JobCard(
                                         job = job,
-                                        onClick = { onJobSelected(job._id, job.alreadyApplied == true) },
+                                        onClick = {
+                                            onJobSelected(
+                                                job._id,
+                                                job.alreadyApplied == true
+                                            )
+                                        },
                                         onApplyClick = {},
                                         alreadyApplied = false,
                                         showApplyButton = false
@@ -192,28 +204,53 @@ fun SearchScreen(
 }
 
 @Composable
-fun SearchTypeButton(
-    text: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
+fun SearchTypeRow(
+    searchType: SearchType,
+    onSearchTypeChange: (Int) -> Unit,
 ) {
-    Button(
-        onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-            contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-        ),
-        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = if (isSelected) 4.dp else 1.dp),
+    val options = listOf("Alumni", "Jobs")
+    val selectedIndex = when (searchType) {
+        SearchType.ALUMNI -> 0
+        SearchType.JOBS -> 1
+    }
+
+    TabRow(
+        selectedTabIndex = selectedIndex,
         modifier = Modifier
-            .padding(horizontal = 8.dp)
-            .height(42.dp)
-            .widthIn(min = 100.dp)
+            .fillMaxWidth()
+            .padding(top = 12.dp, bottom = 4.dp)
+            .shadow(6.dp, MaterialTheme.shapes.small)
+            .clip(MaterialTheme.shapes.small),
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        indicator = { tabPositions ->
+            Box(
+                Modifier
+                    .tabIndicatorOffset(tabPositions[selectedIndex])
+                    .fillMaxHeight()
+                    .zIndex(-1f)
+                    .padding(5.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = MaterialTheme.shapes.small
+                    )
+            )
+        },
+        divider = {}
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
-        )
+        options.forEachIndexed { index, option ->
+            Tab(
+                selected = selectedIndex == index,
+                onClick = { onSearchTypeChange(index) },
+                text = {
+                    Text(
+                        text = option,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (selectedIndex == index) Color.White else Color.Gray,
+                        fontWeight = if (selectedIndex == index) FontWeight.Bold else FontWeight.Normal
+                    )
+                }
+            )
+        }
     }
 }
 

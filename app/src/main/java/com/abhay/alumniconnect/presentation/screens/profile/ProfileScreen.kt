@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -64,6 +65,7 @@ import java.time.Year
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(
+    isCurrentUser: Boolean = true,
     profileState: ProfileState,
     jobsState: List<Job>,
     uiState: ProfileUiState,
@@ -98,11 +100,14 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
+                .then(
+                    if(!isCurrentUser) Modifier.safeDrawingPadding() else Modifier
+                )
         ) {
             profileState.user?.let { user ->
                 // Profile header is always visible
                 Column(modifier = Modifier.padding(16.dp)) {
-                    ProfileHeader(user, onConnectionsClick, onProfileEditClick)
+                    ProfileHeader(user, onConnectionsClick, onProfileEditClick, isCurrentUser = isCurrentUser)
                 }
 
                 // Tab row
@@ -135,7 +140,8 @@ fun ProfileScreen(
                             user = user,
                             onAddExperienceClick = onAddExperienceClick,
                             onExperienceEditClick = onExperienceEditClick,
-                            onLinkClick = onLinkClick
+                            onLinkClick = onLinkClick,
+                            isCurrentUser = isCurrentUser
                         )
 
                         1 -> JobsPostedPage(jobs = jobsState, onJobClick = onJobClick)
@@ -178,7 +184,12 @@ fun ProfileTab(
 }
 
 @Composable
-fun ProfileHeader(user: User, onConnectionsClick: () -> Unit, onProfileEditClick: () -> Unit) {
+fun ProfileHeader(
+    user: User,
+    onConnectionsClick: () -> Unit,
+    onProfileEditClick: () -> Unit,
+    isCurrentUser: Boolean
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -228,16 +239,20 @@ fun ProfileHeader(user: User, onConnectionsClick: () -> Unit, onProfileEditClick
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onConnectionsClick() })
-            Button(
-                onClick = onProfileEditClick,
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier
-                    .padding(4.dp)
-                    .height(35.dp)
-                    .align(Alignment.End)
-            ) {
-                Text("Edit Profile")
+                modifier = Modifier.clickable { onConnectionsClick() }
+            )
+
+            if(isCurrentUser) {
+                Button(
+                    onClick = onProfileEditClick,
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .height(35.dp)
+                        .align(Alignment.End)
+                ) {
+                    Text("Edit Profile")
+                }
             }
         }
     }
@@ -326,7 +341,8 @@ fun SkillsAndInterestsSection(skills: List<String>, interests: List<String>) {
 fun WorkExperienceSection(
     workExperience: List<WorkExperience>,
     onExperienceEditClick: (WorkExperience) -> Unit,
-    onAddExperienceClick: () -> Unit
+    onAddExperienceClick: () -> Unit,
+    isCurrentUser: Boolean
 ) {
     Column {
         Row(
@@ -340,16 +356,18 @@ fun WorkExperienceSection(
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-            IconButton(
-                onClick = onAddExperienceClick,
-            ) {
-                Icon(
-                    Icons.Rounded.Add, contentDescription = "Add Experience"
-                )
+            if(isCurrentUser) {
+                IconButton(
+                    onClick = onAddExperienceClick,
+                ) {
+                    Icon(
+                        Icons.Rounded.Add, contentDescription = "Add Experience"
+                    )
+                }
             }
         }
         workExperience.forEach { work ->
-            WorkExperienceItem(work, onExperienceEditClick = { onExperienceEditClick(work) })
+            WorkExperienceItem(work, onExperienceEditClick = { onExperienceEditClick(work) }, isCurrentUser = isCurrentUser)
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth(0.89f)
@@ -370,7 +388,7 @@ fun AccountCreationInfo(createdAt: String) {
 
 @Composable
 fun WorkExperienceItem(
-    work: WorkExperience, onExperienceEditClick: () -> Unit
+    work: WorkExperience, onExperienceEditClick: () -> Unit, isCurrentUser: Boolean
 ) {
     Card(
         shape = AppShapes.small,
@@ -398,11 +416,13 @@ fun WorkExperienceItem(
                     )
                 }
 
-                IconButton(
-                    onClick = onExperienceEditClick
-                ) {
-                    Icon(Icons.Rounded.Edit, contentDescription = "Edit Experience")
-                }
+               if(isCurrentUser) {
+                   IconButton(
+                       onClick = onExperienceEditClick
+                   ) {
+                       Icon(Icons.Rounded.Edit, contentDescription = "Edit Experience")
+                   }
+               }
             }
             work.description?.let {
                 Text(

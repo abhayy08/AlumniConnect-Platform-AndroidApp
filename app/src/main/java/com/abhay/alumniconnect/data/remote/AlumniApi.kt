@@ -75,6 +75,9 @@ interface AlumniApi {
     @GET("jobs/offered")
     suspend fun getOfferedJobs(): Response<List<Job>>
 
+    @GET("jobs/user/{userId}")
+    suspend fun getJobsByUserId(@Path("userId") userId: String): Response<List<Job>>
+
     @POST("jobs")
     suspend fun createJob(@Body requestBody: Job): Response<ApiResponse>
 
@@ -120,6 +123,6 @@ interface AlumniApi {
     @GET("profile/search")
     suspend fun searchAlumni(
         @QueryMap filters: Map<String, String?>
-    ): Response<List<User>>
+    ): Response<List<UserDetails>>
 
 }

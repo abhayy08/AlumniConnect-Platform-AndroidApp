@@ -1,6 +1,6 @@
 package com.abhay.alumniconnect.presentation.screens.search
 
-import android.view.SearchEvent
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abhay.alumniconnect.data.remote.dto.job.Job
@@ -108,7 +108,14 @@ class SearchViewModel @Inject constructor(
         }
 
         val result = profileRepository.searchAlumni(filters)
-        if (result is Result.Success<*>) _alumniResults.value = result.data!!
+        when (result) {
+            is Result.Success<*> -> {
+                _alumniResults.value = result.data!!
+            }
+            is Result.Error<*> -> {
+                _error.value = result.message
+            }
+        }
     }
 
     private suspend fun searchJobs() {
@@ -130,7 +137,14 @@ class SearchViewModel @Inject constructor(
         }
 
         val result = jobsRepository.searchJobs(filters)
-        if (result is Result.Success<*>) _jobResults.value = result.data!!
+        when(result) {
+            is Result.Success<*> -> {
+                _jobResults.value = result.data!!
+            }
+            is Result.Error<*> -> {
+                _error.value = result.message
+            }
+        }
     }
 }
 
