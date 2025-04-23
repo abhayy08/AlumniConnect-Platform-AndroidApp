@@ -74,7 +74,7 @@ fun ProfileScreen(
     onAddExperienceClick: () -> Unit = {},
     onExperienceEditClick: (WorkExperience) -> Unit = {},
     showSnackbar: (String) -> Unit = {},
-    onJobClick: (String) -> Unit = {},
+    onJobClick: (String, Boolean) -> Unit = {_, _ -> },
     onLinkClick: (String) -> Unit = {}
 ) {
 

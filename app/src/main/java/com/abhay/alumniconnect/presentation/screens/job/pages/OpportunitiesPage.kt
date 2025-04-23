@@ -28,7 +28,7 @@ fun OpportunitiesPage(
                 JobCard(
                     job = it,
                     onApplyClick = { onApplyClick(it._id) },
-                    onClick = { onJobCardClick(it._id, false) }
+                    onClick = { onJobCardClick(it._id, it.alreadyApplied == true) }
                 )
             }
         }

@@ -20,7 +20,7 @@ import com.abhay.alumniconnect.presentation.components.JobCard
 fun JobsPostedPage(
     modifier: Modifier = Modifier,
     jobs: List<Job> = emptyList(),
-    onJobClick: (String) -> Unit
+    onJobClick: (String, Boolean) -> Unit
 ) {
     if(jobs.isNotEmpty()) {
         LazyColumn(
@@ -33,7 +33,7 @@ fun JobsPostedPage(
                     alreadyApplied = false,
                     showApplyButton = false
                 ) {
-                    onJobClick(it._id)
+                    onJobClick(it._id, it.alreadyApplied == true)
                 }
             }
         }

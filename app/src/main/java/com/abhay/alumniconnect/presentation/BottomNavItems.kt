@@ -1,7 +1,6 @@
 package com.abhay.alumniconnect.presentation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Event
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Search
@@ -32,7 +31,7 @@ val topLevelDestinations = listOf(
         icon = Icons.Rounded.Work
     ),
     BottomNavItem(
-        route = Route.MainRoute.Profile,
+        route = Route.MainRoute.CurrentUserProfile,
         title = "Profile",
         icon = Icons.Rounded.Person
     )

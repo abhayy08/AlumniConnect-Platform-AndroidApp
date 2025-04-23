@@ -218,7 +218,7 @@ fun NavGraphBuilder.MainNavGraph(
         )
     }
 
-    composable<Route.MainRoute.Profile> {
+    composable<Route.MainRoute.CurrentUserProfile> {
         val viewModel = hiltViewModel<ProfileViewModel>()
         val profileUiState = viewModel.profileState.collectAsState().value
         val jobsState = viewModel.jobsState.collectAsState().value
@@ -250,7 +250,7 @@ fun NavGraphBuilder.MainNavGraph(
                     )
                 },
                 showSnackbar = onShowSnackbarMessage,
-                onJobClick = { jobId ->
+                onJobClick = { jobId, _ ->
                     navController.navigate(Route.MainRoute.Applicants(jobId = jobId))
                 },
                 onLinkClick = { link ->
@@ -290,7 +290,9 @@ fun NavGraphBuilder.MainNavGraph(
             uiState = uiState,
             onProfileEditClick = {},
             onConnectionsClick = { },
-            onJobClick = { jobId -> navController.navigate(Route.MainRoute.JobDetail(jobId = jobId)) }
+            onJobClick = { jobId, alreadyApplied->
+                navController.navigate(Route.MainRoute.JobDetail(jobId = jobId, alreadyApplied = alreadyApplied))
+            }
         )
     }
 

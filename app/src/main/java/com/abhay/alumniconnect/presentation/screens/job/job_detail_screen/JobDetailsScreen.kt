@@ -211,7 +211,7 @@ fun PostedByCard(
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = postedBy.name.first().toString(),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }

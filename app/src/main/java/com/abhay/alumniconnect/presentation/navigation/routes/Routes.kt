@@ -26,7 +26,7 @@ sealed class Route {
         object CreatePost
 
         @Serializable
-        object Profile
+        object CurrentUserProfile
 
         @Serializable
         data class UserProfile(val userId: String)
