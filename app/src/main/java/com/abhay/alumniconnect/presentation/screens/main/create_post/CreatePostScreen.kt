@@ -61,6 +61,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.abhay.alumniconnect.domain.model.User
+import com.abhay.alumniconnect.presentation.components.LinkifiedText
 import com.abhay.alumniconnect.presentation.dummyUser
 import com.example.compose.AlumniConnectTheme
 import java.util.regex.Pattern
@@ -224,7 +225,10 @@ fun CreatePostScreen(
                         color = MaterialTheme.colorScheme.surface
                     ) {
                         LinkifiedText(
-                            text = postState.content, modifier = Modifier.padding(12.dp)
+                            text = postState.content, modifier = Modifier.padding(12.dp),
+                            style = TextStyle(
+                                fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface
+                            ),
                         )
                     }
                 }
@@ -260,71 +264,6 @@ fun CreatePostScreen(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun LinkifiedText(
-    text: String, modifier: Modifier = Modifier
-) {
-    val uriHandler = LocalUriHandler.current
-    val annotatedString = buildLinkifiedText(text)
-    var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
-
-    Text(
-        text = annotatedString, style = TextStyle(
-        fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface
-    ), onTextLayout = { layoutResult = it }, modifier = modifier.pointerInput(Unit) {
-        detectTapGestures { offset ->
-            layoutResult?.let { layout ->
-                val position = layout.getOffsetForPosition(offset)
-                annotatedString.getStringAnnotations("URL", position, position).firstOrNull()
-                    ?.let { annotation ->
-                        uriHandler.openUri(annotation.item)
-                    }
-            }
-        }
-    })
-}
-
-@Composable
-private fun buildLinkifiedText(text: String): AnnotatedString {
-    val urlPattern = Pattern.compile(
-        "(https?://|www\\.)[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)",
-        Pattern.CASE_INSENSITIVE
-    )
-
-    return buildAnnotatedString {
-        val matcher = urlPattern.matcher(text)
-        var lastIndex = 0
-
-        while (matcher.find()) {
-            // Add text before the link
-            append(text.substring(lastIndex, matcher.start()))
-
-            val url = matcher.group()
-            val fullUrl = if (url.startsWith("www.")) "https://$url" else url
-
-            // Add the link with styling and annotation
-            pushStringAnnotation("URL", fullUrl)
-            withStyle(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.primary,
-                    textDecoration = TextDecoration.Underline,
-                    fontWeight = FontWeight.Medium
-                )
-            ) {
-                append(url)
-            }
-            pop()
-
-            lastIndex = matcher.end()
-        }
-
-        // Add any remaining text
-        if (lastIndex < text.length) {
-            append(text.substring(lastIndex))
         }
     }
 }

@@ -69,6 +69,7 @@ fun JobApplicationScreen(
                 .padding(top = 110.dp)
         ) {
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = state.resumeLink,
                 onValueChange = { onEvent(JobApplicationEvents.UpdateResumeLink(it)) },
                 label = "Resume Link",
@@ -76,6 +77,7 @@ fun JobApplicationScreen(
                 isError = state.resumeError
             )
             CustomOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = state.coverLetter,
                 onValueChange = { onEvent(JobApplicationEvents.UpdateCoverLetter(it)) },
                 label = "Cover Letter (Optional)"

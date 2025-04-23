@@ -1,9 +1,18 @@
 package com.abhay.alumniconnect.presentation.navigation.graphs
 
 import android.util.Log
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -43,25 +52,70 @@ fun NavGraphBuilder.MainNavGraph(
     onShowSnackbarMessage: (String) -> Unit = { _ -> },
     mainViewModel: MainViewModel
 ) {
+
+    val EnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? =
+        {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(400)
+            )
+        }
+
+    val ExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = {
+        slideOutOfContainer(
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
+            animationSpec = tween(400)
+        )
+    }
+
+    val PopEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? =
+        {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(400)
+            )
+        }
+
+    val PopExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? =
+        {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(400)
+            )
+        }
+
     composable<Route.MainRoute.Home> {
         val viewModel = hiltViewModel<HomeViewModel>()
         val uiState = viewModel.uiState.collectAsState().value
         val postsState = viewModel.postsState.collectAsState().value
         val commentsState = viewModel.commentsState.collectAsState().value
+        val currentUser = mainViewModel.currentUser.collectAsState().value
 
-        HomeScreen(
-            uiState = uiState,
-            postsState = postsState,
-            commentsState = commentsState,
-            onEvent = viewModel::onEvent,
-            showSnackbar = onShowSnackbarMessage
-        )
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            HomeScreen(
+                currentUser = currentUser,
+                uiState = uiState,
+                postsState = postsState,
+                commentsState = commentsState,
+                onEvent = viewModel::onEvent,
+                showSnackbar = onShowSnackbarMessage
+            )
+        }
     }
 
-    composable<Route.MainRoute.CreatePost> {
+    composable<Route.MainRoute.CreatePost>(
+        enterTransition = EnterTransition,
+        exitTransition = ExitTransition,
+        popEnterTransition = PopEnterTransition,
+        popExitTransition = PopExitTransition
+    ) {
         val viewModel = hiltViewModel<CreatePostViewModel>()
         val currentUser = mainViewModel.currentUser.collectAsState().value
         val state = viewModel.createPostState.collectAsState().value
+
         CreatePostScreen(
             currentUser = currentUser,
             onNavigateBack = { navController.navigateUp() },
@@ -78,18 +132,28 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.Search> {
-        SearchScreen(onAlumniSelected = { userId ->
-            navController.navigate(Route.MainRoute.UserProfile(userId = userId))
-        }, onJobSelected = { jobId, alreadyApplied ->
-            navController.navigate(
-                Route.MainRoute.JobDetail(
-                    alreadyApplied = alreadyApplied, jobId = jobId
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            SearchScreen(onAlumniSelected = { userId ->
+                navController.navigate(Route.MainRoute.UserProfile(userId = userId))
+            }, onJobSelected = { jobId, alreadyApplied ->
+                navController.navigate(
+                    Route.MainRoute.JobDetail(
+                        alreadyApplied = alreadyApplied, jobId = jobId
+                    )
                 )
-            )
-        })
+            })
+        }
     }
 
-    composable<Route.MainRoute.JobDetail> {
+    composable<Route.MainRoute.JobDetail>(
+        enterTransition = EnterTransition,
+        popEnterTransition = PopEnterTransition,
+        exitTransition = ExitTransition,
+        popExitTransition = PopExitTransition
+    ) {
         val args = it.toRoute<Route.MainRoute.JobDetail>()
         val viewmodel = hiltViewModel<JobDetailViewModel>(it)
         val jobDetailsState = viewmodel.jobDetailsState.collectAsState().value
@@ -115,7 +179,12 @@ fun NavGraphBuilder.MainNavGraph(
         )
     }
 
-    composable<Route.MainRoute.Applicants> {
+    composable<Route.MainRoute.Applicants>(
+        enterTransition = EnterTransition,
+        popEnterTransition = PopEnterTransition,
+        exitTransition = ExitTransition,
+        popExitTransition = PopExitTransition
+    ) {
         val args = it.toRoute<Route.MainRoute.Applicants>()
         val viewModel = hiltViewModel<ApplicantsViewModel>()
 
@@ -153,40 +222,51 @@ fun NavGraphBuilder.MainNavGraph(
         val jobsState = viewModel.jobsState.collectAsState().value
         val uiState = viewModel.uiState.collectAsState().value
 
-        ProfileScreen(
-            profileState = profileUiState,
-            jobsState = jobsState,
-            uiState = uiState,
-            onConnectionsClick = { navController.navigate(Route.MainRoute.Connections) },
-            onProfileEditClick = { navController.navigate(Route.MainRoute.EditProfile) },
-            onAddExperienceClick = {
-                navController.navigate(Route.MainRoute.AddEditExperience())
-            },
-            onExperienceEditClick = { experience ->
-                navController.navigate(
-                    Route.MainRoute.AddEditExperience(
-                        experienceId = experience._id,
-                        company = experience.company,
-                        description = experience.description,
-                        endDate = experience.endDate,
-                        position = experience.position,
-                        startDate = experience.startDate
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            ProfileScreen(
+                profileState = profileUiState,
+                jobsState = jobsState,
+                uiState = uiState,
+                onConnectionsClick = { navController.navigate(Route.MainRoute.Connections) },
+                onProfileEditClick = { navController.navigate(Route.MainRoute.EditProfile) },
+                onAddExperienceClick = {
+                    navController.navigate(Route.MainRoute.AddEditExperience())
+                },
+                onExperienceEditClick = { experience ->
+                    navController.navigate(
+                        Route.MainRoute.AddEditExperience(
+                            experienceId = experience._id,
+                            company = experience.company,
+                            description = experience.description,
+                            endDate = experience.endDate,
+                            position = experience.position,
+                            startDate = experience.startDate
+                        )
                     )
-                )
-            },
-            showSnackbar = onShowSnackbarMessage,
-            onJobClick = { jobId ->
-                navController.navigate(Route.MainRoute.Applicants(jobId = jobId))
-            },
-            onLinkClick = { link ->
-                AppUtils.openLink(link)
-            })
+                },
+                showSnackbar = onShowSnackbarMessage,
+                onJobClick = { jobId ->
+                    navController.navigate(Route.MainRoute.Applicants(jobId = jobId))
+                },
+                onLinkClick = { link ->
+                    AppUtils.openLink(link)
+                }
+            )
+        }
     }
 
-    composable<Route.MainRoute.UserProfile> {
+    composable<Route.MainRoute.UserProfile>(
+        enterTransition = EnterTransition,
+        popEnterTransition = PopEnterTransition,
+        exitTransition = ExitTransition,
+        popExitTransition = PopExitTransition
+    ) {
         val args = it.toRoute<Route.MainRoute.UserProfile>()
         val viewModel = hiltViewModel<UserProfileViewModel>()
-        Log.d("UserProfile", "UserProfile:")
+
 
         LaunchedEffect(args.userId) {
             if (args.userId != null) {
@@ -208,7 +288,8 @@ fun NavGraphBuilder.MainNavGraph(
             uiState = uiState,
             onProfileEditClick = {},
             onConnectionsClick = { },
-            onJobClick = { jobId -> navController.navigate(Route.MainRoute.JobDetail(jobId = jobId)) })
+            onJobClick = { jobId -> navController.navigate(Route.MainRoute.JobDetail(jobId = jobId)) }
+        )
     }
 
     composable<Route.MainRoute.Connections> {
@@ -216,7 +297,12 @@ fun NavGraphBuilder.MainNavGraph(
             connections = dummyUser.connections, onBackClick = { navController.navigateUp() })
     }
 
-    composable<Route.MainRoute.EditProfile> {
+    composable<Route.MainRoute.EditProfile>(
+        enterTransition = EnterTransition,
+        popEnterTransition = PopEnterTransition,
+        exitTransition = ExitTransition,
+        popExitTransition = PopExitTransition
+    ) {
         val viewModel = hiltViewModel<EditProfileViewModel>()
         val editProfileState = viewModel.editProfileState.collectAsState().value
         val uiState = viewModel.uiState.collectAsState().value
@@ -228,7 +314,12 @@ fun NavGraphBuilder.MainNavGraph(
             onBackClick = { navController.popUp() })
     }
 
-    composable<Route.MainRoute.AddEditExperience> {
+    composable<Route.MainRoute.AddEditExperience>(
+        enterTransition = EnterTransition,
+        popEnterTransition = PopEnterTransition,
+        exitTransition = ExitTransition,
+        popExitTransition = PopExitTransition
+    ) {
         val args = it.toRoute<Route.MainRoute.AddEditExperience>()
         val viewModel = hiltViewModel<AddEditExperienceViewModel>()
         viewModel.init(
@@ -251,7 +342,12 @@ fun NavGraphBuilder.MainNavGraph(
         )
     }
 
-    composable<Route.MainRoute.CreateJob> {
+    composable<Route.MainRoute.CreateJob>(
+        enterTransition = EnterTransition,
+        popEnterTransition = PopEnterTransition,
+        exitTransition = ExitTransition,
+        popExitTransition = PopExitTransition
+    ) {
         val viewModel = hiltViewModel<CreateJobViewModel>()
         val newJobState = viewModel.newJobState.collectAsState().value
         CreateJobScreen(
@@ -261,7 +357,12 @@ fun NavGraphBuilder.MainNavGraph(
         )
     }
 
-    composable<Route.MainRoute.Jobs.Application> {
+    composable<Route.MainRoute.Jobs.Application>(
+        enterTransition = EnterTransition,
+        popEnterTransition = PopEnterTransition,
+        exitTransition = ExitTransition,
+        popExitTransition = PopExitTransition
+    ) {
         val args = it.toRoute<Route.MainRoute.Jobs.Application>()
         val viewModel = hiltViewModel<JobApplicationViewModel>(it)
         val state = viewModel.applicationState.collectAsState().value
@@ -305,22 +406,25 @@ fun NavGraphBuilder.jobNavGraph(
 
             val jobScreenState = viewModel.jobScreenState.collectAsState().value
             val jobUiState = viewModel.jobUiState.collectAsState().value
-            JobsScreen(
-                jobScreenState = jobScreenState,
-                uiState = jobUiState,
-                onApplyClick = { navController.navigate(Route.MainRoute.Jobs.Application(it)) },
-                onJobCardClick = { id, appliedOrNot ->
-                    navController.navigate(
-                        Route.MainRoute.JobDetail(
-                            jobId = id, alreadyApplied = appliedOrNot
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                JobsScreen(
+                    jobScreenState = jobScreenState,
+                    uiState = jobUiState,
+                    onApplyClick = { navController.navigate(Route.MainRoute.Jobs.Application(it)) },
+                    onJobCardClick = { id, appliedOrNot ->
+                        navController.navigate(
+                            Route.MainRoute.JobDetail(
+                                jobId = id, alreadyApplied = appliedOrNot
+                            )
                         )
-                    )
-                },
-                onShowSnackbarMessage = showSnackbar
-            )
+                    },
+                    onShowSnackbarMessage = showSnackbar
+                )
+            }
         }
-
-
     }
 }
 

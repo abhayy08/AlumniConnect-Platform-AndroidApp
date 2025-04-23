@@ -236,7 +236,7 @@ val dummyPosts = listOf(
                 createdAt = "2025-04-09T10:30:00Z"
             )
         ),
-        content = "Today I learned about MongoDB relationships in Mongoose.",
+        content = "Today I  learned about MongoDB relationships in Mongoose.",
         createdAt = "2025-04-09T09:45:00Z",
         updatedAt = "2025-04-09T11:00:00Z",
         likes = listOf(

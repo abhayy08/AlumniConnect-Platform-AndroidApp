@@ -44,6 +44,10 @@ class ProfileViewModel @Inject constructor(
         getPostsByUser()
     }
 
+    fun loadCurrentUserFromMainViewModel(user: User?) {
+        _profileState.update { it.copy(user = user) }
+    }
+
     private fun getPostsByUser() {
         viewModelScope.launch {
 //            when(val result = postsRepository.getPostsByCurrentUser()) {
