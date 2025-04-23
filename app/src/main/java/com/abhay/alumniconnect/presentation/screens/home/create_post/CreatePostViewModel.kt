@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.presentation.screens.main.create_post
+package com.abhay.alumniconnect.presentation.screens.home.create_post
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

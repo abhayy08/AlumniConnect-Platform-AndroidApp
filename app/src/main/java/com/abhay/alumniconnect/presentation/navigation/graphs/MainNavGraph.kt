@@ -1,6 +1,5 @@
 package com.abhay.alumniconnect.presentation.navigation.graphs
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -29,10 +28,10 @@ import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobScre
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetailViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails
-import com.abhay.alumniconnect.presentation.screens.main.HomeScreen
-import com.abhay.alumniconnect.presentation.screens.main.HomeViewModel
-import com.abhay.alumniconnect.presentation.screens.main.create_post.CreatePostScreen
-import com.abhay.alumniconnect.presentation.screens.main.create_post.CreatePostViewModel
+import com.abhay.alumniconnect.presentation.screens.home.HomeScreen
+import com.abhay.alumniconnect.presentation.screens.home.HomeViewModel
+import com.abhay.alumniconnect.presentation.screens.home.create_post.CreatePostScreen
+import com.abhay.alumniconnect.presentation.screens.home.create_post.CreatePostViewModel
 import com.abhay.alumniconnect.presentation.screens.profile.ConnectionsScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileViewModel
@@ -175,7 +174,10 @@ fun NavGraphBuilder.MainNavGraph(
                 navController.navigate(Route.MainRoute.Jobs.Application(id = it))
             },
             resetError = { viewmodel.resetError() },
-            showSnackbar = onShowSnackbarMessage
+            showSnackbar = onShowSnackbarMessage,
+            onUserClick = { userId ->
+                navController.navigate(Route.MainRoute.UserProfile(userId = userId))
+            }
         )
     }
 

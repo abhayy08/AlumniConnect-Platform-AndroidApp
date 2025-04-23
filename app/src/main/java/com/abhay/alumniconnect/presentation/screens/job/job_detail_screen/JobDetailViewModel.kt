@@ -51,6 +51,7 @@ class JobDetailViewModel @Inject constructor(
                         isInDeadline = isInDeadline,
                         isLoading = false
                     )
+
                 }
                 is Result.Error<*> -> {
                     Log.e("JobDetailViewModel", "Error loading job details ${result.message}")

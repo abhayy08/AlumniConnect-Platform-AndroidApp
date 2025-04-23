@@ -29,7 +29,7 @@ import com.abhay.alumniconnect.domain.model.User
 @Composable
 fun AlumniCard(
     modifier: Modifier,
-    alumni: User,
+    user: User,
     onClick: () -> Unit,
 ) {
     Card(
@@ -50,7 +50,7 @@ fun AlumniCard(
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
-                        text = alumni.name.first().toString(),
+                        text = user.name.first().toString(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -65,14 +65,14 @@ fun AlumniCard(
                     .padding(start = 16.dp)
             ) {
                 Text(
-                    text = alumni.name,
+                    text = user.name,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
 
-                if (alumni.currentJob.isNotEmpty()) {
+                if (user.currentJob.isNotEmpty()) {
                     Text(
-                        text = "${alumni.jobTitle} at ${alumni.company}",
+                        text = "${user.jobTitle} at ${user.company}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
@@ -90,7 +90,7 @@ fun AlumniCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${alumni.degree} in ${alumni.major}, ${alumni.graduationYear}",
+                        text = "${user.degree} in ${user.major}, ${user.graduationYear}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )

@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.presentation.screens.job.components
+package com.abhay.alumniconnect.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -32,8 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.data.remote.dto.job.Job
-import com.abhay.alumniconnect.presentation.components.CustomChip
-import com.abhay.alumniconnect.presentation.components.InfoLabel
 import com.abhay.alumniconnect.presentation.dummyJobs
 import com.abhay.alumniconnect.utils.capitalize
 import com.abhay.alumniconnect.utils.formatDateForDisplay
@@ -66,9 +64,32 @@ fun JobCard(
             // title + company + logo
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
+                // Company logo
+                Surface(
+                    modifier = Modifier.size(45.dp),
+                    shape = MaterialTheme.shapes.small,
+                    color = Color.Black,
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                    ),
+                    shadowElevation = 4.dp
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = job.company.first().uppercase(),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                // Job title and company
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = job.title,
@@ -79,30 +100,13 @@ fun JobCard(
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = job.company,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
 
-                // Company logo
-                Surface(
-                    modifier = Modifier.size(40.dp),
-                    shape = MaterialTheme.shapes.small,
-                    color = Color.Black,
-                    border = BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-                    ),
-                    shadowElevation = 6.dp
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = job.company.first().uppercase(),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.tertiary
-                        )
-                    }
+                if (alreadyApplied && job.applications.isNotEmpty()) {
+                    StatusTag(name = job.applications[0].status.capitalize())
                 }
             }
 
@@ -175,7 +179,7 @@ fun JobCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Posted on ${formatDateForDisplay(job.createdAt.toString())}",
+                        text = "Created on ${formatDateForDisplay(job.createdAt.toString())}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
@@ -196,6 +200,25 @@ fun JobCard(
         }
     }
 }
+
+@Composable
+fun StatusTag(name: String) {
+    Surface(
+        color = MaterialTheme.colorScheme.primaryContainer,
+        shape = MaterialTheme.shapes.extraSmall,
+        shadowElevation = 1.dp,
+        modifier = Modifier
+            .padding(end = 4.dp, top = 4.dp)
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+    }
+}
+
 
 @Preview
 @Composable

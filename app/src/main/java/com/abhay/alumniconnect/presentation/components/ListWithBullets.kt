@@ -35,7 +35,7 @@ fun ListWithBullets(
         ) {
             value.forEach { item ->
                 Row(
-                    verticalAlignment = Alignment.Top,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 4.dp)
                 ) {
                     Text(

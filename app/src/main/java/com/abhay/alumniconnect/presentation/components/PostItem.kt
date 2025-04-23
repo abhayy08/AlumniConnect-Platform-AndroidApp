@@ -96,7 +96,7 @@ fun PostItem(
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = formatDateForDisplay(post.createdAt),
+                            text = formatDateForDisplay(post.createdAt, true),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )

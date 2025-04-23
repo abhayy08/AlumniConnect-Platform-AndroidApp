@@ -1,4 +1,4 @@
-package com.abhay.alumniconnect.presentation.screens.main
+package com.abhay.alumniconnect.presentation.screens.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition

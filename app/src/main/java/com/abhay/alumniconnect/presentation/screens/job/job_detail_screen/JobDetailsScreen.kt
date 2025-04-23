@@ -2,14 +2,20 @@ package com.abhay.alumniconnect.presentation.screens.job.job_detail_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -21,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -32,13 +39,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.abhay.alumniconnect.data.remote.dto.job.Job
+import com.abhay.alumniconnect.data.remote.dto.job.PostedBy
 import com.abhay.alumniconnect.presentation.components.CustomChip
 import com.abhay.alumniconnect.presentation.components.InfoLabel
 import com.abhay.alumniconnect.presentation.components.InfoLabelWithChip
 import com.abhay.alumniconnect.presentation.components.ListWithBullets
 import com.abhay.alumniconnect.utils.capitalize
 import com.abhay.alumniconnect.utils.formatDateForDisplay
-
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -49,6 +56,7 @@ fun JobDetails(
     alreadyApplied: Boolean,
     resetError: () -> Unit,
     showSnackbar: (String) -> Unit,
+    onUserClick: (String) -> Unit,
 ) {
     BackHandler { onBackClick() }
 
@@ -79,25 +87,31 @@ fun JobDetails(
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .padding(horizontal = 10.dp, vertical = 8.dp)
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
                     .verticalScroll(rememberScrollState())
             ) {
                 val spacing = 12.dp
 
-                InfoLabelWithChip(
-                    label = "Job Type",
-                    value = job.jobType.capitalize(),
-                    labelStyle = MaterialTheme.typography.titleMedium,
-                    labelColor = MaterialTheme.colorScheme.onBackground
-                )
-                Spacer(Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    InfoLabelWithChip(
+                        label = "Job Type",
+                        value = job.jobType.capitalize(),
+                        labelStyle = MaterialTheme.typography.titleMedium,
+                        labelColor = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.weight(1f)
+                    )
+                    InfoLabelWithChip(
+                        label = "Location",
+                        value = job.location.capitalize(),
+                        labelStyle = MaterialTheme.typography.titleMedium,
+                        labelColor = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
-                InfoLabelWithChip(
-                    label = "Location",
-                    value = job.location.capitalize(),
-                    labelStyle = MaterialTheme.typography.titleMedium,
-                    labelColor = MaterialTheme.colorScheme.onBackground
-                )
                 Spacer(Modifier.height(6.dp))
 
                 InfoLabelWithChip(
@@ -152,6 +166,68 @@ fun JobDetails(
                 ListWithBullets(
                     value = job.benefitsOffered, modifier = Modifier.fillMaxWidth()
                 )
+
+                Spacer(Modifier.height(spacing))
+
+                InfoLabel(
+                    label = "Posted By",
+                    labelStyle = MaterialTheme.typography.titleMedium,
+                    labelColor = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(Modifier.height(spacing))
+                job.postedBy?.let {
+                    PostedByCard(
+                        postedBy = job.postedBy,
+                    ){
+                        onUserClick(job.postedBy._id)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PostedByCard(
+    postedBy: PostedBy,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = MaterialTheme.shapes.small
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                modifier = Modifier.size(50.dp),
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = postedBy.name.first().toString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = postedBy.name.capitalize(),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = postedBy.email.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
     }
@@ -195,7 +271,6 @@ private fun JobDetailsBottomBar(
                 style = MaterialTheme.typography.labelMedium,
                 color = Color.Gray
             )
-
         }
         Button(
             modifier = Modifier
@@ -209,7 +284,7 @@ private fun JobDetailsBottomBar(
                 if (!isInDeadline) {
                     "Registration Ended on ${formatDateForDisplay(deadline)}"
                 } else if (alreadyApplied) {
-                    ("Applied on $appliedAt") ?: "Applied"
+                ("Applied on $appliedAt")
                 } else {
                     "Apply Now"
                 }

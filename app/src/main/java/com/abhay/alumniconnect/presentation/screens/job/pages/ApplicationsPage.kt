@@ -1,6 +1,5 @@
 package com.abhay.alumniconnect.presentation.screens.job.pages
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,7 +8,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.abhay.alumniconnect.data.remote.dto.job.Job
-import com.abhay.alumniconnect.presentation.screens.job.components.JobCard
+import com.abhay.alumniconnect.presentation.components.JobCard
 
 @Composable
 fun ApplicationsPage(
