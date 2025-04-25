@@ -66,7 +66,9 @@ val dummyUser = User(
         showEmail = true,
         showPhone = false,
         showLocation = true
-    )
+    ),
+    isConnected = false,
+    connectionCount = 0
 )
 
 

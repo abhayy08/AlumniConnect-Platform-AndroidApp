@@ -28,7 +28,9 @@ fun UserDetails.toUser(): User {
         skills = this.skills,
         connections = this.connections ?: emptyList(),
         workExperience = this.workExperience,
-        privacySettings = this.privacySettings
+        privacySettings = this.privacySettings,
+        connectionCount = this.connectionCount,
+        isConnected = this.isConnected == true
     )
 }
 
@@ -58,6 +60,8 @@ fun User.toUserDetails(): UserDetails {
         university = this.university,
         updatedAt = this.updatedAt,
         workExperience = this.workExperience,
-        __v = null
+        __v = null,
+        isConnected = this.isConnected,
+        connectionCount = this.connectionCount
     )
 }

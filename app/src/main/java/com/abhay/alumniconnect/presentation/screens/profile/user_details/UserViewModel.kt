@@ -64,6 +64,28 @@ class UserProfileViewModel @Inject constructor(
         viewModelScope.launch {
             when(val result = alumniRemoteRepository.connectUser(userId)){
                 is Result.Success<*> -> {
+                    _profileState.update { it.copy(
+                        user = it.user!!.copy(
+                            isConnected = true,
+                        )
+                    ) }
+                    _uiState.update { ProfileUiState.Success(message = result.data) }
+                }
+                is Result.Error<*> -> {
+                    _uiState.update { ProfileUiState.Error(message = result.message!!) }
+                }
+            }
+        }
+    }
+    fun removeConnection(userId: String) {
+        viewModelScope.launch {
+            when(val result = alumniRemoteRepository.removeConnection(userId)){
+                is Result.Success<*> -> {
+                    _profileState.update { it.copy(
+                        user = it.user!!.copy(
+                            isConnected = false
+                        )
+                    ) }
                     _uiState.update { ProfileUiState.Success(message = result.data) }
                 }
                 is Result.Error<*> -> {

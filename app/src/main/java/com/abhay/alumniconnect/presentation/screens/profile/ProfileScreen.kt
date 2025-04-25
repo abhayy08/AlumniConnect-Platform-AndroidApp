@@ -78,6 +78,7 @@ fun ProfileScreen(
     onJobClick: (String, Boolean) -> Unit = { _, _ -> },
     onLinkClick: (String) -> Unit = {},
     onAddConnection: (String) -> Unit = {},
+    onRemoveConnection: (String) -> Unit = {}
 ) {
 
     LaunchedEffect(uiState) {
@@ -87,7 +88,9 @@ fun ProfileScreen(
             }
 
             is ProfileUiState.Success -> {
-                if (uiState.message != null) showSnackbar(uiState.message)
+                uiState.message?.let {
+                    showSnackbar(it)
+                }
             }
 
             else -> {}
@@ -116,6 +119,9 @@ fun ProfileScreen(
                         isCurrentUser = isCurrentUser,
                         onAddConnectionClick = {
                             onAddConnection(user.id)
+                        },
+                        onRemoveConnection = {
+                            onRemoveConnection(user.id)
                         }
                     )
                 }
@@ -199,6 +205,7 @@ fun ProfileHeader(
     onConnectionsClick: (String) -> Unit,
     onProfileEditClick: () -> Unit,
     onAddConnectionClick: () -> Unit = {},
+    onRemoveConnection: () -> Unit = {},
     isCurrentUser: Boolean
 ) {
     Row(
@@ -246,7 +253,7 @@ fun ProfileHeader(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "${user.connections.size} Connections",
+                text = "${user.connectionCount} Connections",
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary,
@@ -254,7 +261,13 @@ fun ProfileHeader(
             )
 
             val onEditOrConnectButtonClick = remember(isCurrentUser) {
-                if (isCurrentUser) onProfileEditClick else onAddConnectionClick
+                if(isCurrentUser) {
+                    onProfileEditClick
+                } else if(!user.isConnected){
+                    onAddConnectionClick
+                }else {
+                    onRemoveConnection
+                }
             }
 
             Button(
@@ -268,7 +281,7 @@ fun ProfileHeader(
                 if (isCurrentUser) {
                     Text("Edit Profile")
                 } else {
-                    Text("Add Connection")
+                    Text(if(user.isConnected) "Remove connection" else "Connect")
                 }
             }
         }

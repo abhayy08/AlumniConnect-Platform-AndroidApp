@@ -29,5 +29,7 @@ data class User(
     val skills: List<String>,
     val connections: List<Connection>,
     val workExperience: List<WorkExperience>,
-    val privacySettings: PrivacySettings
+    val privacySettings: PrivacySettings,
+    val connectionCount: Int = 0,
+    val isConnected: Boolean
 )

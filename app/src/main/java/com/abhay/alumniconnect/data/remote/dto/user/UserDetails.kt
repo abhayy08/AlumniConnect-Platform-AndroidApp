@@ -29,5 +29,7 @@ data class UserDetails(
     val skills: List<String>,
     val university: String,
     val updatedAt: String,
-    val workExperience: List<WorkExperience>
+    val workExperience: List<WorkExperience>,
+    val connectionCount: Int = 0,
+    val isConnected: Boolean?
 )

@@ -264,7 +264,11 @@ fun NavGraphBuilder.MainNavGraph(
             },
             onAddConnection = {userId ->
                 viewModel.addConnection(userId)
-            }
+            },
+            onRemoveConnection = {userId ->
+                viewModel.removeConnection(userId)
+            },
+            showSnackbar = onShowSnackbarMessage
         )
     }
 
@@ -293,7 +297,8 @@ fun NavGraphBuilder.MainNavGraph(
             onBackClick = { navController.navigateUp() },
             onUserClick = { userId ->
                 navController.navigate(Route.MainRoute.UserProfile(userId = userId))
-            })
+            }
+        )
     }
 
     composable<Route.MainRoute.EditProfile>(

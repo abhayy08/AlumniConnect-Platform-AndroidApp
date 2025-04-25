@@ -225,13 +225,43 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
         }
 
 
-    override suspend fun connectUser(targetUserId: String): Result<String> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun connectUser(targetUserId: String): Result<String> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.connectUser(targetUserId)
+                if (!response.isSuccessful) return@withContext Result.Error(
+                    extractErrorMessage(
+                        response, ERROR_TAG
+                    )
+                )
+                response.body()?.let { data ->
+                    Log.d(ERROR_TAG, data.message.toString())
+                    return@withContext Result.Success(data = data.message)
+                }
+                Result.Error("Something went wrong, Try again later!")
+            }catch(e: java.lang.Exception) {
+                Result.Error(e.message ?: "Something went wrong, Try again later!")
+            }
+        }
 
-    override suspend fun removeConnection(targetUserId: String): Result<String> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun removeConnection(targetUserId: String): Result<String> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.removeConnection(targetUserId)
+                if (!response.isSuccessful) return@withContext Result.Error(
+                    extractErrorMessage(
+                        response, ERROR_TAG
+                    )
+                )
+                response.body()?.let { data ->
+                    Log.d(ERROR_TAG, data.message.toString())
+                    return@withContext Result.Success(data = data.message)
+                }
+                Result.Error("Something went wrong, Try again later!")
+            }catch(e: java.lang.Exception) {
+                Result.Error(e.message ?: "Something went wrong, Try again later!")
+            }
+        }
 
     companion object {
         private const val ERROR_TAG = "AlumniRemoteRepository"
