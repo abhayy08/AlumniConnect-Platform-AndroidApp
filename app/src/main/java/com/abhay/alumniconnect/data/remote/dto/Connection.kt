@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Connection(
     val _id: String,
     val name: String,
+    val email: String,
     val company: String?,
-    val jotTitle: String?
+    val jobTitle: String?
 )

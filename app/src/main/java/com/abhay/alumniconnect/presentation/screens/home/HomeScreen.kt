@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,6 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,6 +75,18 @@ fun HomeScreen(
 
     var selectedPostId by rememberSaveable { mutableStateOf<String?>(null) }
 
+    val lazyListState = rememberLazyListState()
+    val isAtEnd = remember {
+        derivedStateOf {
+            lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount - 1
+        }
+    }
+
+    LaunchedEffect(isAtEnd.value) {
+        if(isAtEnd.value) {
+            onEvent(HomeUiEvents.GetMorePost)
+        }
+    }
 
     AnimatedVisibility(
         visible = uiState != HomeUiState.Loading,
@@ -85,7 +99,8 @@ fun HomeScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                state = lazyListState
             ) {
 
                 items(items = postsState.posts, key = { it._id }) { post ->

@@ -40,9 +40,9 @@ val dummyUser = User(
     interests = listOf("Machine Learning", "Mobile Development", "IoT", "Cloud Computing"),
     skills = listOf("Kotlin", "Android", "Java", "Python", "Flutter", "React", "AWS"),
     connections = listOf(
-        Connection("1", "John Smith", "Google", "Software Engineer"),
-        Connection("2", "Alice Johnson", "Amazon", "Product Manager"),
-        Connection("3", "Bob Williams", "Microsoft", "UX Designer")
+        Connection("1", "John Smith", "Google", "Software Engineer", ""),
+        Connection("2", "Alice Johnson", "Amazon", "Product Manager", ""),
+        Connection("3", "Bob Williams", "Microsoft", "UX Designer", "")
     ),
     workExperience = listOf(
         WorkExperience(

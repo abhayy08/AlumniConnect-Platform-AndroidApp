@@ -70,7 +70,7 @@ fun ProfileScreen(
     jobsState: List<Job>,
     uiState: ProfileUiState,
     onProfileEditClick: () -> Unit,
-    onConnectionsClick: () -> Unit,
+    onConnectionsClick: (String) -> Unit,
     onAddExperienceClick: () -> Unit = {},
     onExperienceEditClick: (WorkExperience) -> Unit = {},
     showSnackbar: (String) -> Unit = {},
@@ -186,7 +186,7 @@ fun ProfileTab(
 @Composable
 fun ProfileHeader(
     user: User,
-    onConnectionsClick: () -> Unit,
+    onConnectionsClick: (String) -> Unit,
     onProfileEditClick: () -> Unit,
     isCurrentUser: Boolean
 ) {
@@ -239,7 +239,7 @@ fun ProfileHeader(
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onConnectionsClick() }
+                modifier = Modifier.clickable { onConnectionsClick(user.id) }
             )
 
             if(isCurrentUser) {

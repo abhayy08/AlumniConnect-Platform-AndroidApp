@@ -39,6 +39,9 @@ interface AlumniApi {
     @GET("profile/connections")
     suspend fun getUserConnections(): Response<List<Connection>>
 
+    @GET("profile/connections/{id}")
+    suspend fun getUserConnectionsByUserId(@Path("id") userId: String): Response<List<Connection>>
+
     @POST("profile/connect/{connectionId}")
     suspend fun connectUser(@Path("connectionId") targetUserId: String): Response<ApiResponse>
 

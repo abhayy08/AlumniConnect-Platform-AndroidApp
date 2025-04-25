@@ -51,7 +51,9 @@ sealed class Route {
 
 
         @Serializable
-        object Connections
+        data class Connections(
+            val userId: String? = null
+        )
 
         @Serializable
         object Search

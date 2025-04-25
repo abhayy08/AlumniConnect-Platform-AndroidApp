@@ -12,10 +12,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.abhay.alumniconnect.presentation.dummyUser
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
 import com.abhay.alumniconnect.presentation.navigation.utils.NavigationTransitions
 import com.abhay.alumniconnect.presentation.screens.MainViewModel
+import com.abhay.alumniconnect.presentation.screens.connections.ConnectionViewModel
+import com.abhay.alumniconnect.presentation.screens.connections.ConnectionsScreen
+import com.abhay.alumniconnect.presentation.screens.home.HomeScreen
+import com.abhay.alumniconnect.presentation.screens.home.HomeViewModel
+import com.abhay.alumniconnect.presentation.screens.home.create_post.CreatePostScreen
+import com.abhay.alumniconnect.presentation.screens.home.create_post.CreatePostViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobsScreen
 import com.abhay.alumniconnect.presentation.screens.job.application.JobApplicationScreen
@@ -24,11 +29,6 @@ import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobScre
 import com.abhay.alumniconnect.presentation.screens.job.create_job.CreateJobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetailViewModel
 import com.abhay.alumniconnect.presentation.screens.job.job_detail_screen.JobDetails
-import com.abhay.alumniconnect.presentation.screens.home.HomeScreen
-import com.abhay.alumniconnect.presentation.screens.home.HomeViewModel
-import com.abhay.alumniconnect.presentation.screens.home.create_post.CreatePostScreen
-import com.abhay.alumniconnect.presentation.screens.home.create_post.CreatePostViewModel
-import com.abhay.alumniconnect.presentation.screens.profile.ConnectionsScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileScreen
 import com.abhay.alumniconnect.presentation.screens.profile.ProfileViewModel
 import com.abhay.alumniconnect.presentation.screens.profile.add_edit_work_experience.AddEditExperienceScreen
@@ -196,7 +196,9 @@ fun NavGraphBuilder.MainNavGraph(
                 profileState = profileUiState,
                 jobsState = jobsState,
                 uiState = uiState,
-                onConnectionsClick = { navController.navigate(Route.MainRoute.Connections) },
+                onConnectionsClick = { userId ->
+                    navController.navigate(Route.MainRoute.Connections(userId = userId))
+                },
                 onProfileEditClick = { navController.navigate(Route.MainRoute.EditProfile) },
                 onAddExperienceClick = {
                     navController.navigate(Route.MainRoute.AddEditExperience())
@@ -253,16 +255,47 @@ fun NavGraphBuilder.MainNavGraph(
             jobsState = jobsState,
             uiState = uiState,
             onProfileEditClick = {},
-            onConnectionsClick = { },
-            onJobClick = { jobId, alreadyApplied->
-                navController.navigate(Route.MainRoute.JobDetail(jobId = jobId, alreadyApplied = alreadyApplied))
+            onConnectionsClick = { userId ->
+                navController.navigate(Route.MainRoute.Connections(userId = userId))
+            },
+            onJobClick = { jobId, alreadyApplied ->
+                navController.navigate(
+                    Route.MainRoute.JobDetail(
+                        jobId = jobId,
+                        alreadyApplied = alreadyApplied
+                    )
+                )
             }
         )
     }
 
-    composable<Route.MainRoute.Connections> {
+    composable<Route.MainRoute.Connections>(
+        enterTransition = NavigationTransitions.enterTransition,
+        exitTransition = NavigationTransitions.exitTransition,
+        popEnterTransition = NavigationTransitions.popEnterTransition,
+        popExitTransition = NavigationTransitions.popExitTransition
+    ) {
+        val args = it.toRoute<Route.MainRoute.Connections>()
+        val viewmodel = hiltViewModel<ConnectionViewModel>()
+
+        LaunchedEffect(args.userId) {
+            viewmodel.initialize(args.userId)
+        }
+        val connections = viewmodel.connectionsState.collectAsState().value
+        val errorState = viewmodel.errorState.collectAsState().value
+
+        LaunchedEffect(errorState) {
+            if (errorState != null) {
+                onShowSnackbarMessage(errorState)
+            }
+        }
         ConnectionsScreen(
-            connections = dummyUser.connections, onBackClick = { navController.navigateUp() })
+            connections = connections,
+            onBackClick = { navController.navigateUp() },
+            onUserClick = { userId ->
+                navController.navigate(Route.MainRoute.UserProfile(userId = userId))
+            }
+        )
     }
 
     composable<Route.MainRoute.EditProfile>(

@@ -103,6 +103,24 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun getUserConnectionsByUserId(userId: String): Result<List<Connection>> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.getUserConnectionsByUserId(userId = userId)
+                if (!response.isSuccessful) return@withContext Result.Error(
+                    extractErrorMessage(
+                        response, ERROR_TAG
+                    )
+                )
+                response.body()?.let {
+                    return@withContext Result.Success(it)
+                }
+                Result.Error("Something went wrong, Try again later!")
+            }catch(e: java.lang.Exception) {
+                Result.Error(e.message ?: "Something went wrong, Try again later!")
+            }
+        }
+
     override suspend fun updateUser(user: User): Result<String> =
         withContext(Dispatchers.IO) {
             try {

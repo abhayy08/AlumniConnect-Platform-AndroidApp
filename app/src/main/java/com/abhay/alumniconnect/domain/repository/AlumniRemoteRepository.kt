@@ -23,6 +23,8 @@ interface AlumniRemoteRepository {
 
     suspend fun getUserConnections(): Result<List<Connection>>
 
+    suspend fun getUserConnectionsByUserId(userId: String): Result<List<Connection>>
+
     suspend fun updateUser(user: User): Result<String>
 
     suspend fun updateWorkExperience(experienceId: String, experience: WorkExperience): Result<String>
