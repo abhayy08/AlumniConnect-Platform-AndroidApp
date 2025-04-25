@@ -40,7 +40,7 @@ class HomeViewModel @Inject constructor(
 
     fun onEvent(events: HomeUiEvents) {
         when (events) {
-            is HomeUiEvents.GetMorePost -> getPosts()
+            is HomeUiEvents.GetMorePost -> getPosts(isLoadingMore = true)
             is HomeUiEvents.GetComments -> getComments(events.postId)
             is HomeUiEvents.GetMoreComments -> getComments(events.postId, true)
             is HomeUiEvents.Refresh -> {
@@ -141,8 +141,12 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    private fun getPosts() {
-        _uiState.update { HomeUiState.Loading }
+    private fun getPosts(isLoadingMore: Boolean = false) {
+        if(isLoadingMore){
+            _postsState.update { it.copy(isLoadingMore = true) }
+        }else {
+            _uiState.update { HomeUiState.Loading }
+        }
         _postsState.update { it.copy(isLoadingPosts = true) }
         viewModelScope.launch {
             val result = postsRepository.getPosts(pageForPosts++, limitForPosts)
@@ -155,6 +159,7 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     _uiState.update { HomeUiState.Success }
+                    _postsState.update { it.copy(isLoadingMore = false) }
                 }
 
                 is Result.Error<*> -> {
@@ -191,4 +196,5 @@ data class CommentsState(
 data class PostsState(
     val posts: List<Post> = emptyList(),
     val isLoadingPosts: Boolean = false,
+    val isLoadingMore: Boolean = false,
 )

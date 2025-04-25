@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -59,6 +61,7 @@ fun HomeScreen(
     commentsState: CommentsState,
     onEvent: (HomeUiEvents) -> Unit,
     showSnackbar: (String) -> Unit,
+    onUserClick: (String) -> Unit
 ) {
 
     LaunchedEffect(uiState) {
@@ -107,7 +110,9 @@ fun HomeScreen(
                     PostItem(
                         modifier = Modifier.padding(6.dp),
                         post = post,
-                        onUserClick = { },
+                        onUserClick = {
+                            onUserClick(post.author._id)
+                        },
                         onLikeClick = { onEvent(HomeUiEvents.LikePost(post._id)) },
                         onCommentClick = {
                             selectedPostId = post._id
@@ -119,7 +124,7 @@ fun HomeScreen(
                 }
 
                 item {
-                    if (postsState.isLoadingPosts) {
+                    if (postsState.isLoadingMore) {
                         CircularProgressIndicator()
                     }
                 }
@@ -128,8 +133,9 @@ fun HomeScreen(
     }
     if (uiState == HomeUiState.Loading) {
         Box(
-            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxSize().padding(12.dp), contentAlignment = Alignment.Center
         ) {
+            Spacer(Modifier.height(12.dp))
             CircularProgressIndicator()
         }
     }
@@ -285,6 +291,7 @@ private fun HomeScreenPreview() {
             ),
             onEvent = {},
             showSnackbar = {},
+            onUserClick = {}
         )
     }
 }

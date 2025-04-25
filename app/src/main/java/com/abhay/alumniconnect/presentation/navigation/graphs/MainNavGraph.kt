@@ -55,8 +55,7 @@ fun NavGraphBuilder.MainNavGraph(
         val currentUser = mainViewModel.currentUser.collectAsState().value
 
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
             HomeScreen(
                 currentUser = currentUser,
@@ -64,8 +63,10 @@ fun NavGraphBuilder.MainNavGraph(
                 postsState = postsState,
                 commentsState = commentsState,
                 onEvent = viewModel::onEvent,
-                showSnackbar = onShowSnackbarMessage
-            )
+                showSnackbar = onShowSnackbarMessage,
+                onUserClick = { userId ->
+                    navController.navigate(Route.MainRoute.Connections(userId = userId))
+                })
         }
     }
 
@@ -96,8 +97,7 @@ fun NavGraphBuilder.MainNavGraph(
 
     composable<Route.MainRoute.Search> {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
             SearchScreen(onAlumniSelected = { userId ->
                 navController.navigate(Route.MainRoute.UserProfile(userId = userId))
@@ -141,8 +141,7 @@ fun NavGraphBuilder.MainNavGraph(
             showSnackbar = onShowSnackbarMessage,
             onUserClick = { userId ->
                 navController.navigate(Route.MainRoute.UserProfile(userId = userId))
-            }
-        )
+            })
     }
 
     composable<Route.MainRoute.Applicants>(
@@ -189,8 +188,7 @@ fun NavGraphBuilder.MainNavGraph(
         val uiState = viewModel.uiState.collectAsState().value
 
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
             ProfileScreen(
                 profileState = profileUiState,
@@ -221,8 +219,7 @@ fun NavGraphBuilder.MainNavGraph(
                 },
                 onLinkClick = { link ->
                     AppUtils.openLink(link)
-                }
-            )
+                })
         }
     }
 
@@ -261,10 +258,12 @@ fun NavGraphBuilder.MainNavGraph(
             onJobClick = { jobId, alreadyApplied ->
                 navController.navigate(
                     Route.MainRoute.JobDetail(
-                        jobId = jobId,
-                        alreadyApplied = alreadyApplied
+                        jobId = jobId, alreadyApplied = alreadyApplied
                     )
                 )
+            },
+            onAddConnection = {userId ->
+                viewModel.addConnection(userId)
             }
         )
     }
@@ -294,8 +293,7 @@ fun NavGraphBuilder.MainNavGraph(
             onBackClick = { navController.navigateUp() },
             onUserClick = { userId ->
                 navController.navigate(Route.MainRoute.UserProfile(userId = userId))
-            }
-        )
+            })
     }
 
     composable<Route.MainRoute.EditProfile>(
@@ -312,8 +310,7 @@ fun NavGraphBuilder.MainNavGraph(
             editProfileState = editProfileState,
             uiState = uiState,
             onEvent = viewModel::onEvent,
-            onBackClick = { navController.popUp() }
-        )
+            onBackClick = { navController.popUp() })
     }
 
     composable<Route.MainRoute.AddEditExperience>(
@@ -409,8 +406,7 @@ fun NavGraphBuilder.jobNavGraph(
             val jobScreenState = viewModel.jobScreenState.collectAsState().value
             val jobUiState = viewModel.jobUiState.collectAsState().value
             Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
             ) {
                 JobsScreen(
                     jobScreenState = jobScreenState,

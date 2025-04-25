@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.abhay.alumniconnect.utils.Result
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,6 +55,19 @@ class UserProfileViewModel @Inject constructor(
                 }
                 is Result.Error<*> -> {
                     _uiState.value = ProfileUiState.Error(result.message ?: "An Unknown error occurred")
+                }
+            }
+        }
+    }
+
+    fun addConnection(userId: String) {
+        viewModelScope.launch {
+            when(val result = alumniRemoteRepository.connectUser(userId)){
+                is Result.Success<*> -> {
+                    _uiState.update { ProfileUiState.Success(message = result.data) }
+                }
+                is Result.Error<*> -> {
+                    _uiState.update { ProfileUiState.Error(message = result.message!!) }
                 }
             }
         }

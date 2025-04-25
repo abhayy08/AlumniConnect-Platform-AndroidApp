@@ -38,6 +38,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,8 +75,9 @@ fun ProfileScreen(
     onAddExperienceClick: () -> Unit = {},
     onExperienceEditClick: (WorkExperience) -> Unit = {},
     showSnackbar: (String) -> Unit = {},
-    onJobClick: (String, Boolean) -> Unit = {_, _ -> },
-    onLinkClick: (String) -> Unit = {}
+    onJobClick: (String, Boolean) -> Unit = { _, _ -> },
+    onLinkClick: (String) -> Unit = {},
+    onAddConnection: (String) -> Unit = {},
 ) {
 
     LaunchedEffect(uiState) {
@@ -101,13 +103,21 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .then(
-                    if(!isCurrentUser) Modifier.safeDrawingPadding() else Modifier
+                    if (!isCurrentUser) Modifier.safeDrawingPadding() else Modifier
                 )
         ) {
             profileState.user?.let { user ->
                 // Profile header is always visible
                 Column(modifier = Modifier.padding(16.dp)) {
-                    ProfileHeader(user, onConnectionsClick, onProfileEditClick, isCurrentUser = isCurrentUser)
+                    ProfileHeader(
+                        user,
+                        onConnectionsClick,
+                        onProfileEditClick,
+                        isCurrentUser = isCurrentUser,
+                        onAddConnectionClick = {
+                            onAddConnection(user.id)
+                        }
+                    )
                 }
 
                 // Tab row
@@ -188,6 +198,7 @@ fun ProfileHeader(
     user: User,
     onConnectionsClick: (String) -> Unit,
     onProfileEditClick: () -> Unit,
+    onAddConnectionClick: () -> Unit = {},
     isCurrentUser: Boolean
 ) {
     Row(
@@ -242,16 +253,22 @@ fun ProfileHeader(
                 modifier = Modifier.clickable { onConnectionsClick(user.id) }
             )
 
-            if(isCurrentUser) {
-                Button(
-                    onClick = onProfileEditClick,
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .height(35.dp)
-                        .align(Alignment.End)
-                ) {
+            val onEditOrConnectButtonClick = remember(isCurrentUser) {
+                if (isCurrentUser) onProfileEditClick else onAddConnectionClick
+            }
+
+            Button(
+                onClick = onEditOrConnectButtonClick,
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier
+                    .padding(4.dp)
+                    .height(35.dp)
+                    .align(Alignment.End)
+            ) {
+                if (isCurrentUser) {
                     Text("Edit Profile")
+                } else {
+                    Text("Add Connection")
                 }
             }
         }
@@ -356,7 +373,7 @@ fun WorkExperienceSection(
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-            if(isCurrentUser) {
+            if (isCurrentUser) {
                 IconButton(
                     onClick = onAddExperienceClick,
                 ) {
@@ -367,7 +384,11 @@ fun WorkExperienceSection(
             }
         }
         workExperience.forEach { work ->
-            WorkExperienceItem(work, onExperienceEditClick = { onExperienceEditClick(work) }, isCurrentUser = isCurrentUser)
+            WorkExperienceItem(
+                work,
+                onExperienceEditClick = { onExperienceEditClick(work) },
+                isCurrentUser = isCurrentUser
+            )
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth(0.89f)
@@ -416,13 +437,13 @@ fun WorkExperienceItem(
                     )
                 }
 
-               if(isCurrentUser) {
-                   IconButton(
-                       onClick = onExperienceEditClick
-                   ) {
-                       Icon(Icons.Rounded.Edit, contentDescription = "Edit Experience")
-                   }
-               }
+                if (isCurrentUser) {
+                    IconButton(
+                        onClick = onExperienceEditClick
+                    ) {
+                        Icon(Icons.Rounded.Edit, contentDescription = "Edit Experience")
+                    }
+                }
             }
             work.description?.let {
                 Text(

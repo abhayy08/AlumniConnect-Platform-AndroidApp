@@ -48,7 +48,7 @@ import com.example.ui.theme.AppShapes
 fun PostItem(
     modifier: Modifier = Modifier,
     post: Post,
-    onUserClick: (String) -> Unit,
+    onUserClick: () -> Unit,
     onLikeClick: () -> Unit,
     onCommentClick: () -> Unit,
 ) {
@@ -72,7 +72,7 @@ fun PostItem(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { onUserClick(post.author._id) }) {
+                    modifier = Modifier.clickable { onUserClick() }) {
                     Box(
                         modifier = Modifier
                             .size(40.dp)
