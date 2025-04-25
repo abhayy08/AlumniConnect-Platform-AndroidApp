@@ -2,9 +2,8 @@ package com.abhay.alumniconnect.presentation.navigation.graphs
 
 
 import android.util.Log
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,8 +13,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.abhay.alumniconnect.presentation.navigation.routes.Route
 import com.abhay.alumniconnect.presentation.MainScreen
+import com.abhay.alumniconnect.presentation.navigation.routes.Route
+import com.abhay.alumniconnect.presentation.navigation.utils.NavigationTransitions
 import com.abhay.alumniconnect.presentation.screens.splash_screen.SplashScreen
 import com.abhay.alumniconnect.utils.navigateAndPopUp
 
@@ -26,30 +26,19 @@ fun RootNavGraph(
     NavHost(
         navController = navController,
         startDestination = Route.SplashScreen,
-        enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { it }, animationSpec = tween(200)
-            )
-        },
-        exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { -it }, animationSpec = tween(200)
-            )
-        },
-        popEnterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { -it }, animationSpec = tween(200)
-            )
-        },
-        popExitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { it }, animationSpec = tween(200)
-            )
-        }
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
 
-        composable<Route.SplashScreen> {
-            SplashScreen {isLoggedIn ->
+        composable<Route.SplashScreen>(
+            enterTransition = NavigationTransitions.enterTransition,
+            exitTransition = NavigationTransitions.exitTransition,
+            popEnterTransition = NavigationTransitions.popEnterTransition,
+            popExitTransition = NavigationTransitions.popExitTransition
+        ) {
+            SplashScreen { isLoggedIn ->
                 val destination = if (isLoggedIn) Route.MainRoute else Route.AuthRoute
                 navController.navigateAndPopUp(destination, Route.SplashScreen)
             }

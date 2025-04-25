@@ -1,9 +1,5 @@
 package com.abhay.alumniconnect.presentation.navigation.graphs
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,7 +7,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -19,6 +14,7 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.abhay.alumniconnect.presentation.dummyUser
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
+import com.abhay.alumniconnect.presentation.navigation.utils.NavigationTransitions
 import com.abhay.alumniconnect.presentation.screens.MainViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobViewModel
 import com.abhay.alumniconnect.presentation.screens.job.JobsScreen
@@ -51,38 +47,6 @@ fun NavGraphBuilder.MainNavGraph(
     onShowSnackbarMessage: (String) -> Unit = { _ -> },
     mainViewModel: MainViewModel
 ) {
-
-    val EnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? =
-        {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(400)
-            )
-        }
-
-    val ExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = {
-        slideOutOfContainer(
-            towards = AnimatedContentTransitionScope.SlideDirection.Left,
-            animationSpec = tween(400)
-        )
-    }
-
-    val PopEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? =
-        {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(400)
-            )
-        }
-
-    val PopExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? =
-        {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(400)
-            )
-        }
-
     composable<Route.MainRoute.Home> {
         val viewModel = hiltViewModel<HomeViewModel>()
         val uiState = viewModel.uiState.collectAsState().value
@@ -106,10 +70,10 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.CreatePost>(
-        enterTransition = EnterTransition,
-        exitTransition = ExitTransition,
-        popEnterTransition = PopEnterTransition,
-        popExitTransition = PopExitTransition
+        enterTransition = NavigationTransitions.enterTransition,
+        exitTransition = NavigationTransitions.exitTransition,
+        popEnterTransition = NavigationTransitions.popEnterTransition,
+        popExitTransition = NavigationTransitions.popExitTransition
     ) {
         val viewModel = hiltViewModel<CreatePostViewModel>()
         val currentUser = mainViewModel.currentUser.collectAsState().value
@@ -148,10 +112,10 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.JobDetail>(
-        enterTransition = EnterTransition,
-        popEnterTransition = PopEnterTransition,
-        exitTransition = ExitTransition,
-        popExitTransition = PopExitTransition
+        enterTransition = NavigationTransitions.enterTransition,
+        exitTransition = NavigationTransitions.exitTransition,
+        popEnterTransition = NavigationTransitions.popEnterTransition,
+        popExitTransition = NavigationTransitions.popExitTransition
     ) {
         val args = it.toRoute<Route.MainRoute.JobDetail>()
         val viewmodel = hiltViewModel<JobDetailViewModel>(it)
@@ -182,10 +146,10 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.Applicants>(
-        enterTransition = EnterTransition,
-        popEnterTransition = PopEnterTransition,
-        exitTransition = ExitTransition,
-        popExitTransition = PopExitTransition
+        enterTransition = NavigationTransitions.enterTransition,
+        exitTransition = NavigationTransitions.exitTransition,
+        popEnterTransition = NavigationTransitions.popEnterTransition,
+        popExitTransition = NavigationTransitions.popExitTransition
     ) {
         val args = it.toRoute<Route.MainRoute.Applicants>()
         val viewModel = hiltViewModel<ApplicantsViewModel>()
@@ -261,10 +225,10 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.UserProfile>(
-        enterTransition = EnterTransition,
-        popEnterTransition = PopEnterTransition,
-        exitTransition = ExitTransition,
-        popExitTransition = PopExitTransition
+        enterTransition = NavigationTransitions.enterTransition,
+        exitTransition = NavigationTransitions.exitTransition,
+        popEnterTransition = NavigationTransitions.popEnterTransition,
+        popExitTransition = NavigationTransitions.popExitTransition
     ) {
         val args = it.toRoute<Route.MainRoute.UserProfile>()
         val viewModel = hiltViewModel<UserProfileViewModel>()
@@ -302,10 +266,10 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.EditProfile>(
-        enterTransition = EnterTransition,
-        popEnterTransition = PopEnterTransition,
-        exitTransition = ExitTransition,
-        popExitTransition = PopExitTransition
+        enterTransition = NavigationTransitions.enterTransition,
+        exitTransition = NavigationTransitions.exitTransition,
+        popEnterTransition = NavigationTransitions.popEnterTransition,
+        popExitTransition = NavigationTransitions.popExitTransition
     ) {
         val viewModel = hiltViewModel<EditProfileViewModel>()
         val editProfileState = viewModel.editProfileState.collectAsState().value
@@ -315,14 +279,15 @@ fun NavGraphBuilder.MainNavGraph(
             editProfileState = editProfileState,
             uiState = uiState,
             onEvent = viewModel::onEvent,
-            onBackClick = { navController.popUp() })
+            onBackClick = { navController.popUp() }
+        )
     }
 
     composable<Route.MainRoute.AddEditExperience>(
-        enterTransition = EnterTransition,
-        popEnterTransition = PopEnterTransition,
-        exitTransition = ExitTransition,
-        popExitTransition = PopExitTransition
+        enterTransition = NavigationTransitions.enterTransition,
+        exitTransition = NavigationTransitions.exitTransition,
+        popEnterTransition = NavigationTransitions.popEnterTransition,
+        popExitTransition = NavigationTransitions.popExitTransition
     ) {
         val args = it.toRoute<Route.MainRoute.AddEditExperience>()
         val viewModel = hiltViewModel<AddEditExperienceViewModel>()
@@ -347,10 +312,10 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.CreateJob>(
-        enterTransition = EnterTransition,
-        popEnterTransition = PopEnterTransition,
-        exitTransition = ExitTransition,
-        popExitTransition = PopExitTransition
+        enterTransition = NavigationTransitions.enterTransition,
+        exitTransition = NavigationTransitions.exitTransition,
+        popEnterTransition = NavigationTransitions.popEnterTransition,
+        popExitTransition = NavigationTransitions.popExitTransition
     ) {
         val viewModel = hiltViewModel<CreateJobViewModel>()
         val newJobState = viewModel.newJobState.collectAsState().value
@@ -362,10 +327,10 @@ fun NavGraphBuilder.MainNavGraph(
     }
 
     composable<Route.MainRoute.Jobs.Application>(
-        enterTransition = EnterTransition,
-        popEnterTransition = PopEnterTransition,
-        exitTransition = ExitTransition,
-        popExitTransition = PopExitTransition
+        enterTransition = NavigationTransitions.enterTransition,
+        exitTransition = NavigationTransitions.exitTransition,
+        popEnterTransition = NavigationTransitions.popEnterTransition,
+        popExitTransition = NavigationTransitions.popExitTransition
     ) {
         val args = it.toRoute<Route.MainRoute.Jobs.Application>()
         val viewModel = hiltViewModel<JobApplicationViewModel>(it)

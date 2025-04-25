@@ -17,7 +17,7 @@ data class BottomNavItem(
 val topLevelDestinations = listOf(
     BottomNavItem(
         route = Route.MainRoute.Home,
-        title = "Home",
+        title = "Feed",
         icon = Icons.Rounded.Home
     ),
     BottomNavItem(

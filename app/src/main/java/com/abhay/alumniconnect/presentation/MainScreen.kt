@@ -10,8 +10,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -24,6 +27,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Create
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,9 +50,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
@@ -70,10 +84,22 @@ import kotlinx.coroutines.launch
 fun MainScreen(navController: NavHostController = rememberNavController()) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination
+
+    val screensToShowFABOn = remember { listOf(Route.MainRoute.Home, Route.MainRoute.Jobs) }
+    val isFabVisible = screensToShowFABOn.firstOrNull { route ->
+        currentDestination?.hierarchy?.any { it.hasRoute(route::class) } == true
+    } != null
+
     val topLevelRoute = topLevelDestinations.firstOrNull { route ->
         currentDestination?.hierarchy?.any { it.hasRoute(route.route::class) } == true
     }
-    val isTopLevel = topLevelRoute != null
+
+    val isTopLevel by remember(topLevelRoute) {
+        derivedStateOf {
+            topLevelRoute != null
+        }
+    }
+
     val currentTitle = topLevelRoute?.title ?: "Alumni Connect"
 
     val topBarOffsetY by animateDpAsState(
@@ -97,12 +123,21 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
         bottomBar = {
             if (isTopLevel || bottomBarOffsetY < 100.dp) {
                 Box(
-                    modifier = Modifier.offset(y = bottomBarOffsetY)
+                    modifier = Modifier.offset {
+                        IntOffset(0, bottomBarOffsetY.roundToPx())
+                    }
                 ) {
                     BottomNavigationBar(
                         currentDestination = currentDestination,
                         onNavItemClick = { route ->
-                            navController.navigateWithStateAndPopToStart(route)
+
+                            val isCurrentRoute = currentDestination?.hierarchy?.any {
+                                it.hasRoute(route::class)
+                            } == true
+
+                            if (!isCurrentRoute) {
+                                navController.navigateWithStateAndPopToStart(route)
+                            }
                         },
                         isVisible = true
                     )
@@ -122,10 +157,12 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             }
         },
         floatingActionButton = {
-            if (isTopLevel || bottomBarOffsetY < 100.dp) {
-                Box(
-                    modifier = Modifier.offset(y = bottomBarOffsetY)
-                ) {
+            AnimatedVisibility(
+                visible = isFabVisible,
+                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(tween(150)),
+                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(tween(150))
+            ) {
+                if (isFabVisible) {
                     AppFloatingActionButton(
                         navController = navController,
                     )
@@ -162,8 +199,6 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
         }
     }
 }
-
-
 @Composable
 fun AppFloatingActionButton(
     navController: NavHostController
@@ -171,44 +206,57 @@ fun AppFloatingActionButton(
     var expanded by remember { mutableStateOf(false) }
 
     val rotation by animateFloatAsState(
-        targetValue = if (expanded) 45f else 0f, label = "FabRotation"
+        targetValue = if (expanded) 45f else 0f, label = ""
     )
 
     val shape by animateDpAsState(
-        targetValue = (if (expanded) 50.dp else 4.dp), label = "FabShape"
+        targetValue = if (expanded) 50.dp else 16.dp, label = ""
     )
 
+    val labelBackground = MaterialTheme.colorScheme.surfaceVariant
+    val labelTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.End
     ) {
         AnimatedVisibility(
             visible = expanded,
-            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(animationSpec = tween(200)),
-            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(animationSpec = tween(200))
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(tween(150)),
+            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(tween(150))
         ) {
-            Column {
-                SmallFloatingActionButton(
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                FabWithLabel(
+                    text = "Create Job",
+                    icon = Icons.Rounded.Work,
                     onClick = {
                         expanded = false
                         navController.navigate(Route.MainRoute.CreateJob)
-                    }, containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(Icons.Rounded.Work, contentDescription = "Create Job")
-                }
+                    },
+                    labelBg = labelBackground,
+                    labelTextColor = labelTextColor
+                )
 
-                SmallFloatingActionButton(
+                FabWithLabel(
+                    text = "Create Post",
+                    icon = Icons.Rounded.Create,
                     onClick = {
                         expanded = false
                         navController.navigate(Route.MainRoute.CreatePost)
-                    }, containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(Icons.Rounded.Create, contentDescription = "Create Post")
-                }
+                    },
+                    labelBg = labelBackground,
+                    labelTextColor = labelTextColor
+                )
             }
         }
-        Spacer(Modifier.height(6.dp))
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         FloatingActionButton(
-            onClick = { expanded = !expanded }, shape = RoundedCornerShape(shape)
+            onClick = { expanded = !expanded },
+            shape = RoundedCornerShape(shape)
         ) {
             Icon(
                 imageVector = Icons.Rounded.Add,
@@ -218,6 +266,40 @@ fun AppFloatingActionButton(
         }
     }
 }
+
+@Composable
+fun FabWithLabel(
+    text: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    labelBg: Color,
+    labelTextColor: Color
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .background(labelBg, RoundedCornerShape(12.dp))
+                .padding(horizontal = 12.dp, vertical = 6.dp)
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodySmall,
+                color = labelTextColor
+            )
+        }
+
+        SmallFloatingActionButton(
+            onClick = onClick,
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(icon, contentDescription = text)
+        }
+    }
+}
+
 
 
 @Composable
