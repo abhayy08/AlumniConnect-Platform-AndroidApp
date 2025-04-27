@@ -2,6 +2,7 @@ package com.abhay.alumniconnect.data.remote
 
 import com.abhay.alumniconnect.data.remote.dto.ApiResponse
 import com.abhay.alumniconnect.data.remote.dto.Connection
+import com.abhay.alumniconnect.data.remote.dto.ImageResponse
 import com.abhay.alumniconnect.data.remote.dto.job.Application
 import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.data.remote.dto.post.Comment
@@ -10,13 +11,16 @@ import com.abhay.alumniconnect.data.remote.dto.user.UserDetails
 import com.abhay.alumniconnect.data.remote.dto.user.UserToken
 import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
@@ -24,12 +28,14 @@ import retrofit2.http.QueryMap
 
 interface AlumniApi {
 
+    // AUTH
     @POST("auth/login")
     suspend fun login(@Body requestBody: Map<String, String>): Response<UserToken>
 
     @POST("auth/register")
     suspend fun register(@Body requestBody: Map<String, String>): Response<UserToken>
 
+    // PROFILE/USER
     @GET("profile/detailed")
     suspend fun getCurrentUser(): Response<UserDetails>
 
@@ -60,6 +66,19 @@ interface AlumniApi {
     @DELETE("profile/work-experience/{id}")
     suspend fun deleteWorkExperienceById(@Path("id") experienceId: String): Response<ApiResponse>
 
+    @GET("profile/search")
+    suspend fun searchAlumni(
+        @QueryMap filters: Map<String, String?>
+    ): Response<List<UserDetails>>
+
+    @Multipart
+    @POST("profile/me/profile-image")
+    suspend fun uploadProfileImage(
+        @Part image: MultipartBody.Part
+    ): Response<ImageResponse>
+
+    // JOBS
+
     @GET("jobs")
     suspend fun getJobs(): Response<List<Job>>
 
@@ -83,6 +102,19 @@ interface AlumniApi {
 
     @POST("jobs")
     suspend fun createJob(@Body requestBody: Job): Response<ApiResponse>
+
+    @GET("jobs/search")
+    suspend fun searchJobs(
+        @QueryMap filters: Map<String, String?>
+    ): Response<List<Job>>
+
+    @GET("jobs/{id}/applicants")
+    suspend fun getApplicantsOfJob(@Path("id") jobId: String): Response<List<Application>>
+
+    @PATCH("jobs/{id}/application")
+    suspend fun updateApplicationStatus(@Path("id") jobId: String, @Body requestBody: Map<String, String>): Response<ApiResponse>
+
+    // POSTS
 
     @GET("posts")
     suspend fun getPosts(
@@ -111,21 +143,5 @@ interface AlumniApi {
 
     @DELETE("posts/{id}")
     suspend fun deletePost(@Path("id") postId: String): Response<ApiResponse>
-
-    @GET("jobs/search")
-    suspend fun searchJobs(
-        @QueryMap filters: Map<String, String?>
-    ): Response<List<Job>>
-
-    @GET("jobs/{id}/applicants")
-    suspend fun getApplicantsOfJob(@Path("id") jobId: String): Response<List<Application>>
-
-    @PATCH("jobs/{id}/application")
-    suspend fun updateApplicationStatus(@Path("id") jobId: String, @Body requestBody: Map<String, String>): Response<ApiResponse>
-
-    @GET("profile/search")
-    suspend fun searchAlumni(
-        @QueryMap filters: Map<String, String?>
-    ): Response<List<UserDetails>>
 
 }

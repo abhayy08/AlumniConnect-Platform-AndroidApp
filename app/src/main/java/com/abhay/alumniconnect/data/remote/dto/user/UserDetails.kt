@@ -31,5 +31,6 @@ data class UserDetails(
     val updatedAt: String,
     val workExperience: List<WorkExperience>,
     val connectionCount: Int = 0,
-    val isConnected: Boolean?
+    val isConnected: Boolean?,
+    val profileImage: String?
 )

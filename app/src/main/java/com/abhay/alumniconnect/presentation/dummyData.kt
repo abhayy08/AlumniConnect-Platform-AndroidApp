@@ -68,7 +68,8 @@ val dummyUser = User(
         showLocation = true
     ),
     isConnected = false,
-    connectionCount = 0
+    connectionCount = 0,
+    profileImage = ""
 )
 
 
@@ -108,135 +109,65 @@ val dummyPosts = listOf(
             _id = "user1",
             company = "TechCorp",
             jobTitle = "Software Engineer",
-            name = "Alice Johnson"
+            name = "Alice Johnson",
+            profileImage = ""
         ),
         comments = listOf(
             Comment(
                 _id = "comment1",
                 author = CommentAuthor(
                     _id = "user2",
-                    name = "Bob Smith"
+                    name = "Bob Smith",
+                    profileImage = ""
+                ),
+                comment = "Great post!",
+                createdAt = "2025-04-09T10:00:00Z"
+            ),Comment(
+                _id = "comment1",
+                author = CommentAuthor(
+                    _id = "user2",
+                    name = "Bob Smith",
+                    profileImage = ""
+                ),
+                comment = "Great post!",
+                createdAt = "2025-04-09T10:00:00Z"
+            ),Comment(
+                _id = "comment1",
+                author = CommentAuthor(
+                    _id = "user2",
+                    name = "Bob Smith",
+                    profileImage = ""
+                ),
+                comment = "Great post!",
+                createdAt = "2025-04-09T10:00:00Z"
+            ),Comment(
+                _id = "comment1",
+                author = CommentAuthor(
+                    _id = "user2",
+                    name = "Bob Smith",
+                    profileImage = ""
+                ),
+                comment = "Great post!",
+                createdAt = "2025-04-09T10:00:00Z"
+            ),Comment(
+                _id = "comment1",
+                author = CommentAuthor(
+                    _id = "user2",
+                    name = "Bob Smith",
+                    profileImage = ""
+                ),
+                comment = "Great post!",
+                createdAt = "2025-04-09T10:00:00Z"
+            ),Comment(
+                _id = "comment1",
+                author = CommentAuthor(
+                    _id = "user2",
+                    name = "Bob Smith",
+                    profileImage = ""
                 ),
                 comment = "Great post!",
                 createdAt = "2025-04-09T10:00:00Z"
             ),
-            Comment(
-                _id = "comment2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "c1omment2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "comme2nt2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "commen3t2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "comme4nt2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "comm5ent2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "com6ment2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "co7mment2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "comm8ent2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "co9mment2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "comfment2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "comment2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            ),
-            Comment(
-                _id = "commdent2",
-                author = CommentAuthor(
-                    _id = "user3",
-                    name = "Charlie Nguyen"
-                ),
-                comment = "Thanks for sharing!",
-                createdAt = "2025-04-09T10:30:00Z"
-            )
         ),
         content = "Today I  learned about MongoDB relationships in Mongoose.",
         createdAt = "2025-04-09T09:45:00Z",
@@ -256,7 +187,8 @@ val dummyPosts = listOf(
             _id = "user5",
             company = "DesignHub",
             jobTitle = "UX Designer",
-            name = "Emily Chen"
+            name = "Emily Chen",
+            profileImage = ""
         ),
         comments = emptyList(),
         content = "Design is not just what it looks like and feels like. Design is how it works. - Steve Jobs",

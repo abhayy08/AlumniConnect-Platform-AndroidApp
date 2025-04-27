@@ -1,5 +1,6 @@
 package com.abhay.alumniconnect.presentation.screens.profile
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import com.abhay.alumniconnect.domain.repository.AlumniAccountRepository
 import com.abhay.alumniconnect.domain.repository.AlumniRemoteRepository
 import com.abhay.alumniconnect.domain.repository.JobsRepository
 import com.abhay.alumniconnect.domain.repository.PostsRepository
+import com.abhay.alumniconnect.utils.AppUtils
 import com.abhay.alumniconnect.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +46,37 @@ class ProfileViewModel @Inject constructor(
         getPostsByUser()
     }
 
+    fun updateProfileImage(uri: Uri?) {
+        if (uri == null) {
+            _uiState.update { ProfileUiState.Error(message = "Unable to fetch image") }
+            return
+        }
+        val imageFile = AppUtils.uriToFile(uri = uri)
+        if (imageFile == null) {
+            _uiState.update { ProfileUiState.Error(message = "Unable to fetch image") }
+            return
+        }
+
+        viewModelScope.launch {
+            val result = alumniRemoteRepository.uploadProfileImage(image = imageFile)
+            when (result) {
+                is Result.Success<*> -> {
+                    _uiState.update { ProfileUiState.Success() }
+                }
+
+                is Result.Error<*> -> {
+                    _uiState.update {
+                        ProfileUiState.Error(
+                            message = result.message ?: "An Unknown error occurred"
+                        )
+                    }
+                }
+            }
+        }
+
+    }
+
+
     fun loadCurrentUserFromMainViewModel(user: User?) {
         _profileState.update { it.copy(user = user) }
     }
@@ -55,26 +88,6 @@ class ProfileViewModel @Inject constructor(
 //            }
         }
     }
-
-//    private fun getJobsByUser() {
-//        viewModelScope.launch {
-//                            when(val result = jobsRepository.getJobsByCurrentUser()){
-//                                is Result.Success<*> -> {
-//                                    _jobsState.update { result.data as List<Job> }
-//                                    Log.d("ProfileScreenViewModel", "initializeViewModel: ${result.data}")
-//                                    _uiState.update {
-//                                        ProfileUiState.Success()
-//                                    }
-//                                }
-//                                is Result.Error<*> -> {
-//                                    Log.d("ProfileScreenViewModel", "initializeViewModel: ${result.message}")
-//                                    _uiState.update {
-//                                        ProfileUiState.Error(message = result.message ?: "An Unknown error occurred")
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private fun initializeViewModel() {
         viewModelScope.launch {
@@ -92,7 +105,9 @@ class ProfileViewModel @Inject constructor(
                         is Result.Error -> {
                             Log.d("ProfileScreenViewModel", "init: ${nonNullResult.message}")
                             _uiState.update {
-                                ProfileUiState.Error(message = nonNullResult.message ?: "An Unknown error occurred")
+                                ProfileUiState.Error(
+                                    message = nonNullResult.message ?: "An Unknown error occurred"
+                                )
                             }
                         }
                     }
@@ -100,7 +115,7 @@ class ProfileViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            when(val result = jobsRepository.getJobsByCurrentUser()){
+            when (val result = jobsRepository.getJobsByCurrentUser()) {
                 is Result.Success<*> -> {
                     _jobsState.update { result.data as List<Job> }
                     Log.d("ProfileScreenViewModel", "initializeViewModel: ${result.data}")
@@ -108,10 +123,13 @@ class ProfileViewModel @Inject constructor(
                         ProfileUiState.Success()
                     }
                 }
+
                 is Result.Error<*> -> {
                     Log.d("ProfileScreenViewModel", "initializeViewModel: ${result.message}")
                     _uiState.update {
-                        ProfileUiState.Error(message = result.message ?: "An Unknown error occurred")
+                        ProfileUiState.Error(
+                            message = result.message ?: "An Unknown error occurred"
+                        )
                     }
                 }
             }

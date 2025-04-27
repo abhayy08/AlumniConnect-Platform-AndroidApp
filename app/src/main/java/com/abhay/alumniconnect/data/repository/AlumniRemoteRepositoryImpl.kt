@@ -3,6 +3,7 @@ package com.abhay.alumniconnect.data.repository
 import android.util.Log
 import com.abhay.alumniconnect.data.remote.AlumniApi
 import com.abhay.alumniconnect.data.remote.dto.Connection
+import com.abhay.alumniconnect.data.remote.dto.ImageResponse
 import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import com.abhay.alumniconnect.domain.mapper.toUser
 import com.abhay.alumniconnect.domain.mapper.toUserDetails
@@ -15,6 +16,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 import javax.inject.Inject
 
 class AlumniRemoteRepositoryImpl @Inject constructor(
@@ -223,6 +230,43 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
                 Result.Error(e.message ?: "Something went wrong")
             }
         }
+
+    override suspend fun uploadProfileImage(image: File): Result<ImageResponse> {
+
+        val mimeType = when {
+            image.name.endsWith(".jpg", ignoreCase = true) -> "image/jpeg"
+            image.name.endsWith(".jpeg", ignoreCase = true) -> "image/jpeg"
+            image.name.endsWith(".png", ignoreCase = true) -> "image/png"
+            image.name.endsWith(".gif", ignoreCase = true) -> "image/gif"
+            else -> "image/*"
+        }
+        val requestFile = RequestBody.create(
+            mimeType.toMediaType(),
+            image
+        )
+        val multipartBody = MultipartBody.Part.createFormData(
+            "image",
+            image.name,
+            requestFile
+        )
+        return withContext(Dispatchers.IO) {
+            try {
+                val imageResponse = api.uploadProfileImage(multipartBody)
+                if (!imageResponse.isSuccessful) return@withContext Result.Error(
+                    extractErrorMessage(
+                        imageResponse, ERROR_TAG
+                    )
+                )
+                imageResponse.body()?.let {imageResponse ->
+                    _currentUserFlow.update { Result.Success(it?.data?.copy(profileImage = imageResponse.profileImage!!)) }
+                    return@withContext Result.Success(imageResponse)
+                }
+                Result.Error("Something went wrong")
+            }catch(e: java.lang.Exception) {
+                Result.Error(e.message ?: "Something went wrong")
+            }
+        }
+    }
 
 
     override suspend fun connectUser(targetUserId: String): Result<String> =

@@ -4,5 +4,6 @@ data class Author(
     val _id: String,
     val company: String,
     val jobTitle: String,
-    val name: String
+    val name: String,
+    val profileImage: String?
 )

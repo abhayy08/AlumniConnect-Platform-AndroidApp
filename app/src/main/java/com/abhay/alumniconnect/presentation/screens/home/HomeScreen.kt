@@ -47,7 +47,9 @@ import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.presentation.components.CommentItem
 import com.abhay.alumniconnect.presentation.components.PostItem
+import com.abhay.alumniconnect.presentation.components.ProfileImageComponent
 import com.abhay.alumniconnect.presentation.dummyPosts
+import com.abhay.alumniconnect.presentation.dummyUser
 import com.example.compose.AlumniConnectTheme
 import kotlinx.coroutines.launch
 import kotlin.collections.isNotEmpty
@@ -74,7 +76,7 @@ fun HomeScreen(
 
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     var selectedPostId by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -228,21 +230,14 @@ fun BoxScope.CommentInputBox(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        ProfileImageComponent(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
-            contentAlignment = Alignment.Center
-        ) {
-            currentUser?.let {
-                Text(
-                    text = currentUser.name.first().toString(),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
+            name = currentUser?.name ?: "",
+            imageUrl = currentUser?.profileImage
+        )
 
         BasicTextField(
             value = commentTextFieldValue,
@@ -291,7 +286,8 @@ private fun HomeScreenPreview() {
             ),
             onEvent = {},
             showSnackbar = {},
-            onUserClick = {}
+            onUserClick = {},
+            currentUser = dummyUser
         )
     }
 }

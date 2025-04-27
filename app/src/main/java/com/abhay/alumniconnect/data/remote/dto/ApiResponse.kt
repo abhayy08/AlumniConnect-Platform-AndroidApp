@@ -6,3 +6,9 @@ data class ApiResponse(
     val message: String? = null,
     val user: UserDetails? = null
 )
+
+data class ImageResponse(
+    val message: String? = null,
+    val profileImage: String? = null,
+    val error: String? = null
+)

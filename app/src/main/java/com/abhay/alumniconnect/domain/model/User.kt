@@ -31,5 +31,6 @@ data class User(
     val workExperience: List<WorkExperience>,
     val privacySettings: PrivacySettings,
     val connectionCount: Int = 0,
-    val isConnected: Boolean
+    val isConnected: Boolean,
+    val profileImage: String
 )

@@ -98,6 +98,9 @@ dependencies {
 
     // Material Icons Extended
     implementation(libs.androidx.compose.material.icons.extended)
+
+    // Coil - For Image
+    implementation("io.coil-kt:coil-compose:2.0.0")
 }
 
 kapt {

@@ -3,9 +3,11 @@ package com.abhay.alumniconnect.utils
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.core.net.toUri
 import com.abhay.alumniconnect.App
+import java.io.File
 
 object AppUtils {
 
@@ -32,5 +34,17 @@ object AppUtils {
         }
     }
 
+    fun uriToFile(uri: Uri): File? {
+        val context = App.instance.applicationContext
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val tempFile = File.createTempFile("profile_image", ".jpg", context.cacheDir)
+        tempFile.outputStream().use { output ->
+            inputStream.copyTo(output)
+        }
+        return tempFile
+    }
+
+
 }
+
 

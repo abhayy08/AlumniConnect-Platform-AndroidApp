@@ -1,5 +1,6 @@
 package com.abhay.alumniconnect.data.repository
 
+import android.util.Log
 import com.abhay.alumniconnect.data.remote.AlumniApi
 import com.abhay.alumniconnect.data.remote.dto.post.Comment
 import com.abhay.alumniconnect.data.remote.dto.post.Post
@@ -22,6 +23,7 @@ class PostRepositoryImpl @Inject constructor(
                         message = extractErrorMessage(response, ERROR_TAG)
                     )
                 }
+
                 response.body()?.let {
                     return@withContext Result.Success(it)
                 }

@@ -30,7 +30,8 @@ fun UserDetails.toUser(): User {
         workExperience = this.workExperience,
         privacySettings = this.privacySettings,
         connectionCount = this.connectionCount,
-        isConnected = this.isConnected == true
+        isConnected = this.isConnected == true,
+        profileImage = this.profileImage ?: "",
     )
 }
 
@@ -62,6 +63,7 @@ fun User.toUserDetails(): UserDetails {
         workExperience = this.workExperience,
         __v = null,
         isConnected = this.isConnected,
-        connectionCount = this.connectionCount
+        connectionCount = this.connectionCount,
+        profileImage = this.profileImage
     )
 }

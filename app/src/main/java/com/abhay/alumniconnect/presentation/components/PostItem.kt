@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -41,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.data.remote.dto.post.Post
 import com.abhay.alumniconnect.presentation.dummyPosts
+import com.abhay.alumniconnect.ui.theme.inversePrimaryDark
 import com.abhay.alumniconnect.utils.formatDateForDisplay
 import com.example.ui.theme.AppShapes
 
@@ -72,20 +72,18 @@ fun PostItem(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { onUserClick() }) {
-                    Box(
+                    modifier = Modifier.clickable { onUserClick() }
+                ) {
+
+                    ProfileImageComponent(
                         modifier = Modifier
                             .size(40.dp)
                             .clip(MaterialTheme.shapes.small)
                             .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = post.author.name.first().toString(),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                        name = post.author.name,
+                        imageUrl = post.author.profileImage
+                    )
+
 
                     Spacer(modifier = Modifier.width(12.dp))
 

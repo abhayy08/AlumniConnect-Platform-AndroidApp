@@ -65,7 +65,7 @@ fun NavGraphBuilder.MainNavGraph(
                 onEvent = viewModel::onEvent,
                 showSnackbar = onShowSnackbarMessage,
                 onUserClick = { userId ->
-                    navController.navigate(Route.MainRoute.Connections(userId = userId))
+                    navController.navigate(Route.MainRoute.UserProfile(userId = userId))
                 })
         }
     }
@@ -219,7 +219,11 @@ fun NavGraphBuilder.MainNavGraph(
                 },
                 onLinkClick = { link ->
                     AppUtils.openLink(link)
-                })
+                },
+                onUpdateProfileImage = {uri ->
+                    viewModel.updateProfileImage(uri)
+                }
+            )
         }
     }
 

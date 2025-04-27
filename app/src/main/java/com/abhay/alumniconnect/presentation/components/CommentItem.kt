@@ -33,19 +33,14 @@ fun CommentItem(
         verticalAlignment = Alignment.Top
     ) {
 
-        Box(
+        ProfileImageComponent(
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = comment.author.name.first().uppercaseChar().toString(),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
+            name = comment.author.name,
+            imageUrl = comment.author.profileImage
+        )
 
         Spacer(modifier = Modifier.width(12.dp))
 

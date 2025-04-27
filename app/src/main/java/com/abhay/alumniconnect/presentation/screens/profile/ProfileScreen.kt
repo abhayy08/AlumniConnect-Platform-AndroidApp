@@ -1,5 +1,8 @@
 package com.abhay.alumniconnect.presentation.screens.profile
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,6 +56,7 @@ import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.presentation.components.CustomChip
+import com.abhay.alumniconnect.presentation.components.ProfileImageComponent
 import com.abhay.alumniconnect.presentation.dummyJobs
 import com.abhay.alumniconnect.presentation.dummyUser
 import com.abhay.alumniconnect.presentation.screens.profile.pages.JobsPostedPage
@@ -78,8 +82,15 @@ fun ProfileScreen(
     onJobClick: (String, Boolean) -> Unit = { _, _ -> },
     onLinkClick: (String) -> Unit = {},
     onAddConnection: (String) -> Unit = {},
-    onRemoveConnection: (String) -> Unit = {}
+    onRemoveConnection: (String) -> Unit = {},
+    onUpdateProfileImage: (Uri?) -> Unit = {},
 ) {
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        onUpdateProfileImage(uri)
+    }
 
     LaunchedEffect(uiState) {
         when (uiState) {
@@ -122,6 +133,9 @@ fun ProfileScreen(
                         },
                         onRemoveConnection = {
                             onRemoveConnection(user.id)
+                        },
+                        onProfileImageClick = {
+                            launcher.launch("image/*")
                         }
                     )
                 }
@@ -206,26 +220,23 @@ fun ProfileHeader(
     onProfileEditClick: () -> Unit,
     onAddConnectionClick: () -> Unit = {},
     onRemoveConnection: () -> Unit = {},
-    isCurrentUser: Boolean
+    isCurrentUser: Boolean,
+    onProfileImageClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        Box(
+        ProfileImageComponent(
             modifier = Modifier
+                .then(if (isCurrentUser) Modifier.clickable { onProfileImageClick() }else Modifier)
                 .size(100.dp)
                 .clip(MaterialTheme.shapes.large)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = user.name.first().toString(),
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
+            name = user.name,
+            imageUrl = user.profileImage
+        )
 
         Spacer(modifier = Modifier.width(16.dp))
 

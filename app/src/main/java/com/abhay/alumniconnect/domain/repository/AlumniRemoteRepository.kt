@@ -1,11 +1,13 @@
 package com.abhay.alumniconnect.domain.repository
 
 import com.abhay.alumniconnect.data.remote.dto.Connection
+import com.abhay.alumniconnect.data.remote.dto.ImageResponse
 import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.utils.Result
 import kotlinx.coroutines.flow.StateFlow
 import retrofit2.http.Query
+import java.io.File
 
 interface AlumniRemoteRepository {
 
@@ -34,5 +36,7 @@ interface AlumniRemoteRepository {
     suspend fun deleteWorkExperience(experienceId: String): Result<String>
 
     suspend fun searchAlumni(query: Map<String, String?>): Result<List<User>>
+
+    suspend fun uploadProfileImage(image: File): Result<ImageResponse>
 
 }
