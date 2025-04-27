@@ -2,6 +2,7 @@ package com.abhay.alumniconnect.data.remote
 
 import com.abhay.alumniconnect.data.remote.dto.ApiResponse
 import com.abhay.alumniconnect.data.remote.dto.Connection
+import com.abhay.alumniconnect.data.remote.dto.CreatePostResponse
 import com.abhay.alumniconnect.data.remote.dto.ImageResponse
 import com.abhay.alumniconnect.data.remote.dto.job.Application
 import com.abhay.alumniconnect.data.remote.dto.job.Job
@@ -123,7 +124,14 @@ interface AlumniApi {
     ): Response<List<Post>>
 
     @POST("posts")
-    suspend fun createPost(@Body requestBody: Map<String, String>): Response<ApiResponse>
+    suspend fun createPost(@Body requestBody: Map<String, String>): Response<CreatePostResponse>
+
+    @Multipart
+    @POST("posts")
+    suspend fun createPostWithImage(
+        @Part content: MultipartBody.Part,
+        @Part image: MultipartBody.Part
+    ): Response<CreatePostResponse>
 
     @POST("posts/{id}/like")
     suspend fun likePost(@Path("id") postId: String): Response<ApiResponse>

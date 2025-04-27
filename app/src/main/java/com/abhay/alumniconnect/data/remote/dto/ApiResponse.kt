@@ -12,3 +12,9 @@ data class ImageResponse(
     val profileImage: String? = null,
     val error: String? = null
 )
+
+data class CreatePostResponse(
+    val message: String? = null,
+    val imageUrl: String? = null,
+    val error: String? = null
+)

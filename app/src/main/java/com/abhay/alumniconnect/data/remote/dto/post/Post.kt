@@ -11,5 +11,6 @@ data class Post(
     val updatedAt: String,
     val likedByCurrentUser: Boolean = false,
     val commentsCount: Int,
-    val likesCount: Int
+    val likesCount: Int,
+    val imageUrl: String?
 )

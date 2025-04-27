@@ -178,7 +178,8 @@ val dummyPosts = listOf(
         ),
         likedByCurrentUser = true,
         commentsCount = 10,
-        likesCount = 5
+        likesCount = 5,
+        imageUrl = ""
     ),
     Post(
         __v = 0,
@@ -199,6 +200,7 @@ val dummyPosts = listOf(
         ),
         likedByCurrentUser = false,
         commentsCount = 0,
-        likesCount = 1
+        likesCount = 1,
+         imageUrl = ""
     )
 )

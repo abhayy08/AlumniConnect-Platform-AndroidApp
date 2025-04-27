@@ -1,6 +1,7 @@
 package com.abhay.alumniconnect.data.repository
 
 import android.util.Log
+import android.util.Log.e
 import com.abhay.alumniconnect.data.remote.AlumniApi
 import com.abhay.alumniconnect.data.remote.dto.Connection
 import com.abhay.alumniconnect.data.remote.dto.ImageResponse
@@ -262,7 +263,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
                     return@withContext Result.Success(imageResponse)
                 }
                 Result.Error("Something went wrong")
-            }catch(e: java.lang.Exception) {
+            }catch(e:Exception) {
                 Result.Error(e.message ?: "Something went wrong")
             }
         }

@@ -8,6 +8,10 @@ import com.abhay.alumniconnect.domain.repository.PostsRepository
 import com.abhay.alumniconnect.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -33,23 +37,51 @@ class PostRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun createPost(content: String): Result<String> =
+    override suspend fun createPost(content: String, imageFile: File?): Result<String> =
         withContext(Dispatchers.IO) {
             try {
-                val requestBody = mapOf(
-                    "content" to content
-                )
-                val response = api.createPost(requestBody)
-                if(!response.isSuccessful) {
-                    return@withContext Result.Error(
-                        message = extractErrorMessage(response, ERROR_TAG)
+                if(imageFile == null) {
+                    val requestBody = mapOf(
+                        "content" to content
                     )
-                }
+                    val response = api.createPost(requestBody)
+                    if (!response.isSuccessful) {
+                        return@withContext Result.Error(
+                            message = extractErrorMessage(response, ERROR_TAG)
+                        )
+                    }
 
-                response.body()?.let {
-                    return@withContext Result.Success(it.message)
+                    response.body()?.let {
+                        return@withContext Result.Success(it.message)
+                    }
+                    return@withContext Result.Error(message = "An unknown error has occurred")
+                }else{
+
+                    val contentPart = MultipartBody.Part.createFormData("content", content)
+
+                    val mimeType = when {
+                        imageFile.name.endsWith(".jpg", ignoreCase = true) -> "image/jpeg"
+                        imageFile.name.endsWith(".jpeg", ignoreCase = true) -> "image/jpeg"
+                        imageFile.name.endsWith(".png", ignoreCase = true) -> "image/png"
+                        imageFile.name.endsWith(".gif", ignoreCase = true) -> "image/gif"
+                        else -> "image/*"
+                    }
+
+                    val requestFile = imageFile.asRequestBody(mimeType.toMediaTypeOrNull())
+                    val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+
+                    val response = api.createPostWithImage(contentPart, imagePart)
+                    if (!response.isSuccessful) {
+                        return@withContext Result.Error(
+                            message = extractErrorMessage(response, ERROR_TAG)
+                        )
+                    }
+
+                    response.body()?.let {
+                        return@withContext Result.Success(it.message)
+                    }
+                    return@withContext Result.Error(message = "An unknown error has occurred")
                 }
-                Result.Error(message = "An unknown error has occurred")
             }catch(e: Exception) {
                 Result.Error(e.message ?: "An unknown error has occurred")
             }

@@ -65,7 +65,11 @@ fun NavGraphBuilder.MainNavGraph(
                 onEvent = viewModel::onEvent,
                 showSnackbar = onShowSnackbarMessage,
                 onUserClick = { userId ->
-                    navController.navigate(Route.MainRoute.UserProfile(userId = userId))
+                    if(userId == currentUser?.id) {
+                        navController.navigate(Route.MainRoute.CurrentUserProfile)
+                    } else {
+                        navController.navigate(Route.MainRoute.UserProfile(userId = userId))
+                    }
                 })
         }
     }
@@ -91,7 +95,10 @@ fun NavGraphBuilder.MainNavGraph(
                 }
             },
             resetError = viewModel::resetError,
-            showSnackbar = onShowSnackbarMessage
+            showSnackbar = onShowSnackbarMessage,
+            onAddImage = { uri ->
+                viewModel.onAddImage(uri)
+            }
         )
     }
 
