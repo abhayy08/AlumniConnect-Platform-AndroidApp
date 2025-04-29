@@ -123,6 +123,13 @@ interface AlumniApi {
         @Query("limit") limit: Int
     ): Response<List<Post>>
 
+    @GET("posts/{userId}")
+    suspend fun getPostsByUserId(
+        @Path("userId") userId: String,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+    ): Response<List<Post>>
+
     @POST("posts")
     suspend fun createPost(@Body requestBody: Map<String, String>): Response<CreatePostResponse>
 

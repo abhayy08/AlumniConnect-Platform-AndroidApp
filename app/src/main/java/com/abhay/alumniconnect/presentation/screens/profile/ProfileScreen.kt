@@ -53,6 +53,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.data.remote.dto.job.Job
+import com.abhay.alumniconnect.data.remote.dto.post.Comment
+import com.abhay.alumniconnect.data.remote.dto.post.Post
 import com.abhay.alumniconnect.data.remote.dto.user.WorkExperience
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.presentation.components.CustomChip
@@ -70,9 +72,11 @@ import java.time.Year
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(
+    currentUser: User? = null,
     isCurrentUser: Boolean = true,
     profileState: ProfileState,
     jobsState: List<Job>,
+    postState: List<Post>,
     uiState: ProfileUiState,
     onProfileEditClick: () -> Unit,
     onConnectionsClick: (String) -> Unit,
@@ -84,6 +88,11 @@ fun ProfileScreen(
     onAddConnection: (String) -> Unit = {},
     onRemoveConnection: (String) -> Unit = {},
     onUpdateProfileImage: (Uri?) -> Unit = {},
+    onUserClick: (String) -> Unit = {},
+    onPostCommentClick: (String, String) -> Unit = {_,_ -> },
+    onLikeClick: (String) -> Unit = {},
+    onGetCommentsClick: (String) -> Unit = {},
+    commentsState: List<Comment> = emptyList()
 ) {
 
     val launcher = rememberLauncherForActivityResult(
@@ -175,7 +184,15 @@ fun ProfileScreen(
                         )
 
                         1 -> JobsPostedPage(jobs = jobsState, onJobClick = onJobClick)
-                        2 -> UserPostsPage()
+                        2 -> UserPostsPage(
+                            currentUser = currentUser,
+                            posts = postState,
+                            onUserClick = onUserClick,
+                            onLikeClick = onLikeClick,
+                            onGetCommentsClick = onGetCommentsClick,
+                            commentsState = commentsState,
+                            onPostCommentClick = onPostCommentClick
+                        )
                     }
                 }
             }
@@ -230,7 +247,7 @@ fun ProfileHeader(
     ) {
         ProfileImageComponent(
             modifier = Modifier
-                .then(if (isCurrentUser) Modifier.clickable { onProfileImageClick() }else Modifier)
+                .then(if (isCurrentUser) Modifier.clickable { onProfileImageClick() } else Modifier)
                 .size(100.dp)
                 .clip(MaterialTheme.shapes.large)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
@@ -491,7 +508,9 @@ private fun ProfileScreenPreview() {
             onProfileEditClick = {},
             onConnectionsClick = {},
             showSnackbar = { },
-            jobsState = dummyJobs
+            jobsState = dummyJobs,
+            commentsState = emptyList(),
+            postState = emptyList()
         )
     }
 }

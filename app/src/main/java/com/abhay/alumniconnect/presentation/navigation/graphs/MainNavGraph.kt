@@ -192,14 +192,20 @@ fun NavGraphBuilder.MainNavGraph(
         val viewModel = hiltViewModel<ProfileViewModel>()
         val profileUiState = viewModel.profileState.collectAsState().value
         val jobsState = viewModel.jobsState.collectAsState().value
+        val postsState = viewModel.postsState.collectAsState().value
+        val commentState = viewModel.commentsState.collectAsState().value
         val uiState = viewModel.uiState.collectAsState().value
+        val currentUser = mainViewModel.currentUser.collectAsState().value
 
         Surface(
             modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
             ProfileScreen(
+                currentUser = currentUser,
                 profileState = profileUiState,
                 jobsState = jobsState,
+                postState = postsState,
+                commentsState = commentState,
                 uiState = uiState,
                 onConnectionsClick = { userId ->
                     navController.navigate(Route.MainRoute.Connections(userId = userId))
@@ -229,6 +235,18 @@ fun NavGraphBuilder.MainNavGraph(
                 },
                 onUpdateProfileImage = {uri ->
                     viewModel.updateProfileImage(uri)
+                },
+                onUserClick = {
+                    navController.navigate(Route.MainRoute.UserProfile(userId = it))
+                },
+                onGetCommentsClick = {
+                    viewModel.getComments(it)
+                },
+                onLikeClick = {
+                    viewModel.likePost(it)
+                },
+                onPostCommentClick = { postId, comment ->
+                    viewModel.commentOnPost(postId, comment)
                 }
             )
         }
@@ -255,12 +273,18 @@ fun NavGraphBuilder.MainNavGraph(
 
         val profileState = viewModel.profileState.collectAsState().value
         val jobsState = viewModel.jobsState.collectAsState().value
+        val postState = viewModel.postsState.collectAsState().value
+        val commentState = viewModel.commentsState.collectAsState().value
         val uiState = viewModel.uiState.collectAsState().value
+        val currentUser = mainViewModel.currentUser.collectAsState().value
 
         ProfileScreen(
+            currentUser = currentUser,
             isCurrentUser = false,
             profileState = profileState,
             jobsState = jobsState,
+            postState = postState,
+            commentsState = commentState,
             uiState = uiState,
             onProfileEditClick = {},
             onConnectionsClick = { userId ->
@@ -279,7 +303,19 @@ fun NavGraphBuilder.MainNavGraph(
             onRemoveConnection = {userId ->
                 viewModel.removeConnection(userId)
             },
-            showSnackbar = onShowSnackbarMessage
+            showSnackbar = onShowSnackbarMessage,
+            onUserClick = {
+                navController.navigate(Route.MainRoute.UserProfile(userId = it))
+            },
+            onGetCommentsClick = {
+                viewModel.getComments(it)
+            },
+            onLikeClick = {
+                viewModel.likePost(it)
+            },
+            onPostCommentClick = { postId, comment ->
+                viewModel.commentOnPost(postId, comment)
+            }
         )
     }
 

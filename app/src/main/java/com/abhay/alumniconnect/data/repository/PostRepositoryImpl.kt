@@ -37,6 +37,25 @@ class PostRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun getPostsById(userId: String, page: Int, limit: Int): Result<List<Post>> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.getPostsByUserId(userId, page, limit)
+                if(!response.isSuccessful) {
+                    return@withContext Result.Error(
+                        message = extractErrorMessage(response, ERROR_TAG)
+                    )
+                }
+
+                response.body()?.let {
+                    return@withContext Result.Success(it)
+                }
+                Result.Error(message = "An unknown error has occurred")
+            }catch(e: Exception) {
+                Result.Error(e.message ?: "An unknown error has occurred")
+            }
+        }
+
     override suspend fun createPost(content: String, imageFile: File?): Result<String> =
         withContext(Dispatchers.IO) {
             try {
