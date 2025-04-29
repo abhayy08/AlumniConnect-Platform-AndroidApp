@@ -92,6 +92,9 @@ interface AlumniApi {
     @POST("jobs/{id}/apply")
     suspend fun applyForJob(@Path("id") jobId: String, @Body requestBody: Map<String, String>): Response<ApiResponse>
 
+    @DELETE("jobs/{jobId}")
+    suspend fun deleteJobById(@Path("jobId") jobId: String): Response<ApiResponse>
+
     @GET("jobs/applied")
     suspend fun getAppliedJobs(): Response<List<Job>>
 

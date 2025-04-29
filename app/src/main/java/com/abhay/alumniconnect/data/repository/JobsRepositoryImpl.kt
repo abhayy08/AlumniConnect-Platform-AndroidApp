@@ -142,6 +142,25 @@ class JobsRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun deleteJobById(jobId: String): Result<String> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = api.deleteJobById(jobId)
+                if (!response.isSuccessful) {
+                    return@withContext Result.Error(
+                        message = extractErrorMessage(response, ERROR_TAG)
+                    )
+                }
+
+                response.body()?.let {
+                    return@withContext Result.Success(it.message)
+                }
+                Result.Error(message = "An unknown error has occurred!")
+            }catch(e: java.lang.Exception) {
+                Result.Error(message = "An unknown error has occurred!")
+            }
+        }
+
     override suspend fun getJobsByUserId(userId: String): Result<List<Job>> =
         withContext(Dispatchers.IO) {
             try {

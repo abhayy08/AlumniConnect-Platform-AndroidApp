@@ -45,8 +45,15 @@ fun RootNavGraph(
         }
 
         AuthNavGraph(navController)
-        composable<Route.MainRoute> {
-            MainScreen()
+        composable<Route.MainRoute>(
+            enterTransition = NavigationTransitions.enterTransition,
+            exitTransition = NavigationTransitions.exitTransition,
+            popEnterTransition = NavigationTransitions.popEnterTransition,
+            popExitTransition = NavigationTransitions.popExitTransition
+        ) {
+            MainScreen {
+                navController.navigateAndPopUp(Route.AuthRoute, Route.MainRoute)
+            }
         }
     }
 }

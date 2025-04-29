@@ -138,6 +138,7 @@ fun NavGraphBuilder.MainNavGraph(
         }
 
         JobDetails(
+            isCurrentUser = args.isCurrentUser,
             jobState = jobDetailsState,
             alreadyApplied = args.alreadyApplied,
             onBackClick = { navController.popUp() },
@@ -148,7 +149,13 @@ fun NavGraphBuilder.MainNavGraph(
             showSnackbar = onShowSnackbarMessage,
             onUserClick = { userId ->
                 navController.navigate(Route.MainRoute.UserProfile(userId = userId))
-            })
+            },
+            onDeleteJob = {
+                viewmodel.deleteJob(jobId = args.jobId!!, onPopBackStack = {
+                    navController.popUp()
+                })
+            }
+        )
     }
 
     composable<Route.MainRoute.Applicants>(
@@ -161,7 +168,12 @@ fun NavGraphBuilder.MainNavGraph(
         val viewModel = hiltViewModel<ApplicantsViewModel>()
 
         LaunchedEffect(args.jobId) {
-            viewModel.getApplicantsOfJob(args.jobId)
+            if(args.jobId != null) {
+                viewModel.getApplicantsOfJob(args.jobId)
+            }else {
+                onShowSnackbarMessage("Unable to get Job Applicants")
+                navController.popUp()
+            }
         }
 
         val applications = viewModel.applicantsState.collectAsState().value
@@ -185,6 +197,11 @@ fun NavGraphBuilder.MainNavGraph(
             onResumeClick = { link ->
                 AppUtils.openLink(link)
             },
+            onJobDelete = {
+                viewModel.deleteJob(jobId = args.jobId, onPopBackStack = {
+                    navController.popUp()
+                })
+            }
         )
     }
 

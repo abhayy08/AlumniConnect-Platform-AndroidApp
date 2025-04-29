@@ -1,6 +1,5 @@
 package com.abhay.alumniconnect.presentation.screens.profile.applicants
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -29,7 +28,9 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -42,6 +43,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,7 +57,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abhay.alumniconnect.data.remote.dto.job.Application
-import com.abhay.alumniconnect.utils.capitalize
 import com.example.compose.AlumniConnectTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,17 +66,14 @@ fun ApplicantsScreen(
     onApplicationStatusUpdate: (String, String) -> Unit = { _, _ -> },
     onUserClick: (String) -> Unit,
     onResumeClick: (String) -> Unit = { _ -> },
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onJobDelete: () -> Unit
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = "Applicants") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Close")
-                    }
-                }
+            ApplicantsTopAppBar(
+                onBackClick = onBackClick,
+                onJobDelete = onJobDelete
             )
         }
     ) { paddingValues ->
@@ -114,6 +112,55 @@ fun ApplicantsScreen(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ApplicantsTopAppBar(
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
+    onJobDelete: () -> Unit,
+
+    ) {
+    var showDialogBox by remember {mutableStateOf(false)}
+    TopAppBar(
+        title = { Text(text = "Applicants") },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Close")
+            }
+        },
+        actions = {
+            IconButton(onClick = {
+                showDialogBox = !showDialogBox
+            }) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = "Delete Job"
+                )
+            }
+        }
+    )
+
+    if(showDialogBox) {
+        AlertDialog(
+            shape = MaterialTheme.shapes.small,
+            onDismissRequest = { showDialogBox = false },
+            confirmButton = {
+                TextButton(onClick = onJobDelete) {
+                    Text("Delete")
+                }
+            },
+            text = {
+                Text("Are you sure you want to delete this job?")
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialogBox = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 
@@ -393,7 +440,8 @@ fun ApplicantsScreenPreview() {
             applications = sampleApplicants,
             onApplicationStatusUpdate = { _, _ -> },
             onUserClick = {},
-            onResumeClick = {}
+            onResumeClick = {},
+            onJobDelete = {}
         )
     }
 }

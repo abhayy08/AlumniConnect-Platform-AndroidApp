@@ -15,10 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,9 +30,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,6 +61,8 @@ fun JobDetails(
     resetError: () -> Unit,
     showSnackbar: (String) -> Unit,
     onUserClick: (String) -> Unit,
+    isCurrentUser: Boolean,
+    onDeleteJob: () -> Unit
 ) {
     BackHandler { onBackClick() }
 
@@ -71,7 +77,9 @@ fun JobDetails(
         Scaffold(
             topBar = {
                 JobDetailsTopBar(
-                    job = job, isInDeadline = jobState.isInDeadline, onBackClick = onBackClick
+                    isCurrentUser = isCurrentUser,
+                    job = job, isInDeadline = jobState.isInDeadline, onBackClick = onBackClick,
+                    onDeleteJob = onDeleteJob
                 )
             }, bottomBar = {
                 JobDetailsBottomBar(
@@ -235,7 +243,16 @@ fun PostedByCard(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun JobDetailsTopBar(job: Job, isInDeadline: Boolean, onBackClick: () -> Unit) {
+private fun JobDetailsTopBar(
+    job: Job,
+    isInDeadline: Boolean,
+    onBackClick: () -> Unit,
+    isCurrentUser: Boolean,
+    onDeleteJob: () -> Unit
+) {
+
+    var showDialogBox = remember { false }
+
     TopAppBar(modifier = Modifier.zIndex(1f), title = {
         Column {
             Text(job.title, style = MaterialTheme.typography.titleLarge)
@@ -251,7 +268,37 @@ private fun JobDetailsTopBar(job: Job, isInDeadline: Boolean, onBackClick: () ->
             color = if (isInDeadline) Color.Green.copy(0.3f) else Color.Red.copy(0.3f),
             modifier = Modifier.padding(horizontal = 8.dp)
         )
+        if (isCurrentUser) {
+            IconButton(onClick = {
+                showDialogBox = !showDialogBox
+            }) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = "Delete Job"
+                )
+            }
+        }
     })
+
+    if(showDialogBox) {
+        AlertDialog(
+            shape = MaterialTheme.shapes.small,
+            onDismissRequest = { showDialogBox = false },
+            confirmButton = {
+                TextButton(onClick = onDeleteJob) {
+                    Text("Delete")
+                }
+            },
+            text = {
+                Text("Are you sure you want to delete this job?")
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialogBox = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
 @Composable

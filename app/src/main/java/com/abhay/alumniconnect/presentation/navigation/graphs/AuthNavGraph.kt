@@ -7,9 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
+import com.abhay.alumniconnect.presentation.navigation.utils.NavigationTransitions
 import com.abhay.alumniconnect.presentation.screens.auth.AuthViewModel
 import com.abhay.alumniconnect.presentation.screens.auth.LoginSignupScreen
-import com.abhay.alumniconnect.utils.clearAndNavigate
 import com.abhay.alumniconnect.utils.navigateAndPopUp
 
 fun NavGraphBuilder.AuthNavGraph(
@@ -18,7 +18,12 @@ fun NavGraphBuilder.AuthNavGraph(
     navigation<Route.AuthRoute>(
         startDestination = Route.AuthRoute.LoginRegister
     ) {
-        composable<Route.AuthRoute.LoginRegister> {
+        composable<Route.AuthRoute.LoginRegister>(
+            enterTransition = NavigationTransitions.enterTransition,
+            exitTransition = NavigationTransitions.exitTransition,
+            popEnterTransition = NavigationTransitions.popEnterTransition,
+            popExitTransition = NavigationTransitions.popExitTransition
+        ) {
             val viewModel: AuthViewModel = hiltViewModel()
             val state = viewModel.authUiState.collectAsState().value
             val isUserLoggedIn = viewModel.isLoggedIn.value

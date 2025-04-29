@@ -23,13 +23,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Create
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -50,14 +51,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -75,13 +70,14 @@ import com.abhay.alumniconnect.R
 import com.abhay.alumniconnect.presentation.navigation.graphs.MainNavGraph
 import com.abhay.alumniconnect.presentation.navigation.routes.Route
 import com.abhay.alumniconnect.presentation.screens.MainViewModel
+import com.abhay.alumniconnect.utils.clearAndNavigate
 import com.abhay.alumniconnect.utils.navigateWithStateAndPopToStart
 import com.example.ui.theme.someFontFamily
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavHostController = rememberNavController()) {
+fun MainScreen(navController: NavHostController = rememberNavController(), onLogout: () -> Unit) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination
 
@@ -151,7 +147,12 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
                 ) {
                     AlumniTopAppBar(
                         isVisible = true,
-                        title = currentTitle
+                        title = currentTitle,
+                        onLogOutClick = {
+                            mainViewModel.onLogout {
+                                onLogout()
+                            }
+                        }
                     )
                 }
             }
@@ -341,7 +342,8 @@ fun BottomNavigationBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlumniTopAppBar(
-    modifier: Modifier = Modifier, isVisible: Boolean = true, title: String
+    modifier: Modifier = Modifier, isVisible: Boolean = true, title: String,
+    onLogOutClick: () -> Unit = {}
 ) {
 
     if (isVisible) {
@@ -362,6 +364,19 @@ fun AlumniTopAppBar(
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.requiredSize(70.dp)
                 )
-            })
+            },
+            actions = {
+                if(title == "Profile") {
+                    IconButton(
+                        onClick = onLogOutClick
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.Logout,
+                            contentDescription = "Log out"
+                        )
+                    }
+                }
+            }
+        )
     }
 }

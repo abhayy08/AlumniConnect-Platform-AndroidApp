@@ -61,7 +61,8 @@ sealed class Route {
         @Serializable
         data class JobDetail(
             val alreadyApplied: Boolean = false,
-            val jobId: String? = null
+            val jobId: String? = null,
+            val isCurrentUser: Boolean = false
         )
 
         @Serializable

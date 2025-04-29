@@ -41,6 +41,23 @@ class ApplicantsViewModel @Inject constructor(
         }
     }
 
+    fun deleteJob(jobId: String, onPopBackStack: () -> Unit) {
+        viewModelScope.launch {
+            val result = jobRepository.deleteJobById(jobId)
+            when(result) {
+                is Result.Success<*> -> {
+                    onPopBackStack()
+                }
+                is Result.Error<*> -> {
+                    _messageState.update {
+                        result.message
+                    }
+                }
+            }
+
+        }
+    }
+
     fun updateApplicationState(jobId: String, applicationId: String, status: String) {
         Log.d("ApplicantsViewModel", "updateApplicationState: $jobId, $applicationId, $status")
         viewModelScope.launch {

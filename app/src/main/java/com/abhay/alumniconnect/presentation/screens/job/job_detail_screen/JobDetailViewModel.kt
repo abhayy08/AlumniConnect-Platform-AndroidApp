@@ -3,6 +3,7 @@ package com.abhay.alumniconnect.presentation.screens.job.job_detail_screen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil.util.CoilUtils.result
 import com.abhay.alumniconnect.data.remote.dto.job.Job
 import com.abhay.alumniconnect.domain.repository.JobsRepository
 import com.abhay.alumniconnect.utils.Result
@@ -61,6 +62,23 @@ class JobDetailViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun deleteJob(jobId: String, onPopBackStack: () -> Unit) {
+        viewModelScope.launch {
+            val result = jobsRepository.deleteJobById(jobId)
+            when(result) {
+                is Result.Success<*> -> {
+                    onPopBackStack()
+                }
+                is Result.Error<*> -> {
+                    _jobDetailsState.value = _jobDetailsState.value.copy(
+                        error = result.message
+                    )
+                }
+            }
+
         }
     }
 
