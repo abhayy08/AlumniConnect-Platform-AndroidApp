@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.implementation
+import org.gradle.kotlin.dsl.testImplementation
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -31,6 +32,8 @@ android {
         properties.load(FileInputStream(file))
 
         buildConfigField("String", "LOCALHOST_IP_ADDRESS", properties.getProperty("localhost_ip_address"))
+
+        testInstrumentationRunner = "com.abhay.alumniconnect.MyHiltTestRunner"
     }
 
     buildTypes {
@@ -66,7 +69,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
-    testImplementation(libs.junit)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -101,6 +104,19 @@ dependencies {
 
     // Coil - For Image
     implementation("io.coil-kt:coil-compose:2.0.0")
+
+    testImplementation("org.mockito:mockito-core:5.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation(libs.junit)
+    testImplementation("io.mockk:mockk:1.13.5")
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.51.1")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51.1")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+
+
 }
 
 kapt {

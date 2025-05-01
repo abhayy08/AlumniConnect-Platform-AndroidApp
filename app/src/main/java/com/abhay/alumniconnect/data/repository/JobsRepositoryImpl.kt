@@ -14,7 +14,7 @@ import okhttp3.Dispatcher
 import javax.inject.Inject
 
 class JobsRepositoryImpl @Inject constructor(
-    private val api: AlumniApi
+    private val api: AlumniApi,
 ) : JobsRepository {
     override suspend fun getJobs(): Result<List<Job>> =
         withContext(Dispatchers.IO) {
@@ -26,7 +26,7 @@ class JobsRepositoryImpl @Inject constructor(
                     )
                 }
                 response.body()?.let {
-                    Log.d(ERROR_TAG, "getJobs: $it")
+//                    Log.d(ERROR_TAG, "getJobs: $it")
                     return@withContext Result.Success(it)
                 }
                 Result.Error(message = "An unknown error has occurred!")
@@ -39,7 +39,7 @@ class JobsRepositoryImpl @Inject constructor(
     override suspend fun getJobsByCurrentUser(): Result<List<Job>> =
         withContext(Dispatchers.IO) {
             try {
-                Log.d(ERROR_TAG, "getJobsByCurrentUser: called")
+//                Log.d(ERROR_TAG, "getJobsByCurrentUser: called")
                 val response = api.getJobsByCurrentUser()
                 if (!response.isSuccessful) {
                     return@withContext Result.Error(
@@ -47,7 +47,7 @@ class JobsRepositoryImpl @Inject constructor(
                     )
                 }
                 response.body()?.let {
-                    Log.d(ERROR_TAG, "getJobsByCurrentUser: $it")
+//                    Log.d(ERROR_TAG, "getJobsByCurrentUser: $it")
                     return@withContext Result.Success(it)
                 }
                 Result.Error(message = "An unknown error has occurred!")
@@ -106,7 +106,7 @@ class JobsRepositoryImpl @Inject constructor(
                     )
                 }
                 response.body()?.let {
-                    Log.d(ERROR_TAG, "getOfferedJobs: $it")
+//                    Log.d(ERROR_TAG, "getOfferedJobs: $it")
                     return@withContext Result.Success(it)
                 }
                 Result.Error(message = "An unknown error has occurred!")
@@ -119,7 +119,7 @@ class JobsRepositoryImpl @Inject constructor(
     override suspend fun applyForJob(
         jobId: String,
         resumeLink: String,
-        coverLetter: String
+        coverLetter: String,
     ): Result<String> =
         withContext(Dispatchers.IO) {
             try {
@@ -132,7 +132,7 @@ class JobsRepositoryImpl @Inject constructor(
                 }
 
                 response.body()?.let {
-                    Log.d(ERROR_TAG, "applyForJob: ${it.message}")
+//                    Log.d(ERROR_TAG, "applyForJob: ${it.message}")
                     return@withContext Result.Success(it.message)
                 }
 
@@ -156,7 +156,7 @@ class JobsRepositoryImpl @Inject constructor(
                     return@withContext Result.Success(it.message)
                 }
                 Result.Error(message = "An unknown error has occurred!")
-            }catch(e: java.lang.Exception) {
+            } catch (e: java.lang.Exception) {
                 Result.Error(message = "An unknown error has occurred!")
             }
         }
@@ -175,7 +175,7 @@ class JobsRepositoryImpl @Inject constructor(
                     return@withContext Result.Success(it)
                 }
                 Result.Error(message = "An unknown error has occurred!")
-            }catch(e: Exception) {
+            } catch (e: Exception) {
                 Result.Error(message = e.message ?: "An unknown error has occurred!")
             }
         }
@@ -212,7 +212,7 @@ class JobsRepositoryImpl @Inject constructor(
                     return@withContext Result.Success(it)
                 }
                 Result.Error(message = "An unknown error has occurred!")
-            }catch(e: java.lang.Exception) {
+            } catch (e: java.lang.Exception) {
                 Result.Error(message = "An unknown error has occurred!")
             }
         }
@@ -227,11 +227,11 @@ class JobsRepositoryImpl @Inject constructor(
                     )
                 }
                 response.body()?.let {
-                    Log.d(ERROR_TAG, "getJobApplicants: $it")
+//                    Log.d(ERROR_TAG, "getJobApplicants: $it")
                     return@withContext Result.Success(it)
                 }
                 Result.Error(message = "An unknown error has occurred!")
-            }catch(e: java.lang.Exception) {
+            } catch (e: java.lang.Exception) {
                 Result.Error(message = e.message ?: "An unknown error has occurred!")
             }
         }
@@ -239,7 +239,7 @@ class JobsRepositoryImpl @Inject constructor(
     override suspend fun updateApplicationStatus(
         jobId: String,
         applicationId: String,
-        status: String
+        status: String,
     ): Result<String> =
         withContext(Dispatchers.IO) {
             try {
@@ -248,7 +248,7 @@ class JobsRepositoryImpl @Inject constructor(
                     "status" to status
                 )
                 val response = api.updateApplicationStatus(jobId, requestBody)
-                Log.d(ERROR_TAG, "updateApplicationStatus: $response")
+//                Log.d(ERROR_TAG, "updateApplicationStatus: $response")
                 if (!response.isSuccessful) {
                     return@withContext Result.Error(
                         message = extractErrorMessage(response, ERROR_TAG)
@@ -256,11 +256,11 @@ class JobsRepositoryImpl @Inject constructor(
                 }
 
                 response.body()?.let {
-                    Log.d(ERROR_TAG, "updateApplicationStatus: ${it.message}")
+//                    Log.d(ERROR_TAG, "updateApplicationStatus: ${it.message}")
                     return@withContext Result.Success(it.message)
                 }
                 Result.Error(message = "An unknown error has occurred!")
-            }catch(e: java.lang.Exception) {
+            } catch (e: java.lang.Exception) {
                 Result.Error(message = e.message ?: "An unknown error has occurred!")
             }
         }

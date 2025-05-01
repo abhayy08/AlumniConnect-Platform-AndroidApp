@@ -59,7 +59,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
             )
 
             response.body()?.let { userDetails ->
-                Log.d(ERROR_TAG, "getCurrentUser: $userDetails")
+//                Log.d(ERROR_TAG, "getCurrentUser: $userDetails")
                 _currentUserFlow.update { Result.Success(userDetails.toUser()) }
                 return@withContext Result.Success(userDetails.toUser())
             }
@@ -74,7 +74,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             try {
                 val response = api.getUserById(id)
-                Log.d(ERROR_TAG, "getUserById: $response")
+//                Log.d(ERROR_TAG, "getUserById: $response")
                 if (!response.isSuccessful) return@withContext Result.Error(
                     extractErrorMessage(
                         response, ERROR_TAG
@@ -184,7 +184,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
                 )
             )
             response.body()?.let { data ->
-                Log.d(ERROR_TAG, "addWorkExperience: ${data}")
+//                Log.d(ERROR_TAG, "addWorkExperience: ${data}")
                 _currentUserFlow.update { Result.Success(data.user!!.toUser()) }
                 return@withContext Result.Success(data = data.message)
             }
@@ -280,7 +280,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
                     )
                 )
                 response.body()?.let { data ->
-                    Log.d(ERROR_TAG, data.message.toString())
+//                    Log.d(ERROR_TAG, data.message.toString())
                     return@withContext Result.Success(data = data.message)
                 }
                 Result.Error("Something went wrong, Try again later!")
@@ -299,7 +299,7 @@ class AlumniRemoteRepositoryImpl @Inject constructor(
                     )
                 )
                 response.body()?.let { data ->
-                    Log.d(ERROR_TAG, data.message.toString())
+//                    Log.d(ERROR_TAG, data.message.toString())
                     return@withContext Result.Success(data = data.message)
                 }
                 Result.Error("Something went wrong, Try again later!")

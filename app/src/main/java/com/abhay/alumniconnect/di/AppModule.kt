@@ -5,6 +5,7 @@ import com.abhay.alumniconnect.BuildConfig
 import com.abhay.alumniconnect.data.remote.AlumniApi
 import com.abhay.alumniconnect.data.remote.RequestInterceptor
 import com.abhay.alumniconnect.data.repository.SessionManager
+import com.abhay.alumniconnect.data.repository.SessionManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,7 +43,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSessionManager(@ApplicationContext context: Context): SessionManager {
-        return SessionManager(context)
+        return SessionManagerImpl(context)
     }
 
 }
