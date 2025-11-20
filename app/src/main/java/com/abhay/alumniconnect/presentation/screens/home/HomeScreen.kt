@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,8 +44,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.abhay.alumniconnect.domain.model.User
 import com.abhay.alumniconnect.presentation.components.CommentItem
 import com.abhay.alumniconnect.presentation.components.PostItem
@@ -52,6 +56,7 @@ import com.abhay.alumniconnect.presentation.components.ProfileImageComponent
 import com.abhay.alumniconnect.presentation.dummyPosts
 import com.abhay.alumniconnect.presentation.dummyUser
 import com.example.compose.AlumniConnectTheme
+import com.example.ui.theme.someFontFamily
 import kotlinx.coroutines.launch
 import kotlin.collections.isNotEmpty
 
@@ -99,36 +104,92 @@ fun HomeScreen(
         enter = fadeIn(animationSpec = tween(300)),
         exit = ExitTransition.None
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-        ) {
-            LazyColumn(
+        if(uiState is HomeUiState.Error) {
+            Surface(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                state = lazyListState
+                color = MaterialTheme.colorScheme.background,
             ) {
-
-                items(items = postsState.posts, key = { it._id }) { post ->
-                    PostItem(
-                        modifier = Modifier.padding(6.dp),
-                        post = post,
-                        onUserClick = {
-                            onUserClick(post.author._id)
-                        },
-                        onLikeClick = { onEvent(HomeUiEvents.LikePost(post._id)) },
-                        onCommentClick = {
-                            selectedPostId = post._id
-                            openBottomSheet = true
-                            onEvent(HomeUiEvents.GetComments(post._id))
-                            scope.launch { bottomSheetState.show() }
-                        },
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Something Went Wrong",
+                        fontSize = 25.sp,
+                        style = MaterialTheme.typography.displayMedium,
+                        fontFamily = someFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 2.sp
                     )
                 }
+            }
+        } else {
+            Surface(
+                modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    state = lazyListState
+                ) {
 
-                item {
-                    if (postsState.isLoadingMore) {
-                        CircularProgressIndicator()
+                    if (postsState.posts.isEmpty()) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(top = 300.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Nothing to see here",
+                                        fontSize = 25.sp,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontFamily = someFontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        textAlign = TextAlign.Center,
+                                        letterSpacing = 2.sp
+                                    )
+                                    Text(
+                                        text = "(ಠ_ಠ)",
+                                        fontSize = 25.sp,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontFamily = someFontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        textAlign = TextAlign.Center,
+                                        letterSpacing = 2.sp
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        items(items = postsState.posts, key = { it._id }) { post ->
+                            PostItem(
+                                modifier = Modifier.padding(6.dp),
+                                post = post,
+                                onUserClick = {
+                                    onUserClick(post.author._id)
+                                },
+                                onLikeClick = { onEvent(HomeUiEvents.LikePost(post._id)) },
+                                onCommentClick = {
+                                    selectedPostId = post._id
+                                    openBottomSheet = true
+                                    onEvent(HomeUiEvents.GetComments(post._id))
+                                    scope.launch { bottomSheetState.show() }
+                                },
+                            )
+                        }
+                    }
+
+                    item {
+                        if (postsState.isLoadingMore) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }

@@ -329,7 +329,7 @@ fun BottomNavigationBar(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     },
-                    label = { Text(item.title) },
+                    label = { Text(item.title, style = MaterialTheme.typography.bodyMedium, fontFamily = someFontFamily, fontWeight = FontWeight.ExtraBold) },
                     onClick = { onNavItemClick(item.route) },
                     alwaysShowLabel = false,
                 )
@@ -352,11 +352,11 @@ fun AlumniTopAppBar(
                 Text(
                     text = title,
                     fontFamily = someFontFamily,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.ExtraBold
                 )
             }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
             ), navigationIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),

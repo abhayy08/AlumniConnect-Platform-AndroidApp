@@ -31,7 +31,7 @@ android {
         val properties = Properties()
         properties.load(FileInputStream(file))
 
-        buildConfigField("String", "LOCALHOST_IP_ADDRESS", properties.getProperty("localhost_ip_address"))
+//        buildConfigField("String", "LOCALHOST_IP_ADDRESS", properties.getProperty("localhost_ip_address"))
 
         testInstrumentationRunner = "com.abhay.alumniconnect.MyHiltTestRunner"
     }

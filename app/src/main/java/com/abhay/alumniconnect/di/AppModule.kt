@@ -1,7 +1,6 @@
 package com.abhay.alumniconnect.di
 
 import android.content.Context
-import com.abhay.alumniconnect.BuildConfig
 import com.abhay.alumniconnect.data.remote.AlumniApi
 import com.abhay.alumniconnect.data.remote.RequestInterceptor
 import com.abhay.alumniconnect.data.repository.SessionManager
@@ -24,7 +23,7 @@ object AppModule {
     @Singleton
     fun provideAlumniApi(sessionManager: SessionManager): AlumniApi {
 
-        val BASE_URL = "http://${BuildConfig.LOCALHOST_IP_ADDRESS}:5000/api/"
+        val BASE_URL = "https://alumniconnect-platform-backend.onrender.com/api/"
 
         val interceptor = RequestInterceptor(sessionManager)
 
