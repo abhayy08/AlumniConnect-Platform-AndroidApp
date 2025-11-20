@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -46,79 +47,84 @@ fun JobApplicationScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        TopAppBar(modifier = Modifier.align(Alignment.TopCenter), title = {
-            Text(
-                text = "Job Application", style = MaterialTheme.typography.titleLarge
-            )
-        }, navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back"
-                )
-            }
-        })
-
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 110.dp)
+                .padding(8.dp),
         ) {
-            CustomOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.resumeLink,
-                onValueChange = { onEvent(JobApplicationEvents.UpdateResumeLink(it)) },
-                label = "Resume Link",
-                isRequired = true,
-                isError = state.resumeError
-            )
-            CustomOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.coverLetter,
-                onValueChange = { onEvent(JobApplicationEvents.UpdateCoverLetter(it)) },
-                label = "Cover Letter (Optional)"
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .imePadding()
-        ) {
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-                shape = MaterialTheme.shapes.small,
-                elevation = CardDefaults.cardElevation(1.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
-            ) {
+            TopAppBar(modifier = Modifier.align(Alignment.TopCenter), title = {
                 Text(
-                    modifier = Modifier.padding(8.dp),
-                    text = "Note: Make sure that your resume is up to date with your skills and " + "other details along with your " +
-                            "user profile here, so that the job poster can review your application properly",
-                    style = MaterialTheme.typography.bodySmall
+                    text = "Job Application", style = MaterialTheme.typography.titleLarge
+                )
+            }, navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back"
+                    )
+                }
+            })
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 110.dp)
+            ) {
+                CustomOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = state.resumeLink,
+                    onValueChange = { onEvent(JobApplicationEvents.UpdateResumeLink(it)) },
+                    label = "Resume Link",
+                    isRequired = true,
+                    isError = state.resumeError
+                )
+                CustomOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = state.coverLetter,
+                    onValueChange = { onEvent(JobApplicationEvents.UpdateCoverLetter(it)) },
+                    label = "Cover Letter (Optional)"
                 )
             }
 
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.small,
-                onClick = { onEvent(JobApplicationEvents.ApplyForJob(navigateAndPopUp = navigateAndPopUp)) },
-                enabled = state.resumeLink.isNotEmpty()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .imePadding()
             ) {
-                Text(
-                    text = "Submit Application"
-                )
-                if(state.isLoading) {
-                    CircularProgressIndicator()
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    shape = MaterialTheme.shapes.small,
+                    elevation = CardDefaults.cardElevation(1.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = "Note: Make sure that your resume is up to date with your skills and " + "other details along with your " +
+                                "user profile here, so that the job poster can review your application properly",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.small,
+                    onClick = { onEvent(JobApplicationEvents.ApplyForJob(navigateAndPopUp = navigateAndPopUp)) },
+                    enabled = state.resumeLink.isNotEmpty()
+                ) {
+                    Text(
+                        text = "Submit Application"
+                    )
+                    if(state.isLoading) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
         }

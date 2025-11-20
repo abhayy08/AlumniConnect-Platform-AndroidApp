@@ -234,40 +234,45 @@ fun CommentsSection(
     currentUser: User?
 ) {
     Box(modifier = Modifier.fillMaxSize().imePadding()) {
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 72.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .imePadding()
         ) {
-            if (commentsState.isLoadingComments) {
-                item {
-                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-                }
-            } else {
-                if (commentsState.commentsOnPost.isNotEmpty()) {
-                    items(commentsState.commentsOnPost, key = { it._id }) { comment ->
-                        CommentItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            comment = comment
-                        )
-                        HorizontalDivider(modifier = Modifier.fillMaxWidth(0.9f))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 72.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (commentsState.isLoadingComments) {
+                    item {
+                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                     }
                 } else {
-                    item {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("No comments yet")
+                    if (commentsState.commentsOnPost.isNotEmpty()) {
+                        items(commentsState.commentsOnPost, key = { it._id }) { comment ->
+                            CommentItem(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                comment = comment
+                            )
+                            HorizontalDivider(modifier = Modifier.fillMaxWidth(0.9f))
+                        }
+                    } else {
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("No comments yet")
+                            }
                         }
                     }
                 }
             }
         }
-
         // Comment Input Box
         CommentInputBox(
             commentTextFieldValue = commentTextFieldValue,
